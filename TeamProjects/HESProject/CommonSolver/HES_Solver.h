@@ -116,6 +116,3 @@ extern "C"
 	EXPORT_API void STD_CALL HES_FreeTask(HES_Task, HES_Status*);
 
 };
-
-
-#endif
