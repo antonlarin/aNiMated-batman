@@ -1,0 +1,19 @@
+{
+	"main": "application/index.html",
+	"name": "HES Project",
+	"description": "Heat equation solver",
+	"version": "0.1.0",
+	"window": {
+		"title": "Heat equation solver",
+		"toolbar": false,
+		"frame": true,
+		"width": 800,
+		"height": 500,
+		"position": "mouse",
+		"min_width": 400,
+		"min_height": 200
+	},
+	"webkit": {
+		"plugin": true
+	}
+}
