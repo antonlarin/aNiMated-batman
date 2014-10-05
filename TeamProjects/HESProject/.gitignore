@@ -1,0 +1,12 @@
+# executables files
+*.exe
+*.dll
+
+# node-webkit windows files
+icudtl.dat
+nw.pak
+locales/
+
+# Visual Studio files
+*.sln
+*.vcxproj
