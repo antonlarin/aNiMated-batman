@@ -41,7 +41,7 @@ EXPORT_API void STD_CALL HES_GetTable(HES_Task task, double* table, HES_Status* 
 }
 EXPORT_API void STD_CALL HES_Solve(HES_Task task, HES_Status* stat)
 {
-	HE_Integrator_Implicit(((HE_Task*)task), stat);
+	HE_Integrate(((HE_Task*)task), stat);
 }
 EXPORT_API void STD_CALL HES_FreeTask(HES_Task task, HES_Status* stat)
 {

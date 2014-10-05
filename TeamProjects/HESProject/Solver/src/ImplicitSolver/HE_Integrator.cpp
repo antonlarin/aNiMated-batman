@@ -1,6 +1,6 @@
 #include "HE_Integrator.h"
 
-void HE_Integrator_Implicit(HE_Task* task, HES_Status* stat)
+void HE_Integrate(HE_Task* task, HES_Status* stat)
 {
 	double x_start = task->GetLeftBound();
 	double x_end = task->GetRightBound();
