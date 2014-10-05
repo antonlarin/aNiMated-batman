@@ -10,3 +10,4 @@ locales/
 # Visual Studio files
 *.sln
 *.vcxproj
+*.filters
