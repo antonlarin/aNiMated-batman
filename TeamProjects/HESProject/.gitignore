@@ -9,5 +9,10 @@ locales/
 
 # Visual Studio files
 *.sln
+*.suo
 *.vcxproj
 *.filters
+
+# Visual Studio Data Base
+*.sdf
+*.opensdf
