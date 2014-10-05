@@ -25,32 +25,24 @@
 			],
 			"include_dirs": [
 				"include/MathParser"
-			],
-			"direct_dependent_settings": {
-				"include_dirs": [ "include/MathParser/" ]
-			}
-		},
-		{
-			"target_name": "ExplicitSolver",
-			"type": "shared_library",
-			"sources": [
-				# explicit solver sources
-			],
-			"include_dirs": [
-				"include/MathParser"
-			],
-			"dependencies": [
-				"MathParser"
 			]
 		},
 		{
 			"target_name": "ImplicitSolver",
 			"type": "shared_library",
 			"sources": [
-				# explicit solver sources
+				"src/CommonSolver/HE_Integrator.h",
+				"src/CommonSolver/HE_Task.h",
+				"src/CommonSolver/HES_Solver.h",
+
+				"src/CommonSolver/HE_Task.cpp",
+				"src/CommonSolver/HES_Solver.cpp",
+
+				"src/ImplicitSolver/HE_Integrator.cpp"
 			],
 			"include_dirs": [
-				"include/MathParser"
+				"include/MathParser",
+				"src/CommonSolver"
 			],
 			"dependencies": [
 				"MathParser"
