@@ -5,6 +5,16 @@
 	"targets": [
 		{
 			"target_name": "MathParser",
+			"conditions": [
+				[ "OS=='linux'", {
+					"cflags": [
+						"-Wswitch-enum",
+						"-std=c++11",
+						"-fexceptions",
+						"-fPIC"
+					]
+				}]
+			],
 			"product_name": "MathParser",
 			"type": "shared_library",
 			"sources": [
@@ -29,6 +39,16 @@
 		},
 		{
 			"target_name": "ImplicitSolver",
+			"conditions": [
+				[ "OS=='linux'", {
+					"cflags": [
+						"-Wswitch-enum",
+						"-std=c++11",
+						"-fexceptions",
+						"-fPIC"
+					],
+				}]
+			],
 			"type": "shared_library",
 			"sources": [
 				"src/CommonSolver/HE_Integrator.h",
