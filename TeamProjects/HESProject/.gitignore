@@ -16,3 +16,8 @@ locales/
 # Visual Studio Data Base
 *.sdf
 *.opensdf
+
+# Shell scripts
+*.sh
+*.bat
+*.ps1
