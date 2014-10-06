@@ -22,6 +22,7 @@
 #define HES_ERR_MESSAGE_MAX_LENGTH 2048
 
 #define HES_ERRNO_NONE   0
+#define HES_ERRNO_ERR    1
 
 //Structure describes error
 typedef struct {

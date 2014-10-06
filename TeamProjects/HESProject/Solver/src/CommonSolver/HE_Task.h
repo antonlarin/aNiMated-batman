@@ -3,7 +3,7 @@
 #include "math_parser.h"
 #include <string.h>
 #include "HES_Solver.h"
-#define HES_ERRNO_ERR   1
+
 class HE_Task
 {
 protected:
