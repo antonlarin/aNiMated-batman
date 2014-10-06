@@ -173,4 +173,10 @@ HE_Task::~HE_Task()
 {
 	if (gridPoints)
 		delete[] gridPoints;
+	if (rhsFunction)
+		MP_Delete(&rhsFunction, &errObj);
+	if (leftBoundaryCondition)
+		MP_Delete(&leftBoundaryCondition, &errObj);
+	if (rightBoundaryCondition)
+		MP_Delete(&rightBoundaryCondition, &errObj);
 }
