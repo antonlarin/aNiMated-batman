@@ -1,4 +1,5 @@
 #include "HE_Integrator.h"
+#include <omp.h>
 
 void HE_Integrate(HE_Task* task, HES_Status* stat)
 {
@@ -14,11 +15,58 @@ void HE_Integrate(HE_Task* task, HES_Status* stat)
 	{
 		double* alpha = new double[n + 1];
 		double* beta = new double[n + 1];
+		double* rhs_values = new double[n];
 		double h = (x_end - x_start) / n;
 		double k = timeLim / m;
 		double tmp1, tmp2;
 		int p = n / 2;
 
+		for (int j = 0; j < m; j++)
+		{
+			double* curr_layer = grid + (n + 1)*(j + 1);
+			double* prev_layer = grid + (n + 1)*j;
+			for (int i = 1; i < n; i++)
+				rhs_values[i] = task->RhsCalculate(x_start + h*i, k*(j + 1));
+
+#pragma omp parallel private(tmp1, tmp2) num_threads(2)
+			{
+				if (omp_get_thread_num() == 0)
+				{
+					alpha[0] = 0;
+					beta[0] = curr_layer[0];
+					for (int i = 1; i <= p; i++)
+					{
+						tmp1 = 2 + h*h / k - alpha[i - 1];
+						alpha[i] = 1 / tmp1;
+						tmp2 = h*h*(prev_layer[i] / k + rhs_values[i]);
+						beta[i] = (tmp2 + beta[i - 1]) / tmp1;
+					}
+				}
+				else if (omp_get_thread_num() == 1)
+				{
+					alpha[n] = 0;
+					beta[n] = curr_layer[n];
+					for (int i = n - 1; i > p; i--)
+					{
+						tmp1 = 2 + h*h / k - alpha[i + 1];
+						alpha[i] = 1 / tmp1;
+						tmp2 = h*h*(prev_layer[i] / k + rhs_values[i]);
+						beta[i] = (tmp2 + beta[i + 1]) / tmp1;
+					}
+				}
+#pragma omp barrier
+#pragma omp single
+{
+	curr_layer[p] = (alpha[p] * beta[p + 1] + beta[p]) / (1 - alpha[p] * alpha[p + 1]);
+}
+				if (omp_get_thread_num() == 0)
+					for (int i = p; i > 0; i--)
+						curr_layer[i - 1] = alpha[i - 1] * curr_layer[i] + beta[i - 1];
+				else if (omp_get_thread_num() == 1)
+					for (int i = p + 1; i < n + 1; i++)
+						curr_layer[i] = alpha[i] * curr_layer[i - 1] + beta[i];
+			}//end of omp parallel section
+		/*
 		for (int j = 0; j < m; j++)
 		{
 			double* curr_layer = grid + (n+1)*(j + 1);
@@ -36,8 +84,10 @@ void HE_Integrate(HE_Task* task, HES_Status* stat)
 			for (int i = n; i > 0; i--)
 				curr_layer[i - 1] = alpha[i - 1] * curr_layer[i] + beta[i - 1];
 		}
+		*/
 		delete[] alpha;
 		delete[] beta;
+		delete[] rhs_values;
 		stat->ErrCode = HES_ERRNO_NONE;
 	}
 	else
