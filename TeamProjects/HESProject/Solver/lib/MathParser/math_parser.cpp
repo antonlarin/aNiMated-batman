@@ -1,6 +1,6 @@
 
 #include <algorithm>
-#include <exception>
+#include <stdexcept>
 #include <string>
 #include <limits>
 #include <cmath>
@@ -108,10 +108,10 @@ void InternalFunction::MapVariableToIndex(
 	const char* varName, int index)
 {
 	if (varName == NULL)
-		throw exception("Variable name is null.");
+		throw runtime_error("Variable name is null.");
 
 	if (index < 0)
-		throw exception("Invalid index.");
+		throw runtime_error("Invalid index.");
 
 	mIndexedVariablesCount = 0;
 	auto mvq = mVariablesQ;
@@ -132,7 +132,7 @@ bool InternalFunction::IsAllVariablesIndexed()
 double InternalFunction::Calc(const double* x)
 {
 	if (!IsAllVariablesIndexed())
-		throw exception("Some variables not maped to index.");
+		throw runtime_error("Some variables not maped to index.");
 
 	double left, right;
 	for (auto s = mQ.begin(); s != mQ.end(); s++)
@@ -291,6 +291,7 @@ void STD_CALL MP_Delete(MPFunction* func, MPErrObj* err)
 		return;
 	}
 
-	delete *func;
+	auto f = reinterpret_cast<InternalFunction*>(*func);
+	delete f;
 	*func = NULL;
 }

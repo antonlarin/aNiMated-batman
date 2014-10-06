@@ -8,7 +8,7 @@
 typedef double (*EvalOperator)(double, double);
 typedef double (*EvalFunction)(double);
 
-class EvalTable sealed 
+class EvalTable 
 {
 
 private:

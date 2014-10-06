@@ -1,7 +1,6 @@
 
 #include "eval_stack.h"
 #include <iostream>
-#include <codecvt>
 #include <locale>
 
 EvalAtom::EvalAtom(std::wstring& src, 
@@ -66,7 +65,5 @@ void EvalAtom::CreateVariable(std::wstring& src)
 	 * string representation. No reason to support non
 	 * latin characters in math formula.
 	 */
-	std::wstring_convert<std::codecvt_utf8<wchar_t>, 
-		wchar_t> converterStr;
-   Ident = converterStr.to_bytes(src);
+	Ident = std::string(src.begin(), src.end());
 }
