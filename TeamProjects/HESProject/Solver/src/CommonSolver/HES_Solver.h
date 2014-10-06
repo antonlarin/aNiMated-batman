@@ -92,11 +92,11 @@ extern "C"
 
 	/**
 	 * Get specified layer of solved task. Task must be solved before calling this method.
-	 * @param index index of this layer. Indexing started from 0 to N, 
-	 * where N grid dimensions by 't' variable.
+	 * @param index index of specified layer. Indexing started from 0 to M, 
+	 * where M grid dimensions by 't' variable.
 	 * @param layer vector of computed task values. Memory must be allocated before passing
-	 * pointer to function. Size of memory block must be greater or equal sizeof(double)*(M + 1),
-	 * where M grid dimensions by 't' variable. 
+	 * pointer to function. Size of memory block must be greater or equal sizeof(double)*(N + 1),
+	 * where N grid dimensions by 'x' variable. 
 	 */
 	EXPORT_API void STD_CALL HES_GetLayer(HES_Task, int index, double* layer, HES_Status*);
 	
