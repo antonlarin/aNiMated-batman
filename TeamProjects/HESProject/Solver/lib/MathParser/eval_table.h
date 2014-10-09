@@ -5,6 +5,8 @@
 #include <string>
 #include <map>
 
+#define MP_MAX_IDENTIFIER_SIZE 128
+
 typedef double (*EvalOperator)(double, double);
 typedef double (*EvalFunction)(double);
 
@@ -31,6 +33,7 @@ private:
 public:
 
 	static bool IsConstExists(std::wstring& id);
+	static bool CheckIdentSize(std::wstring& id);
 
 	static EvalOperator GetOper(std::wstring& id);
 	static EvalFunction GetFunc(std::wstring& id);

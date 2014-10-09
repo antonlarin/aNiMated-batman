@@ -1,10 +1,11 @@
 
 #include "Parser.h"
 #include "eval_table.h"
+
+#include <stdexcept>
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <exception>
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -42,6 +43,12 @@ bool EvalTable::IsConstExists(std::wstring& id)
 	return tbl->mConsts.find(id) != end;
 }
 
+bool EvalTable::CheckIdentSize(std::wstring& id)
+{
+	if (id.size() > MP_MAX_IDENTIFIER_SIZE)
+		throw std::runtime_error("Identifier is too long.");
+}
+
 
 EvalOperator EvalTable::GetOper(std::wstring& id)
 {
@@ -63,6 +70,8 @@ EvalOperator EvalTable::GetOper(std::wstring& id)
 
 EvalFunction EvalTable::GetFunc(std::wstring& id)
 {
+	CheckIdentSize(id);
+
 	EvalTable* tbl = GetInstance();
 	try
 	{ return tbl->mFuncs.at(id); }
@@ -81,6 +90,8 @@ EvalFunction EvalTable::GetFunc(std::wstring& id)
 
 double EvalTable::GetConst(std::wstring& id)
 {
+	CheckIdentSize(id);
+
 	EvalTable* tbl = GetInstance();
 	try
 	{ return tbl->mConsts.at(id); }
@@ -99,6 +110,8 @@ double EvalTable::GetConst(std::wstring& id)
 
 void EvalTable::AddFunc(std::wstring& id, EvalFunction f)
 {
+	CheckIdentSize(id);
+
 	if (id.size() < 3)
 	{
 		std::wstring exMes = L"Function identifier is too short.";

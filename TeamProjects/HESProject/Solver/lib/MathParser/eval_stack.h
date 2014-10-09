@@ -9,7 +9,6 @@
 #include "type_aliases.h"
 #include "eval_table.h"
 
-
 enum EvalAtomType
 {
 	Operator,

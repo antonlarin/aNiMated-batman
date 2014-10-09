@@ -60,6 +60,7 @@ void EvalAtom::CreateConstant(std::wstring& src)
 
 void EvalAtom::CreateVariable(std::wstring& src)
 {
+	EvalTable::CheckIdentSize(src);
 	/**
 	 * Convert wstring representation of identifier to
 	 * string representation. No reason to support non

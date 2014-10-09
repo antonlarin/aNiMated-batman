@@ -65,6 +65,7 @@ public:
 
 	int GetVariablesCount();
 	void MapVariableToIndex(const char* varName, int index);
+	void VariablesToBuffers(char** buffers);
 	double Calc(const double* x);
 
 private:
@@ -129,6 +130,18 @@ bool InternalFunction::IsAllVariablesIndexed()
 { return mIndexedVariablesCount == GetVariablesCount(); }
 
 
+void InternalFunction::VariablesToBuffers(char** buffers)
+{
+	auto mvq = mVariablesQ;
+	for_each(mvq.begin(), mvq.end(), [&](EvalAtom* atom) 
+	{
+		const char* cIdent = atom->Ident.c_str();
+		strcpy(*buffers, cIdent);
+		buffers++; 
+	});
+}
+
+
 double InternalFunction::Calc(const double* x)
 {
 	if (!IsAllVariablesIndexed())
@@ -190,6 +203,28 @@ MPFunction STD_CALL MP_Parse(const char* src, MPErrObj* err)
 
 	return NULL;
 }
+
+
+
+void MP_GetVariables(const MPFunction func, char** buffers, MPErrObj* err)
+{
+	err->ErrCode = MP_ERRNO_NONE;
+
+	if (func == NULL)
+	{
+		SetMPErrObj(err, MP_ERRNO_ARGUMENT, "Function object is null.");
+		return;
+	}
+
+	try
+	{
+		auto f = reinterpret_cast<InternalFunction*>(func);
+		f->VariablesToBuffers(buffers);
+	}
+	catch (exception ex)
+	{ SetMPErrObj(err, MP_ERRNO_INTERNAL, ex.what()); }
+}
+
 
 
 void STD_CALL MP_SetVariable(const MPFunction func, 
@@ -264,6 +299,22 @@ double STD_CALL MP_CalcUnsafe(const MPFunction func, const double* x)
 	return f->Calc(x);
 }
 
+void STD_CALL MP_Delete(MPFunction* func, MPErrObj* err)
+{
+	err->ErrCode = MP_ERRNO_NONE;
+
+	if (func == NULL)
+	{
+		SetMPErrObj(err, MP_ERRNO_ARGUMENT, "Function object is null.");
+		return;
+	}
+
+	auto f = reinterpret_cast<InternalFunction*>(*func);
+	delete f;
+	*func = NULL;
+}
+
+
 
 void STD_CALL MP_AddFunc(const char* id, UserFunc f, MPErrObj* err)
 {
@@ -293,17 +344,8 @@ void STD_CALL MP_AddFunc(const char* id, UserFunc f, MPErrObj* err)
 }
 
 
-void STD_CALL MP_Delete(MPFunction* func, MPErrObj* err)
+int STD_CALL MP_GetMaxIdentifierSize(MPErrObj* err)
 {
 	err->ErrCode = MP_ERRNO_NONE;
-
-	if (func == NULL)
-	{
-		SetMPErrObj(err, MP_ERRNO_ARGUMENT, "Function object is null.");
-		return;
-	}
-
-	auto f = reinterpret_cast<InternalFunction*>(*func);
-	delete f;
-	*func = NULL;
+	return MP_MAX_IDENTIFIER_SIZE;
 }
