@@ -170,6 +170,8 @@ double InternalFunction::Calc(const double* x)
 
 MPFunction STD_CALL MP_Parse(const char* src, MPErrObj* err) 
 {
+	err->ErrCode = MP_ERRNO_NONE;
+
 	if (src == NULL) 
 	{
 		SetMPErrObj(err, MP_ERRNO_ARGUMENT, "Input string is null.");
@@ -193,6 +195,8 @@ MPFunction STD_CALL MP_Parse(const char* src, MPErrObj* err)
 void STD_CALL MP_SetVariable(const MPFunction func, 
 		const char* varName, int varIndex, MPErrObj* err) 
 {
+	err->ErrCode = MP_ERRNO_NONE;
+
 	if (func == NULL)
 	{
 		SetMPErrObj(err, MP_ERRNO_ARGUMENT, "Function object is null.");
@@ -213,6 +217,8 @@ void STD_CALL MP_SetVariable(const MPFunction func,
 
 int STD_CALL MP_GetDimensions(const MPFunction func, MPErrObj* err)
 {
+	err->ErrCode = MP_ERRNO_NONE;
+
 	if (func == NULL)
 	{
 		SetMPErrObj(err, MP_ERRNO_ARGUMENT, "Function object is null.");
@@ -226,6 +232,8 @@ int STD_CALL MP_GetDimensions(const MPFunction func, MPErrObj* err)
 
 double STD_CALL MP_Calc(const MPFunction func, const double* x, MPErrObj* err)
 {
+	err->ErrCode = MP_ERRNO_NONE;
+
 	if (func == NULL)
 	{
 		SetMPErrObj(err, MP_ERRNO_ARGUMENT, "Function object is null.");
@@ -259,6 +267,8 @@ double STD_CALL MP_CalcUnsafe(const MPFunction func, const double* x)
 
 void STD_CALL MP_AddFunc(const char* id, UserFunc f, MPErrObj* err)
 {
+	err->ErrCode = MP_ERRNO_NONE;
+
 	if (id == NULL)
 	{
 		SetMPErrObj(err, MP_ERRNO_ARGUMENT, "Function identifier is null.");
@@ -285,6 +295,8 @@ void STD_CALL MP_AddFunc(const char* id, UserFunc f, MPErrObj* err)
 
 void STD_CALL MP_Delete(MPFunction* func, MPErrObj* err)
 {
+	err->ErrCode = MP_ERRNO_NONE;
+
 	if (func == NULL)
 	{
 		SetMPErrObj(err, MP_ERRNO_ARGUMENT, "Function object is null.");
