@@ -11,7 +11,7 @@ protected:
 	double x_start = 0, x_end = 1;
 	double* gridPoints = 0;
 	int m = 0, n = 0;
-	MPFunction initialConditions = 0, leftBoundaryCondition = 0, rightBoundaryCondition = 0, rhsFunction = 0;
+	MPFunction initialConditions, leftBoundaryCondition, rightBoundaryCondition, rhsFunction;
 	MPErrObj errObj;
 public:
 	HE_Task();
