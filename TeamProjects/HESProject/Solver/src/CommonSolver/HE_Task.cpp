@@ -25,12 +25,22 @@ void HE_Task::SetDimensions(int dimX, int dimY, HES_Status* stat)
 void HE_Task::SetInitialConditions(const char* iCFunc, HES_Status* stat)
 {
 	initialConditions = MP_Parse(iCFunc, &errObj);
-	if (errObj.ErrCode != MP_ERRNO_NONE)
+	int dims = MP_GetDimensions(initialConditions, &errObj);
+	if (errObj.ErrCode != MP_ERRNO_NONE || dims != 1)
 	{
 		stat->ErrCode = HES_ERRNO_ERR;
 		strcpy(stat->Message, errObj.Message);
 		return;
 	}
+	varBuffers[0] = new char[MP_GetMaxIdentifierSize(&errObj)];
+	MP_GetVariables(initialConditions, varBuffers, &errObj);
+	if (varBuffers[0][0]!='x')
+	{
+		stat->ErrCode = HES_ERRNO_ERR;
+		strcpy(stat->Message, "The variable must be called x.");
+		return;
+	}
+	delete[] varBuffers[0];
 	MP_SetVariable(initialConditions, "x", 0, &errObj);
 	stat->ErrCode = HES_ERRNO_NONE;
 	if (errObj.ErrCode != MP_ERRNO_NONE)
@@ -42,12 +52,22 @@ void HE_Task::SetInitialConditions(const char* iCFunc, HES_Status* stat)
 void HE_Task::SetRightBoundaryCondition(const char* iRBCFunc, HES_Status* stat)
 {
 	rightBoundaryCondition = MP_Parse(iRBCFunc, &errObj);
-	if (errObj.ErrCode != MP_ERRNO_NONE)
+	int dims = MP_GetDimensions(initialConditions, &errObj);
+	if (errObj.ErrCode != MP_ERRNO_NONE || dims != 1)
 	{
 		stat->ErrCode = HES_ERRNO_ERR;
 		strcpy(stat->Message, errObj.Message);
 		return;
 	}
+	varBuffers[0] = new char[MP_GetMaxIdentifierSize(&errObj)];
+	MP_GetVariables(initialConditions, varBuffers, &errObj);
+	if (varBuffers[0][0] != 't' && varBuffers[0][0] != 'x')
+	{
+		stat->ErrCode = HES_ERRNO_ERR;
+		strcpy(stat->Message, "The variable must be called t.");
+		return;
+	}
+	delete[] varBuffers[0];
 	MP_SetVariable(rightBoundaryCondition, "t", 0, &errObj);
 	stat->ErrCode = HES_ERRNO_NONE;
 	if (errObj.ErrCode != MP_ERRNO_NONE)
@@ -59,12 +79,22 @@ void HE_Task::SetRightBoundaryCondition(const char* iRBCFunc, HES_Status* stat)
 void HE_Task::SetLeftBoundaryCondition(const char* iLBCFunc, HES_Status* stat)
 {
 	leftBoundaryCondition = MP_Parse(iLBCFunc, &errObj);
-	if (errObj.ErrCode != MP_ERRNO_NONE)
+	int dims = MP_GetDimensions(initialConditions, &errObj);
+	if (errObj.ErrCode != MP_ERRNO_NONE|| dims != 1)
 	{
 		stat->ErrCode = HES_ERRNO_ERR;
 		strcpy(stat->Message, errObj.Message);
 		return;
 	}
+	varBuffers[0] = new char[MP_GetMaxIdentifierSize(&errObj)];
+	MP_GetVariables(initialConditions, varBuffers, &errObj);
+	if (varBuffers[0][0] != 't' && varBuffers[0][0] != 'x')
+	{
+		stat->ErrCode = HES_ERRNO_ERR;
+		strcpy(stat->Message, "The variable must be called t.");
+		return;
+	}
+	delete[] varBuffers[0];
 	MP_SetVariable(leftBoundaryCondition, "t", 0, &errObj);
 	stat->ErrCode = HES_ERRNO_NONE;
 	if (errObj.ErrCode != MP_ERRNO_NONE)
@@ -76,12 +106,30 @@ void HE_Task::SetLeftBoundaryCondition(const char* iLBCFunc, HES_Status* stat)
 void HE_Task::SetRHSFunction(const char* rhsF, HES_Status* stat)
 {
 	rhsFunction = MP_Parse(rhsF, &errObj);
-	if (errObj.ErrCode != MP_ERRNO_NONE)
+	int dims = MP_GetDimensions(initialConditions, &errObj);
+	if (errObj.ErrCode != MP_ERRNO_NONE || dims>2)
 	{
 		stat->ErrCode = HES_ERRNO_ERR;
 		strcpy(stat->Message, errObj.Message);
 		return;
 	}
+	varBuffers[0] = new char[MP_GetMaxIdentifierSize(&errObj)];
+	varBuffers[1] = new char[MP_GetMaxIdentifierSize(&errObj)];
+	MP_GetVariables(initialConditions, varBuffers, &errObj);
+	if ((varBuffers[0][0] != 't' && varBuffers[0][0] != 'x' || varBuffers[0][1] != 't' && varBuffers[0][1] != 'x')&& dims==2)
+	{
+		stat->ErrCode = HES_ERRNO_ERR;
+		strcpy(stat->Message, "The variables must be called x and t.");
+		return;
+	}
+	else if (varBuffers[0][0] != 't' && varBuffers[0][0] != 'x')
+	{
+		stat->ErrCode = HES_ERRNO_ERR;
+		strcpy(stat->Message, "The variables must be called x and t.");
+		return;
+	}
+	delete[] varBuffers[0];
+	delete[] varBuffers[1];
 	MP_SetVariable(rhsFunction, "x", 0, &errObj);
 	MP_SetVariable(rhsFunction, "t", 1, &errObj);
 	stat->ErrCode = HES_ERRNO_NONE;
