@@ -47,3 +47,7 @@ EXPORT_API void STD_CALL HES_FreeTask(HES_Task task, HES_Status* stat)
 {
 	delete ((HE_Task*)task);
 }
+EXPORT_API double STD_CALL HES_GetSolution(HES_Task task, int layer, int index, HES_Status* stat)
+{
+	return ((HE_Task*)task)->GetSolution(layer, index, stat);
+}

@@ -25,6 +25,7 @@ public:
 	void GetLayer(int index, double* layer, HES_Status* stat);
 	double RhsCalculate(double x, double t);
 	void GetTable(double* table, HES_Status* stat);
+	double GetSolution(int layer, int index, HES_Status* stat);
 	void PrepareGridMem();
 	double* const GetGridPointer();
 	int GetXDim();

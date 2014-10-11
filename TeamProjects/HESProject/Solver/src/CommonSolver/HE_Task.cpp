@@ -141,16 +141,21 @@ void HE_Task::SetRHSFunction(const char* rhsF, HES_Status* stat)
 }
 void HE_Task::GetLayer(int index, double* layer, HES_Status* stat)
 {
-	if (gridPoints)
+	if (gridPoints && index<=m)
 	{
 		for (int i = 0; i <= n; i++)
 			layer[i] = gridPoints[(n + 1)*index + i];
 		stat->ErrCode = HES_ERRNO_NONE;
 	}
-	else
+	else if (!gridPoints)
 	{
 		stat->ErrCode = HES_ERRNO_ERR;
 		strcpy(stat->Message, "Error. The layer is not filled yet.");
+	}
+	else
+	{
+		stat->ErrCode = HES_ERRNO_ERR;
+		strcpy(stat->Message, "Error. Index must be less than M+1.");
 	}
 }
 double HE_Task::RhsCalculate(double x, double t)
@@ -212,10 +217,21 @@ double HE_Task::GetRightBound()
 {
 	return x_end;
 }
+double HE_Task::GetSolution(int layer, int index, HES_Status* stat)
+{
+	if (gridPoints)
+		return gridPoints[(n+1)*layer + index];
+	else
+	{
+		stat->ErrCode = HES_ERRNO_ERR;
+		strcpy(stat->Message, "Error. The task is not decided yet.");
+		return 0;
+	}
+}
 int HE_Task::CheckTaskConditions()
 {
-
-	return 0;
+	int check_result=0;
+	return check_result;
 }
 HE_Task::~HE_Task()
 {
