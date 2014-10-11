@@ -110,6 +110,14 @@ extern "C"
 	 */
 	EXPORT_API void STD_CALL HES_GetTable(HES_Task, double* table, HES_Status*);
 	
+	/**
+	 * Return value stored in spicified position of table. Task must be solved before
+	 * calling this method.
+	 * @param layer index of table layer.
+	 * @param index index of layer column.
+	 */
+	EXPORT_API void STD_CALL HES_GetSolution(HES_Task, int layer, int index, HES_Status*);
+
 	//Solve specified task.
 	EXPORT_API void STD_CALL HES_Solve(HES_Task, HES_Status*);
 
