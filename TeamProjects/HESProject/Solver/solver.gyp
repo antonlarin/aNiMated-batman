@@ -6,15 +6,11 @@
 		{
 			"target_name": "MathParser",
 			"cflags_cc!": [ "-fno-exceptions" ],
-			"conditions": [
-				[ "OS=='linux'", {
-					"cflags": [
-						"-Wswitch-enum",
-						"-std=c++11",
-						"-fexceptions",
-						"-fPIC"
-					]
-				}]
+			"cflags": [
+				"-Wswitch-enum",
+				"-std=c++11",
+				"-fexceptions",
+				"-fPIC"
 			],
 			"product_name": "MathParser",
 			"type": "shared_library",
@@ -40,15 +36,11 @@
 		},
 		{
 			"target_name": "ImplicitSolver",
-			"conditions": [
-				[ "OS=='linux'", {
-					"cflags": [
-						"-Wswitch-enum",
-						"-std=c++11",
-						"-fexceptions",
-						"-fPIC"
-					],
-				}]
+			"cflags": [
+				"-Wswitch-enum",
+				"-std=c++11",
+				"-fexceptions",
+				"-fPIC"
 			],
 			"type": "shared_library",
 			"sources": [
