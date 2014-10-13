@@ -5,6 +5,7 @@
 	"targets": [
 		{
 			"target_name": "MathParser",
+			"cflags_cc!": [ "-fno-exceptions" ],
 			"conditions": [
 				[ "OS=='linux'", {
 					"cflags": [
