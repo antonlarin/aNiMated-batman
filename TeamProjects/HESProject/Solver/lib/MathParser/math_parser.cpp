@@ -1,18 +1,17 @@
-
-#include <algorithm>
 #include <stdexcept>
 #include <string>
 #include <limits>
 #include <cmath>
 
-#include "type_aliases.h"
 #include "math_parser.h"
-#include "eval_stack.h"
+#include "type_aliases.h"
 #include "eval_table.h"
+#include "InternalFunction.h"
 #include "Parser.h"
 
 using namespace std;
 
+/* Helpers methods */
 
 void StringToErrorBuffer(const char* str, char* buffer)
 {
@@ -47,139 +46,7 @@ inline double GetSignalingNaN()
 
 
 
-class InternalFunction
-{
-
-private:
-
-	EvalQueue mQ;
-	EvalStack mS;
-	EvalQueue mVariablesQ;
-
-	int mIndexedVariablesCount;
-
-public:
-
-	InternalFunction(const char* src);
-	~InternalFunction();
-
-	int GetVariablesCount();
-	void MapVariableToIndex(const char* varName, int index);
-	void VariablesToBuffers(char** buffers);
-	double Calc(const double* x);
-
-private:
-
-	bool IsAllVariablesIndexed();
-
-};
-
-
-InternalFunction::InternalFunction(const char* src)
-{
-	mIndexedVariablesCount = 0;
-
-	size_t strLen = strlen(src);
-	auto usrc = reinterpret_cast<const byte*>(src);
-	Scanner scanner(usrc, strLen);
-	Parser parser(&scanner, &mQ);
-	parser.Parse();
-
-	//Determine subset of variable atoms.
-	for_each(mQ.begin(), mQ.end(), [&](EvalAtom* atom)
-	{
-		if (atom->AtomType == EvalAtomType::Variable)
-			mVariablesQ.push_back(atom);
-	});
-}
-
-InternalFunction::~InternalFunction() 
-{
-	for_each(mQ.begin(), mQ.end(), [&](EvalAtom* atom) 
-	{ delete atom; });
-}
-
-
-
-int InternalFunction::GetVariablesCount()
-{ return mVariablesQ.size(); }
-
-
-void InternalFunction::MapVariableToIndex(
-	const char* varName, int index)
-{
-	if (varName == NULL)
-		throw runtime_error("Variable name is null.");
-
-	if (index < 0)
-		throw runtime_error("Invalid index.");
-
-	mIndexedVariablesCount = 0;
-	auto mvq = mVariablesQ;
-	for_each(mvq.begin(), mvq.end(), [&](EvalAtom* atom) 
-	{ 
-		if (atom->Ident == string(varName))
-			atom->Index = index;
-
-		mIndexedVariablesCount += (int)(atom->Index > -1);
-	});
-}
-
-
-bool InternalFunction::IsAllVariablesIndexed()
-{ return mIndexedVariablesCount == GetVariablesCount(); }
-
-
-void InternalFunction::VariablesToBuffers(char** buffers)
-{
-	auto mvq = mVariablesQ;
-	for_each(mvq.begin(), mvq.end(), [&](EvalAtom* atom) 
-	{
-		const char* cIdent = atom->Ident.c_str();
-		strcpy(*buffers, cIdent);
-		buffers++; 
-	});
-}
-
-
-double InternalFunction::Calc(const double* x)
-{
-	if (!IsAllVariablesIndexed())
-		throw runtime_error("Some variables not maped to index.");
-
-	double left, right;
-	for (auto s = mQ.begin(); s != mQ.end(); s++)
-	{
-		EvalAtom* atom = *s;
-		switch (atom->AtomType)
-		{
-			case EvalAtomType::Operator:
-				right = mS.top(); mS.pop();
-				left  = mS.top(); mS.pop();
-				mS.push(atom->Operator(left, right));
-				break;
-
-			case EvalAtomType::Function:
-				left = mS.top(); mS.pop();
-				mS.push(atom->Function(left));
-				break;
-
-			case EvalAtomType::Constant:
-				mS.push(atom->Value);
-				break;
-
-			case EvalAtomType::Variable:
-				mS.push(x[atom->Index]);
-				break;
-		}
-	}
-
-	double res = mS.top(); mS.pop();
-	return res;
-}
-
-
-
+/* Implementation of MathParser interface */
 
 MPFunction STD_CALL MP_Parse(const char* src, MPErrObj* err) 
 {
@@ -205,7 +72,6 @@ MPFunction STD_CALL MP_Parse(const char* src, MPErrObj* err)
 }
 
 
-
 void MP_GetVariables(const MPFunction func, char** buffers, MPErrObj* err)
 {
 	err->ErrCode = MP_ERRNO_NONE;
@@ -224,7 +90,6 @@ void MP_GetVariables(const MPFunction func, char** buffers, MPErrObj* err)
 	catch (exception ex)
 	{ SetMPErrObj(err, MP_ERRNO_INTERNAL, ex.what()); }
 }
-
 
 
 void STD_CALL MP_SetVariable(const MPFunction func, 

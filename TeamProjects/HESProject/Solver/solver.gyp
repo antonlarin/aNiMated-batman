@@ -22,6 +22,7 @@
 				"lib/MathParser/eval_table.h",
 				"lib/MathParser/Parser.h",
 				"lib/MathParser/Scanner.h",
+				"lib/MathParser/InternalFunction.h",
 
 				"lib/MathParser/eval_stack.cpp",
 				"lib/MathParser/eval_table.cpp",
@@ -29,6 +30,7 @@
 				"lib/MathParser/Parser.cpp",
 				"lib/MathParser/Parser_user.cpp",
 				"lib/MathParser/Scanner.cpp",
+				"lib/MathParser/InternalFunction.cpp"
 			],
 			"include_dirs": [
 				"include/MathParser"
