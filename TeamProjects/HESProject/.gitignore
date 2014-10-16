@@ -1,11 +1,16 @@
 # executables files
 *.exe
 *.dll
+*.so
 
 # node-webkit windows files
 icudtl.dat
 nw.pak
 locales/
+
+# node-webkit linux files
+nw
+nwsnapshot
 
 # Visual Studio files
 *.sln
