@@ -33,7 +33,7 @@ private:
 public:
 
 	static bool IsConstExists(std::wstring& id);
-	static bool CheckIdentSize(std::wstring& id);
+	static void CheckIdentSize(std::wstring& id);
 
 	static EvalOperator GetOper(std::wstring& id);
 	static EvalFunction GetFunc(std::wstring& id);

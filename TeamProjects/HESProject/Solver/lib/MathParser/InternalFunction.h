@@ -3,7 +3,7 @@
 
 #include <string>
 #include <list>
-#include "eval_stack.h";
+#include "eval_stack.h"
 
 class InternalFunction
 {

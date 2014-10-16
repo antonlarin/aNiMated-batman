@@ -43,7 +43,7 @@ bool EvalTable::IsConstExists(std::wstring& id)
 	return tbl->mConsts.find(id) != end;
 }
 
-bool EvalTable::CheckIdentSize(std::wstring& id)
+void EvalTable::CheckIdentSize(std::wstring& id)
 {
 	if (id.size() > MP_MAX_IDENTIFIER_SIZE)
 		throw std::runtime_error("Identifier is too long.");
