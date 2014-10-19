@@ -15,17 +15,16 @@ using namespace std;
 
 void StringToErrorBuffer(const char* str, char* buffer)
 {
-	char* strPtr = const_cast<char*>(str);
 	int i = 0;
 	for (; i < MP_ERR_MESSAGE_MAX_LENGTH; i++)
 	{
-		*(buffer++) = *(strPtr++);
-		if (*strPtr == 0)
+		buffer[i] = str[i];
+		if (str[i] == 0)
 			break;
 	}
 
 	if (i == MP_ERR_MESSAGE_MAX_LENGTH - 1)
-		*buffer = 0;
+		buffer[i] = 0;
 }
 
 void SetMPErrObj(MPErrObj* err, int errcode, const char* mes)
@@ -65,6 +64,8 @@ MPFunction STD_CALL MP_Parse(const char* src, MPErrObj* err)
 	}
 	catch (CocoException ex)
 	{ SetMPErrObj(err, MP_ERRNO_PARSING, ex.wide_what()); }
+	catch (runtime_error ex)
+	{ SetMPErrObj(err, MP_ERRNO_INTERNAL, ex.what()); }
 	catch (exception ex)
 	{ SetMPErrObj(err, MP_ERRNO_INTERNAL, ex.what()); }
 
@@ -87,6 +88,8 @@ void MP_GetVariables(const MPFunction func, char** buffers, MPErrObj* err)
 		auto f = reinterpret_cast<InternalFunction*>(func);
 		f->VariablesToBuffers(buffers);
 	}
+	catch (runtime_error ex)
+	{ SetMPErrObj(err, MP_ERRNO_INTERNAL, ex.what()); }
 	catch (exception ex)
 	{ SetMPErrObj(err, MP_ERRNO_INTERNAL, ex.what()); }
 }
@@ -110,6 +113,8 @@ void STD_CALL MP_SetVariable(const MPFunction func,
 	}
 	catch (CocoException ex)
 	{ SetMPErrObj(err, MP_ERRNO_PARSING, ex.wide_what()); }
+	catch (runtime_error ex)
+	{ SetMPErrObj(err, MP_ERRNO_INTERNAL, ex.what()); }
 	catch (exception ex)
 	{ SetMPErrObj(err, MP_ERRNO_INTERNAL, ex.what()); }
 }
@@ -151,6 +156,8 @@ double STD_CALL MP_Calc(const MPFunction func, const double* x, MPErrObj* err)
 		auto f = reinterpret_cast<InternalFunction*>(func);
 		return f->Calc(x);
 	}
+	catch (runtime_error ex)
+	{ SetMPErrObj(err, MP_ERRNO_INTERNAL, ex.what()); }
 	catch (exception ex)
 	{ SetMPErrObj(err, MP_ERRNO_INTERNAL, ex.what()); }
 
@@ -206,6 +213,8 @@ void STD_CALL MP_AddFunc(const char* id, UserFunc f, MPErrObj* err)
 	}
 	catch (CocoException ex)
 	{ SetMPErrObj(err, MP_ERRNO_INTERNAL, ex.wide_what()); }
+	catch (exception ex)
+	{ SetMPErrObj(err, MP_ERRNO_INTERNAL, ex.what()); }
 }
 
 

@@ -18,6 +18,9 @@ InternalFunction::InternalFunction(const char* src)
 	Parser parser(&scanner, &mQ);
 	parser.Parse();
 
+	if (mQ.empty())
+		throw runtime_error("There no parsed tokens.");
+
 	//Determine subset of variable atoms.
 	auto start = mQ.begin();
 	auto end = mQ.end();
@@ -83,6 +86,9 @@ double InternalFunction::Calc(const double* x)
 {
 	if (!IsAllVariablesIndexed())
 		throw runtime_error("Some variables not maped to index.");
+
+	if (mQ.empty())
+		throw runtime_error("There no parsed tokens.");
 
 	double left, right;
 	for (auto s = mQ.begin(); s != mQ.end(); s++)
