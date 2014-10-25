@@ -62,6 +62,33 @@
 			"dependencies": [
 				"MathParser"
 			]
+		},
+		{
+			"target_name": "ExplicitSolver",
+			"cflags": [
+				"-Wswitch-enum",
+				"-std=c++11",
+				"-fexceptions",
+				"-fPIC"
+			],
+			"type": "shared_library",
+			"sources": [
+				"src/CommonSolver/HE_Integrator.h",
+				"src/CommonSolver/HE_Task.h",
+				"src/CommonSolver/HES_Solver.h",
+
+				"src/CommonSolver/HE_Task.cpp",
+				"src/CommonSolver/HES_Solver.cpp",
+
+				"src/ExplicitSolver/HE_Integrator.cpp"
+			],
+			"include_dirs": [
+				"include/MathParser",
+				"src/CommonSolver"
+			],
+			"dependencies": [
+				"MathParser"
+			]
 		}
 	]
 }
