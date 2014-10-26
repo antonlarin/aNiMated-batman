@@ -1,0 +1,11 @@
+
+@font-face {
+    font-family: 'open_sansregular';
+    src: url('../fonts/opensans/OpenSans-Regular-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+* {
+	font-family: "open_sansregular";
+}
