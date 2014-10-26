@@ -11,6 +11,7 @@
 	<script type="text/javascript" src="js/vendor/jquery-2.1.1.min.js"></script>	
 	<script type="text/javascript" src="js/vendor/knockout-3.2.0.js"></script>	
 	<script type="text/javascript" src="js/vendor/semantic.min.js"></script>
+	<script type="text/javascript" src="js/vendor/jquery.jqplot.min.js"></script>
 	<!--application js-->
 	<script type="text/javascript" src="bootstrap.js"></script>
 	<script type="text/javascript" src="js/hesproject.js"></script>
@@ -37,6 +38,14 @@
 					<input type="text" data-bind="textInput: solverRightConditions" />
 				</div>
 				<div class="field">
+					<label>Time grid nodes</label>
+					<input type="text" data-bind="textInput: solverDimensionsT" />
+				</div>
+				<div class="field">
+					<label>Space grid nodes</label>
+					<input type="text" data-bind="textInput: solverDimensionsX" />
+				</div>
+				<div class="field">
 					<label>Time limit</label>
 					<input type="text" data-bind="textInput: solverTimeLimit" />
 				</div>
@@ -53,18 +62,37 @@
 		</form>
 	</aside>
 	<main class="ten wide column">
-		<div class="ui menu">
+		<div>
+			<div class="ui menu" data-bind="visible: taskIsSolved()">
 			<a class="active item">Layers</a>
 			<a class="item">Table</a>
 		</div>
-		<table class="ui celled table segment" data-bind="visible: typeof resultTable() !== undefined">
-			<tbody data-bind="foreach: resultTable()">
+			<div class="ui center aligned segment" data-bind="visible: !taskIsSolved()">
+				<label>Set parameters and hit SOLVE</label>
+			</div>
+			<div>
+				<table class="ui celled compact table segment"
+							 data-bind="visible: taskIsSolved() && showingTable">
+					<tbody data-bind="foreach: displayedTable">
 				<tr data-bind="foreach: $data">
 					<td data-bind="text: $data"></td>
 				</tr>
 			</tbody>
 		</table>
-		<div id="output">
+			</div>
+			<div data-bind="visible: taskIsSolved() && !showingTable">
+				<button class="ui icon button" data-bind="disable: isFirstLayer,
+																									click: previousLayer">
+					<i class="left arrow icon"></i>
+				</button>
+				<label data-bind="text: 'Layer ' + currentLayer() + ' of ' + solverDimensionsX()"></label>
+				<button class="ui icon button" data-bind="disable: isLastLayer,
+																									click: nextLayer">
+					<i class="right arrow icon"></i>
+				</button>
+			</div>
+			<div id="plotOutput" data-bind="visible: !showingTable">
+			</div>
 		</div>
 	</main>
 

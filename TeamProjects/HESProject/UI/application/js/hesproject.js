@@ -57,6 +57,9 @@ var hesproject = (function() {
    var defaultSolverRHSFunction     = "0";
    var defaultSolverDescriptor = getDefaultSolverDescriptor();
 
+   var maximumTableColumnsNumber = 10;
+   var maximumTableRowsNumber = 20;
+
    function MainModel() {
       this.solverDescriptors        = loadSolverDescriptors();
       this.solverSelectedDescriptor = ko.observable(defaultSolverDescriptor);
@@ -67,7 +70,46 @@ var hesproject = (function() {
       this.solverLeftConditions     = ko.observable(defaultSolverLeftConditions);
       this.solverRightConditions    = ko.observable(defaultSolverRightConditions);
       this.solverRHSFunction        = ko.observable(defaultSolverRHSFunction);
-      this.resultTable              = ko.observableArray(undefined);
+
+      this.solver = undefined;
+      this.taskIsSolved = ko.observable(false);
+
+      // View specific properties
+      this.displayedTable = ko.observableArray(undefined);
+      this.currentLayer   = ko.observable(0);
+
+      this.showingTable = false;
+
+      this.displayLayer = function(layer) {
+         var currentLayer = this.solver.getLayer(layer);
+         var plottingData = [];
+         var x = 0.0;
+         var xStep = 1 / this.solverDimensionsX();
+         for (var i = 0; i < currentLayer.length; i++) {
+            plottingData.push([x, currentLayer[i]]);
+            x += xStep;
+         }
+         $.jqplot("plotOutput", [plottingData]);
+      };
+
+      this.isFirstLayer = ko.computed(function() {
+         return this.currentLayer == 0;
+      }.bind(this));
+
+      this.isLastLayer = ko.computed(function() {
+         console.log(typeof this.currentLayer)
+         return this.currentLayer == parseInt(this.solverDimensionsX());
+      }.bind(this));
+
+      this.nextLayer = function() {
+         var n = this.currentLayer();
+         this.currentLayer(n + 1);
+      };
+
+      this.previousLayer = function() {
+         var n = this.currentLayer();
+         this.currentLayer(n - 1);
+      };
 
       this.solveClick = function() {
          if (this.solverSelectedDescriptor == null) {
@@ -80,16 +122,17 @@ var hesproject = (function() {
             var timeLimit   = parseFloat(this.solverTimeLimit());
             var dimensionsX = parseInt(this.solverDimensionsX());
             var dimensionsT = parseInt(this.solverDimensionsT());
-            console.log(timeLimit + ", " + dimensionsT + ", " + dimensionsX);
 
-            var solver = createSolver(this.solverSelectedDescriptor());
-            solver.setTimeLimit(timeLimit);
-            solver.setDimensions(dimensionsX, dimensionsT);
-            solver.setInitialConditions(this.solverInitConditions());
-            solver.leftBoundaryCondition(this.solverLeftConditions());
-            solver.rightBoundaryCondition(this.solverRightConditions());
-            solver.setRHSFunction(this.solverRHSFunction());
-            solver.solve();
+            this.solver = createSolver(this.solverSelectedDescriptor());
+            this.solver.setTimeLimit(timeLimit);
+            this.solver.setDimensions(dimensionsX, dimensionsT);
+            this.solver.setInitialConditions(this.solverInitConditions());
+            this.solver.leftBoundaryCondition(this.solverLeftConditions());
+            this.solver.rightBoundaryCondition(this.solverRightConditions());
+            this.solver.setRHSFunction(this.solverRHSFunction());
+            this.solver.solve();
+            this.taskIsSolved(true);
+            this.displayLayer(this.currentLayer());
          }
          catch (e) {
             reportError("Solver initialization error: " + e.toString());
@@ -97,12 +140,24 @@ var hesproject = (function() {
          }
 
          // debug only
-         var layer = solver.getLayer(0);
+         var layer = this.solver.getLayer(0);
          console.log(layer);
-         this.resultTable(solver.getTable());
+      };
+
+      this.prepareTableForDisplay = function() {
+         this.displayedTable = []
+         var k = this.startXIndex;
+         for (var i = 0; i < maximumTableRowsNumber; i++) {
+            this.displayedTable.push([]);
+            var l = this.startTIndex;
+            for (var j = 0; j < maximumTableColumnsNumber; j++) {
+               this.displayedTable[i].push(this.resultTable[k][l]);
+               l++;
+            }
+            k++;
+         }
       };
    }
-
 
    var modelInstance = null;
    function getMainModel() {
