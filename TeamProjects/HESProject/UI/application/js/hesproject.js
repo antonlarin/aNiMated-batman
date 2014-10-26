@@ -78,8 +78,10 @@ var hesproject = (function() {
       this.displayedTable = ko.observableArray(undefined);
       this.currentLayer   = ko.observable(0);
 
+      this.resultTable = null;
       this.showingTable = false;
       this.plot = null;
+      this.maxTableValue = 0;
 
       this.displayLayer = function(layer) {
          if (this.plot !== null) {
@@ -91,10 +93,28 @@ var hesproject = (function() {
          var x = 0.0;
          var xStep = 1 / this.solverDimensionsX();
          for (var i = 0; i < currentLayerData.length; i++) {
-            plottingData.push([x, currentLayerData[i]]);
+            var layerValue = currentLayerData[i]
+            plottingData.push([x, layerValue]);
             x += xStep;
          }
-         this.plot = $.jqplot("plotOutput", [plottingData]);
+
+         this.plot = $.jqplot("plotOutput", [plottingData], {
+            axes: { 
+               yaxis: { 
+                  min: -0.2, 
+                  max: this.maxTableValue + 0.2 
+               },
+               xaxis: {
+                  min: -0.1,
+                  max: 1.1
+               }
+            },
+            seriesDefaults: {
+               markerOptions: {
+                  show: false
+               }
+            }
+         });
       };
 
       this.isFirstLayer = ko.pureComputed(function() {
@@ -132,6 +152,8 @@ var hesproject = (function() {
             this.solver.rightBoundaryCondition(this.solverRightConditions());
             this.solver.setRHSFunction(this.solverRHSFunction());
             this.solver.solve();
+
+            this.updateDisplayedTable(this.solver.getTable());
             this.taskIsSolved(true);
             this.displayLayer(this.currentLayer());
          }
@@ -143,6 +165,12 @@ var hesproject = (function() {
          // debug only
          var layer = this.solver.getLayer(0);
          console.log(layer);
+      };
+
+      this.updateDisplayedTable = function(table) {
+         this.resultTable = table;
+         this.updateMaxTableValue();
+         //this.prepareTableForDisplay();
       };
 
       this.prepareTableForDisplay = function() {
@@ -157,6 +185,17 @@ var hesproject = (function() {
             }
             k++;
          }
+      };
+
+      this.updateMaxTableValue = function() {
+         var table = this.resultTable;
+         var maxValue = 0;
+         for (var i = 0; i < table.length; i++) {
+            for (var j = 0; j < table[i].length; j++) {
+               maxValue = Math.max(maxValue, table[i][j]);
+            };
+         };
+         this.maxTableValue = maxValue;
       };
    }
 
