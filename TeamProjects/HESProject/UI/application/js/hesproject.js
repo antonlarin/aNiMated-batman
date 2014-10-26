@@ -74,6 +74,12 @@ var hesproject = (function() {
       this.solver = undefined;
       this.taskIsSolved = ko.observable(false);
 
+      // View specific properties
+      this.displayedTable = ko.observableArray(undefined);
+      this.currentLayer   = ko.observable(0);
+
+      this.showingTable = false;
+
       this.displayLayer = function(layer) {
          var currentLayer = this.solver.getLayer(layer);
          var plottingData = [];
@@ -84,6 +90,25 @@ var hesproject = (function() {
             x += xStep;
          }
          $.jqplot("plotOutput", [plottingData]);
+      };
+
+      this.isFirstLayer = ko.computed(function() {
+         return this.currentLayer == 0;
+      }.bind(this));
+
+      this.isLastLayer = ko.computed(function() {
+         console.log(typeof this.currentLayer)
+         return this.currentLayer == parseInt(this.solverDimensionsX());
+      }.bind(this));
+
+      this.nextLayer = function() {
+         var n = this.currentLayer();
+         this.currentLayer(n + 1);
+      };
+
+      this.previousLayer = function() {
+         var n = this.currentLayer();
+         this.currentLayer(n - 1);
       };
 
       this.solveClick = function() {
@@ -107,7 +132,7 @@ var hesproject = (function() {
             this.solver.setRHSFunction(this.solverRHSFunction());
             this.solver.solve();
             this.taskIsSolved(true);
-            this.displayLayer(0);
+            this.displayLayer(this.currentLayer());
          }
          catch (e) {
             reportError("Solver initialization error: " + e.toString());
@@ -118,10 +143,6 @@ var hesproject = (function() {
          var layer = this.solver.getLayer(0);
          console.log(layer);
       };
-
-      // View specific properties
-      this.displayedTable = ko.observableArray(undefined);
-      this.showingTable = false;
 
       this.prepareTableForDisplay = function() {
          this.displayedTable = []

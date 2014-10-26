@@ -80,6 +80,17 @@
 					</tbody>
 				</table>
 			</div>
+			<div data-bind="visible: taskIsSolved() && !showingTable">
+				<button class="ui icon button" data-bind="disable: isFirstLayer,
+																									click: previousLayer">
+					<i class="left arrow icon"></i>
+				</button>
+				<label data-bind="text: 'Layer ' + currentLayer() + ' of ' + solverDimensionsX()"></label>
+				<button class="ui icon button" data-bind="disable: isLastLayer,
+																									click: nextLayer">
+					<i class="right arrow icon"></i>
+				</button>
+			</div>
 			<div id="plotOutput" data-bind="visible: !showingTable">
 			</div>
 		</div>
