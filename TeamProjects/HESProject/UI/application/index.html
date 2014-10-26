@@ -8,12 +8,11 @@
 	<link rel="stylesheet" type="text/css" href="css/main.css">
 	<!--third party js-->
 	<script type="text/javascript" src="js/vendor/jquery-2.1.1.min.js"></script>	
-	<script type="text/javascript" src="js/vendor/react.min.js"></script>	
+	<script type="text/javascript" src="js/vendor/knockout-3.2.0.js"></script>	
 	<script type="text/javascript" src="js/vendor/semantic.min.js"></script>
-	<!--not for production-->	
-	<script type="text/javascript" src="js/vendor/JSXTransformer.js"></script>
 	<!--application js-->
 	<script type="text/javascript" src="bootstrap.js"></script>
+	<script type="text/javascript" src="js/hesproject.js"></script>
 </head>
 <body class="ui two column page grid">
 	<aside class="column">
@@ -41,10 +40,21 @@
 				<input type="radio">Explicit<br />
 				<input type="radio">Implicit
 			</div>
-			<button>Solve</button>
+			<button data-bind="click: solveClick">Solve</button>
 		</form>
 	</aside>
 	<main class="column">
 	</main>
+
+	<script type="text/javascript">
+	$(window).on("modelError", function(ev, ex) {
+		alert(ex);
+		console.log(ex);
+	});
+
+	var vm = hesproject.getMainModel();
+	ko.applyBindings(vm);
+	</script>
+
 </body>
 </html>
