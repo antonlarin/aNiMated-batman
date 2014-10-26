@@ -15,7 +15,36 @@
 	<!--application js-->
 	<script type="text/javascript" src="bootstrap.js"></script>
 </head>
-<body>
-
+<body class="ui two column page grid">
+	<aside class="column">
+		<h1>Heat equation solver</h1>
+		<img src="images/equation.gif" />
+		<form>
+			<div>
+				<img src="images/rhs.gif" />
+				<input type="text" size=30 />
+			</div>
+			<div>
+				<img src="images/ic.gif" />
+				<input type="text" size=30 />
+			</div>
+			<div>
+				<img src="images/lbc.gif" />
+				<input type="text" size=30 />
+			</div>
+			<div>
+				<img src="images/rbc.gif" />
+				<input type="text" size=30 />
+			</div>
+			<div>
+				<p>Solver type:</p><br />
+				<input type="radio">Explicit<br />
+				<input type="radio">Implicit
+			</div>
+			<button>Solve</button>
+		</form>
+	</aside>
+	<main class="column">
+	</main>
 </body>
 </html>
