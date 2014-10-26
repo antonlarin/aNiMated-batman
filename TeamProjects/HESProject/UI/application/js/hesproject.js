@@ -34,10 +34,22 @@ var hesproject = (function() {
       return descriptors[0];
    }
 
+   // created solver objects dictionary
+   var instancedSolvers = { }
+   function createSolver(desciptor) {
+      var solver = instancedSolvers[desciptor.name];
+      if (solver)
+         return solver;
+
+      solver = solverProvider.provide(desciptor);
+      instancedSolvers[desciptor.name] = solver;
+      return solver;
+   }
+
 
    // default solver parameters
    var defaultSolverTimeLimit       = 1;
-   var defaultSolverDimensionsX     = 10;
+   var defaultSolverDimensionsX     = 2;
    var defaultSolverDimensionsT     = 100;
    var defaultSolverInitConditions  = "0";
    var defaultSolverLeftConditions  = "0";
@@ -70,7 +82,7 @@ var hesproject = (function() {
             var dimensionsT = parseInt(this.solverDimensionsT());
             console.log(timeLimit + ", " + dimensionsT + ", " + dimensionsX);
 
-            var solver = solverProvider.provide(this.solverSelectedDescriptor());
+            var solver = createSolver(this.solverSelectedDescriptor());
             solver.setTimeLimit(timeLimit);
             solver.setDimensions(dimensionsX, dimensionsT);
             solver.setInitialConditions(this.solverInitConditions());
