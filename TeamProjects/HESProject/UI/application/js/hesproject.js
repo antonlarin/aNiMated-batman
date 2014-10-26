@@ -37,8 +37,8 @@ var hesproject = (function() {
 
    // default solver parameters
    var defaultSolverTimeLimit       = 1;
-   var defaultSolverDimensionsX     = 100;
-   var defaultSolverDimensionsT     = 10000;
+   var defaultSolverDimensionsX     = 10;
+   var defaultSolverDimensionsT     = 100;
    var defaultSolverInitConditions  = "0";
    var defaultSolverLeftConditions  = "0";
    var defaultSolverRightConditions = "0";
@@ -55,6 +55,7 @@ var hesproject = (function() {
       this.solverLeftConditions     = ko.observable(defaultSolverLeftConditions);
       this.solverRightConditions    = ko.observable(defaultSolverRightConditions);
       this.solverRHSFunction        = ko.observable(defaultSolverRHSFunction);
+      this.resultTable              = ko.observableArray(undefined);
 
       this.solveClick = function() {
          if (this.solverSelectedDescriptor == null) {
@@ -67,6 +68,7 @@ var hesproject = (function() {
             var timeLimit   = parseFloat(this.solverTimeLimit());
             var dimensionsX = parseInt(this.solverDimensionsX());
             var dimensionsT = parseInt(this.solverDimensionsT());
+            console.log(timeLimit + ", " + dimensionsT + ", " + dimensionsX);
 
             var solver = solverProvider.provide(this.solverSelectedDescriptor());
             solver.setTimeLimit(timeLimit);
@@ -85,6 +87,7 @@ var hesproject = (function() {
          // debug only
          var layer = solver.getLayer(0);
          console.log(layer);
+         this.resultTable(solver.getTable());
       };
    }
 
