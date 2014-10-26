@@ -45,6 +45,9 @@ var hesproject = (function() {
    var defaultSolverRHSFunction     = "0";
    var defaultSolverDescriptor = getDefaultSolverDescriptor();
 
+   var maximumTableColumnsNumber = 10;
+   var maximumTableRowsNumber = 20;
+
    function MainModel() {
       this.solverDescriptors        = loadSolverDescriptors();
       this.solverSelectedDescriptor = ko.observable(defaultSolverDescriptor);
@@ -55,7 +58,21 @@ var hesproject = (function() {
       this.solverLeftConditions     = ko.observable(defaultSolverLeftConditions);
       this.solverRightConditions    = ko.observable(defaultSolverRightConditions);
       this.solverRHSFunction        = ko.observable(defaultSolverRHSFunction);
-      this.resultTable              = ko.observableArray(undefined);
+
+      this.solver = undefined;
+      this.taskIsSolved = ko.observable(false);
+
+      this.displayLayer = function(layer) {
+         var currentLayer = this.solver.getLayer(layer);
+         var plottingData = [];
+         var x = 0.0;
+         var xStep = 1 / this.solverDimensionsX();
+         for (var i = 0; i < currentLayer.length; i++) {
+            plottingData.push([x, currentLayer[i]]);
+            x += xStep;
+         }
+         $.jqplot("plotOutput", [plottingData]);
+      };
 
       this.solveClick = function() {
          if (this.solverSelectedDescriptor == null) {
@@ -68,16 +85,17 @@ var hesproject = (function() {
             var timeLimit   = parseFloat(this.solverTimeLimit());
             var dimensionsX = parseInt(this.solverDimensionsX());
             var dimensionsT = parseInt(this.solverDimensionsT());
-            console.log(timeLimit + ", " + dimensionsT + ", " + dimensionsX);
 
-            var solver = solverProvider.provide(this.solverSelectedDescriptor());
-            solver.setTimeLimit(timeLimit);
-            solver.setDimensions(dimensionsX, dimensionsT);
-            solver.setInitialConditions(this.solverInitConditions());
-            solver.leftBoundaryCondition(this.solverLeftConditions());
-            solver.rightBoundaryCondition(this.solverRightConditions());
-            solver.setRHSFunction(this.solverRHSFunction());
-            solver.solve();
+            this.solver = solverProvider.provide(this.solverSelectedDescriptor());
+            this.solver.setTimeLimit(timeLimit);
+            this.solver.setDimensions(dimensionsX, dimensionsT);
+            this.solver.setInitialConditions(this.solverInitConditions());
+            this.solver.leftBoundaryCondition(this.solverLeftConditions());
+            this.solver.rightBoundaryCondition(this.solverRightConditions());
+            this.solver.setRHSFunction(this.solverRHSFunction());
+            this.solver.solve();
+            this.taskIsSolved(true);
+            this.displayLayer(0);
          }
          catch (e) {
             reportError("Solver initialization error: " + e.toString());
@@ -85,12 +103,28 @@ var hesproject = (function() {
          }
 
          // debug only
-         var layer = solver.getLayer(0);
+         var layer = this.solver.getLayer(0);
          console.log(layer);
-         this.resultTable(solver.getTable());
+      };
+
+      // View specific properties
+      this.displayedTable = ko.observableArray(undefined);
+      this.showingTable = false;
+
+      this.prepareTableForDisplay = function() {
+         this.displayedTable = []
+         var k = this.startXIndex;
+         for (var i = 0; i < maximumTableRowsNumber; i++) {
+            this.displayedTable.push([]);
+            var l = this.startTIndex;
+            for (var j = 0; j < maximumTableColumnsNumber; j++) {
+               this.displayedTable[i].push(this.resultTable[k][l]);
+               l++;
+            }
+            k++;
+         }
       };
    }
-
 
    var modelInstance = null;
    function getMainModel() {
