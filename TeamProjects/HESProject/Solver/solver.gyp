@@ -65,6 +65,7 @@
 		},
 		{
 			"target_name": "ExplicitSolver",
+			"cflags_cc!": [ "-fno-exceptions" ],
 			"cflags": [
 				"-Wswitch-enum",
 				"-std=c++11",
