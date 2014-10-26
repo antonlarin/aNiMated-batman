@@ -4,47 +4,53 @@
 	<title>Heat Equation Solver</title>
 	<!--third party css-->
 	<link rel="stylesheet" type="text/css" href="css/vendor/semantic.min.css">
+	<link rel="stylesheet" type="text/css" href="css/vendor/jquery.jqplot.min.css">
 	<!--application css-->
 	<link rel="stylesheet" type="text/css" href="css/main.css">
 	<!--third party js-->
-	<script type="text/javascript" src="js/vendor/jquery-2.1.1.min.js"></script>	
-	<script type="text/javascript" src="js/vendor/react.min.js"></script>	
+	<script type="text/javascript" src="js/vendor/jquery-2.1.1.min.js"></script>
+	<script type="text/javascript" src="js/vendor/jquery.jqplot.min.js"></script>
+	<script type="text/javascript" src="js/vendor/knockout-3.2.0.js"></script>
 	<script type="text/javascript" src="js/vendor/semantic.min.js"></script>
-	<!--not for production-->	
-	<script type="text/javascript" src="js/vendor/JSXTransformer.js"></script>
+	<!--not for production-->
 	<!--application js-->
 	<script type="text/javascript" src="bootstrap.js"></script>
+	<script type="text/javascript" src="js/hesviewmodel.js"></script>
 </head>
 <body class="ui two column page grid">
 	<aside class="column">
-		<h1>Heat equation solver</h1>
-		<img src="images/equation.gif" />
-		<form>
-			<div>
-				<img src="images/rhs.gif" />
-				<input type="text" size=30 />
+		<h1 class="header">Heat equation solver</h1>
+		<form class="ui form">
+			<div class="grouped inline fields">
+				<div class="field">
+					<img src="images/rhs.gif" />
+					<input type="text" data-bind="textInput: rhsFunctionExpr" size=20 />
+				</div>
+				<div class="field">
+					<img src="images/ic.gif" />
+					<input type="text" data-bind="textInput: icFunctionExpr" size=20 />
+				</div>
+				<div class="field">
+					<img src="images/lbc.gif" />
+					<input type="text" data-bind="textInput: lbcFunctionExpr" size=20 />
+				</div>
+				<div class="field">
+					<img src="images/rbc.gif" />
+					<input type="text" data-bind="textInput: rbcFunctionExpr" size=20 />
+				</div>
+				<div class="field">
+					<label>Time limit</label>
+					<input type="text" data-bind="textInput: timeLimit" size=20 />
+				</div>
 			</div>
-			<div>
-				<img src="images/ic.gif" />
-				<input type="text" size=30 />
+			<div class="ui fluid form">
+				<label>Solver type</label><br />
+				<select class="ui fluid selection dropdown" data-bind="options: availableSolvers"></select>
 			</div>
-			<div>
-				<img src="images/lbc.gif" />
-				<input type="text" size=30 />
-			</div>
-			<div>
-				<img src="images/rbc.gif" />
-				<input type="text" size=30 />
-			</div>
-			<div>
-				<p>Solver type:</p><br />
-				<input type="radio">Explicit<br />
-				<input type="radio">Implicit
-			</div>
-			<button>Solve</button>
+			<button class="ui blue button" data-bind="click: solve">Solve</button>
 		</form>
 	</aside>
-	<main class="column">
+	<main id="output" class="column">
 	</main>
 </body>
 </html>
