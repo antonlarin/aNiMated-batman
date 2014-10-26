@@ -64,9 +64,9 @@
 	<main class="ten wide column">
 		<div>
 			<div class="ui menu" data-bind="visible: taskIsSolved()">
-			<a class="active item">Layers</a>
-			<a class="item">Table</a>
-		</div>
+				<a class="item" data-bind="css: { active : !showingTable }">Layers</a>
+				<a class="item" data-bind="css: { active: showingTable }">Table</a>
+			</div>
 			<div class="ui center aligned segment" data-bind="visible: !taskIsSolved()">
 				<label>Set parameters and hit SOLVE</label>
 			</div>
@@ -81,13 +81,16 @@
 		</table>
 			</div>
 			<div data-bind="visible: taskIsSolved() && !showingTable">
-				<button class="ui icon button" data-bind="disable: isFirstLayer,
-																									click: previousLayer">
+				<button class="ui icon button" data-bind="disable: isFirstLayer(),
+																									click: changeLayer(-1),
+																									css: { disabled: isFirstLayer() }">
 					<i class="left arrow icon"></i>
 				</button>
-				<label data-bind="text: 'Layer ' + currentLayer() + ' of ' + solverDimensionsX()"></label>
-				<button class="ui icon button" data-bind="disable: isLastLayer,
-																									click: nextLayer">
+				<label data-bind="text: 'Layer ' + (currentLayer() + 1) + ' of ' +
+														(solverDimensionsX() + 1)"></label>
+				<button class="ui icon button" data-bind="disable: isLastLayer(),
+																									click: changeLayer(1),
+																									css: { disabled: isLastLayer() }">
 					<i class="right arrow icon"></i>
 				</button>
 			</div>

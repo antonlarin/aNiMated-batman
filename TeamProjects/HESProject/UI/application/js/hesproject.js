@@ -79,36 +79,37 @@ var hesproject = (function() {
       this.currentLayer   = ko.observable(0);
 
       this.showingTable = false;
+      this.plot = null;
 
       this.displayLayer = function(layer) {
-         var currentLayer = this.solver.getLayer(layer);
+         if (this.plot !== null) {
+            this.plot.destroy();
+            this.plot = null;
+         }
+         var currentLayerData = this.solver.getLayer(layer);
          var plottingData = [];
          var x = 0.0;
          var xStep = 1 / this.solverDimensionsX();
-         for (var i = 0; i < currentLayer.length; i++) {
-            plottingData.push([x, currentLayer[i]]);
+         for (var i = 0; i < currentLayerData.length; i++) {
+            plottingData.push([x, currentLayerData[i]]);
             x += xStep;
          }
-         $.jqplot("plotOutput", [plottingData]);
+         this.plot = $.jqplot("plotOutput", [plottingData]);
       };
 
-      this.isFirstLayer = ko.computed(function() {
-         return this.currentLayer == 0;
-      }.bind(this));
+      this.isFirstLayer = ko.pureComputed(function() {
+         return this.currentLayer() <= 0;
+      }, this);
 
-      this.isLastLayer = ko.computed(function() {
-         console.log(typeof this.currentLayer)
-         return this.currentLayer == parseInt(this.solverDimensionsX());
-      }.bind(this));
+      this.isLastLayer = ko.pureComputed(function() {
+         return this.currentLayer() >= parseInt(this.solverDimensionsX());
+      }, this);
 
-      this.nextLayer = function() {
+      this.changeLayer = function(shift) {
          var n = this.currentLayer();
-         this.currentLayer(n + 1);
-      };
-
-      this.previousLayer = function() {
-         var n = this.currentLayer();
-         this.currentLayer(n - 1);
+         this.currentLayer(n + shift);
+         if (this.taskIsSolved())
+            this.displayLayer(this.currentLayer());
       };
 
       this.solveClick = function() {
