@@ -122,7 +122,7 @@ var hesproject = (function() {
       }, this);
 
       this.isLastLayer = ko.pureComputed(function() {
-         return this.currentLayer() >= parseInt(this.solverDimensionsX());
+         return this.currentLayer() >= parseInt(this.solverDimensionsT());
       }, this);
 
       this.changeLayer = function(shift) {
