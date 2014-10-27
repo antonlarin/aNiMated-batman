@@ -63,16 +63,18 @@
 	</aside>
 	<main class="ten wide column">
 		<div>
-			<div class="ui menu" data-bind="visible: taskIsSolved()">
-				<a class="item" data-bind="css: { active : !showingTable }">Layers</a>
-				<a class="item" data-bind="css: { active: showingTable }">Table</a>
+			<div class="ui menu" data-bind="visible: taskIsSolved">
+				<a class="item" data-bind="css: { active : !showingTable() },
+																	 click: goToLayers ">Layers</a>
+				<a class="item" data-bind="css: { active: showingTable },
+																	 click: goToTable ">Table</a>
 			</div>
 			<div class="ui center aligned segment" data-bind="visible: !taskIsSolved()">
 				<label>Set parameters and hit SOLVE</label>
 			</div>
 			<div>
 				<table class="ui celled compact table segment"
-							 data-bind="visible: taskIsSolved() && showingTable">
+							 data-bind="visible: taskIsSolved && showingTable">
 					<tbody data-bind="foreach: displayedTable">
 				<tr data-bind="foreach: $data">
 					<td data-bind="text: $data"></td>
@@ -80,21 +82,21 @@
 			</tbody>
 		</table>
 			</div>
-			<div data-bind="visible: taskIsSolved() && !showingTable">
-				<button class="ui icon button" data-bind="disable: isFirstLayer(),
+			<div data-bind="visible: taskIsSolved() && !showingTable()">
+				<button class="ui icon button" data-bind="disable: isFirstLayer,
 																									click: changeLayer(-1),
-																									css: { disabled: isFirstLayer() }">
+																									css: { disabled: isFirstLayer }">
 					<i class="left arrow icon"></i>
 				</button>
 				<label data-bind="text: 'Layer ' + (currentLayer() + 1) + ' of ' +
 														(solverDimensionsT() + 1)"></label>
-				<button class="ui icon button" data-bind="disable: isLastLayer(),
+				<button class="ui icon button" data-bind="disable: isLastLayer,
 																									click: changeLayer(1),
-																									css: { disabled: isLastLayer() }">
+																									css: { disabled: isLastLayer }">
 					<i class="right arrow icon"></i>
 				</button>
 			</div>
-			<div id="plotOutput" data-bind="visible: !showingTable">
+			<div id="plotOutput" data-bind="visible: !showingTable()">
 			</div>
 		</div>
 	</main>

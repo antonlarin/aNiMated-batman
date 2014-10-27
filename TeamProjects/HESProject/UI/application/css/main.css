@@ -15,3 +15,11 @@
 p, h1, h2, h3, h4, h5 {
    pointer-events: none;
 }
+
+div.ui.menu > a.item {
+  width: 50%;
+}
+
+.ui.form .grouped.inline.fluid.fields .field > input {
+  width: 100px;
+}

@@ -75,11 +75,11 @@ var hesproject = (function() {
       this.taskIsSolved = ko.observable(false);
 
       // View specific properties
+      this.showingTable   = ko.observable(false);
       this.displayedTable = ko.observableArray(undefined);
       this.currentLayer   = ko.observable(0);
 
       this.resultTable = null;
-      this.showingTable = false;
       this.plot = null;
       this.maxTableValue = 0;
 
@@ -130,6 +130,16 @@ var hesproject = (function() {
          this.currentLayer(n + shift);
          if (this.taskIsSolved())
             this.displayLayer(this.currentLayer());
+      };
+
+      this.goToLayers = function() {
+         if (this.showingTable())
+            this.showingTable(false);
+      };
+
+      this.goToTable = function() {
+         if (!this.showingTable())
+            this.showingTable(true);
       };
 
       this.solveClick = function() {
