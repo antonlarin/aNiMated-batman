@@ -16,10 +16,24 @@ p, h1, h2, h3, h4, h5 {
    pointer-events: none;
 }
 
+body.ui.two.column.page.divided.grid {
+  padding-top: 8px;
+}
+
 div.ui.menu > a.item {
   width: 50%;
 }
 
-.ui.form .grouped.inline.fluid.fields .field > input {
-  width: 100px;
+.ui.small.form .ui.two.column.grid > div.row {
+  padding-top: 2px;
+}
+
+.six.wide.column > h1.header {
+  margin-top: 2px;
+  margin-bottom: 10px;
+}
+
+.ui.small.form .ui.two.column.grid .row .column > input {
+  padding-top: 3px;
+  padding-bottom: 3px;
 }
