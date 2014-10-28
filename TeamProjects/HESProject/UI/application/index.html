@@ -114,14 +114,14 @@
 				<input type="number" min="0"
 							 data-bind="value: startTIndex,
 													attr: { max: Math.max(0, parseInt(solverDimensionsT()) - 9) },
-													event: { onchange : prepareTableForDisplay }" />
+													event: { change : prepareTableForDisplay }" />
 			</div>
 			<label class="inline">,	X</label>
 			<div class="ui inline input">
 				<input type="number" min="0"
 							 data-bind="value: startXIndex,
 													attr: { max: Math.max(0, parseInt(solverDimensionsX()) - 9) },
-													event: { onchange : prepareTableForDisplay }" />
+													event: { change : prepareTableForDisplay }" />
 			</div>
 			<div class="table-container">
 				<table class="ui celled compact table segment">
