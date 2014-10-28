@@ -331,11 +331,6 @@ double HE_Task::GetErrorNorm(const char* F, HES_Status* stat)
 				max_err = err;
 		}
 
-		double min = gridPoints[0];
-		for (int i = 0; i < (m + 1)*(n + 1); i++)
-			if (gridPoints[i] < min)
-				min = gridPoints[i];
-
 		return max_err;
 	}
 	else
