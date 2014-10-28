@@ -87,7 +87,7 @@ extern "C"
 	/**
 	 * Set right hand side function of specified task.
 	 * @param funcStr string representation of task right hand side function.
-	 * Function may have 'x' and 't' as free varibles.
+	 * Function may have 'x' and 't' as free variables.
 	 */
 	EXPORT_API void STD_CALL HES_SetRHSFunction(HES_Task, HES_Str funcStr, HES_Status*);
 
@@ -117,6 +117,20 @@ extern "C"
 	 * @param index index of layer column.
 	 */
 	EXPORT_API double STD_CALL HES_GetSolution(HES_Task, int layer, int index, HES_Status*);
+
+	//Return maximal value in solution. Task must be solved before calling this method.
+	EXPORT_API double STD_CALL HES_GetMaxFormTable(HES_Task, HES_Status*);
+
+	//Return minimal value in solution. Task must be solved before calling this method.
+	EXPORT_API double STD_CALL HES_GetMinFormTable(HES_Task, HES_Status*);
+
+	/*
+	* Return norm of difference between reference function and solution.
+	* @param string contains reference function.
+	* Function may have 'x' and 't' as free variables.
+	* Task must be solved before calling this method.
+	*/
+	EXPORT_API double STD_CALL HES_GetErrorNorm(HES_Task, HES_Str, HES_Status*);
 
 	//Solve specified task.
 	EXPORT_API void STD_CALL HES_Solve(HES_Task, HES_Status*);
