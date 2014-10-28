@@ -206,17 +206,8 @@ var hesproject = (function() {
       };
 
       this.updateMaxAndMinTableValues = function() {
-         var table = this.resultTable;
-         var maxValue = table[0][0];
-         var minValue = table[0][0];
-         for (var i = 0; i < table.length; i++) {
-            for (var j = 0; j < table[i].length; j++) {
-               maxValue = Math.max(maxValue, table[i][j]);
-               minValue = Math.min(minValue, table[i][j]);
-            };
-         };
-         this.maxTableValue = maxValue;
-         this.minTableValue = minValue;
+         this.maxTableValue = this.solver.getMaxTableValue();
+         this.minTableValue = this.solver.getMinTableValue();
       };
 
       this.compareWithExactSolution = function() {
