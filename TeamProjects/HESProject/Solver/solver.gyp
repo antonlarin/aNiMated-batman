@@ -38,6 +38,7 @@
 		},
 		{
 			"target_name": "ImplicitSolver",
+			"cflags_cc!": [ "-fno-exceptions" ],
 			"cflags": [
 				"-Wswitch-enum",
 				"-std=c++11",
