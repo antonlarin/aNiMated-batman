@@ -37,3 +37,20 @@ div.ui.menu > a.item {
   padding-top: 3px;
   padding-bottom: 3px;
 }
+
+.ui.small.fluid.action.input {
+  margin-top: 10px;
+  margin-left: 15px;
+}
+
+.ui.inline.input > input {
+  width: 75 px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+
+.table-container {
+  max-width: 450px;
+  max-height: 290px;
+  overflow: auto;
+}

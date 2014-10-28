@@ -55,7 +55,7 @@
 				</div>
 				<div class="row">
 					<div class="column">
-						<label>Time grid nodes</label>
+						<label>T dimension</label>
 					</div>
 					<div class="column">
 						<input type="text" data-bind="textInput: solverDimensionsT" />
@@ -63,7 +63,7 @@
 				</div>
 				<div class="row">
 					<div class="column">
-						<label>Space grid nodes</label>
+						<label>X dimension</label>
 					</div>
 					<div class="column">
 						<input type="text" data-bind="textInput: solverDimensionsX" />
@@ -96,43 +96,90 @@
 		</form>
 	</aside>
 	<main class="ten wide column">
-		<div>
-			<div class="ui menu" data-bind="visible: taskIsSolved">
-				<a class="item" data-bind="css: { active : !showingTable() },
-																	 click: goToLayers ">Layers</a>
-				<a class="item" data-bind="css: { active: showingTable },
-																	 click: goToTable ">Table</a>
+		<!-- Common controls -->
+		<div class="ui center aligned segment" data-bind="visible: !taskIsSolved()">
+			<label>Set parameters and hit SOLVE</label>
+		</div>
+		<div class="ui menu" data-bind="visible: taskIsSolved">
+			<a class="item" data-bind="css: { active : !showingTable() },
+																 click: goToLayers ">Layers</a>
+			<a class="item" data-bind="css: { active: showingTable },
+																 click: goToTable ">Table</a>
+		</div>
+
+		<!-- Table view controls -->
+		<div data-bind="visible: taskIsSolved() && showingTable()">
+			<label class="inline">Table starts from: T</label>
+			<div class="ui inline input">
+				<input type="number" min="0"
+							 data-bind="value: startTIndex,
+													attr: { max: Math.max(0, parseInt(solverDimensionsT()) - 9) },
+													event: { onchange : prepareTableForDisplay }" />
 			</div>
-			<div class="ui center aligned segment" data-bind="visible: !taskIsSolved()">
-				<label>Set parameters and hit SOLVE</label>
+			<label class="inline">,	X</label>
+			<div class="ui inline input">
+				<input type="number" min="0"
+							 data-bind="value: startXIndex,
+													attr: { max: Math.max(0, parseInt(solverDimensionsX()) - 9) },
+													event: { onchange : prepareTableForDisplay }" />
 			</div>
-			<div>
-				<table class="ui celled compact table segment"
-							 data-bind="visible: taskIsSolved && showingTable">
+			<div class="table-container">
+				<table class="ui celled compact table segment">
 					<tbody data-bind="foreach: displayedTable">
-				<tr data-bind="foreach: $data">
-					<td data-bind="text: $data"></td>
-				</tr>
-			</tbody>
-		</table>
-			</div>
-			<div data-bind="visible: taskIsSolved() && !showingTable()">
-				<button class="ui icon button" data-bind="disable: isFirstLayer,
-																									click: changeLayer(-1),
-																									css: { disabled: isFirstLayer }">
-					<i class="left arrow icon"></i>
-				</button>
-				<label data-bind="text: 'Layer ' + (currentLayer() + 1) + ' of ' +
-														(solverDimensionsT() + 1)"></label>
-				<button class="ui icon button" data-bind="disable: isLastLayer,
-																									click: changeLayer(1),
-																									css: { disabled: isLastLayer }">
-					<i class="right arrow icon"></i>
-				</button>
-			</div>
-			<div id="plotOutput" data-bind="visible: !showingTable()">
+						<tr data-bind="foreach: $data">
+							<td data-bind="text: $data"></td>
+						</tr>
+					</tbody>
+				</table>
 			</div>
 		</div>
+
+		<!-- Layer view controls -->
+		<div data-bind="visible: taskIsSolved() && !showingTable()">
+			<button class="ui icon button" data-bind="disable: isFirstLayer,
+																								click: changeLayer(-1),
+																								css: { disabled: isFirstLayer }">
+				<i class="left arrow icon"></i>
+			</button>
+			<label data-bind="text: 'Layer ' + (currentLayer() + 1) + ' of ' +
+													(parseInt(solverDimensionsT()) + 1)"></label>
+			<button class="ui icon button" data-bind="disable: isLastLayer,
+																								click: changeLayer(1),
+																								css: { disabled: isLastLayer }">
+				<i class="right arrow icon"></i>
+			</button>
+		</div>
+		<div id="plotOutput" data-bind="visible: !showingTable()">
+		</div>
+		<div class="ui small fluid action input" data-bind="visible: taskIsSolved()">
+			<input type="text" placeholder="Exact solution..." data-bind="" />
+			<div class="ui small button" data-bind="click: compareWithExactSolution">Check</div>
+		</div>
+
+		<!-- Summary modal -->
+		<div class="ui modal">
+			<i class="close icon"></i>
+			<div class="header">
+				Header
+			</div>
+			<div class="content">
+				<div class="left">
+					Some content to the left, usually an image or icon
+				</div>
+				<div class="right">
+					Some content to the right
+				</div>
+			</div>
+			<div class="actions">
+				<div class="ui button">
+					Cancel
+				</div>
+				<div class="ui button">
+					Okay
+				</div>
+			</div>
+		</div>
+
 	</main>
 
 	<script type="text/javascript">

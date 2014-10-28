@@ -58,7 +58,7 @@ var hesproject = (function() {
    var defaultSolverDescriptor = getDefaultSolverDescriptor();
 
    var maximumTableColumnsNumber = 10;
-   var maximumTableRowsNumber = 20;
+   var maximumTableRowsNumber = 10;
 
    function MainModel() {
       this.solverDescriptors        = loadSolverDescriptors();
@@ -78,6 +78,8 @@ var hesproject = (function() {
       this.showingTable   = ko.observable(false);
       this.displayedTable = ko.observableArray(undefined);
       this.currentLayer   = ko.observable(0);
+      this.startTIndex    = ko.observable(0);
+      this.startXIndex    = ko.observable(0);
 
       this.resultTable = null;
       this.plot = null;
@@ -180,17 +182,23 @@ var hesproject = (function() {
       this.updateDisplayedTable = function(table) {
          this.resultTable = table;
          this.updateMaxAndMinTableValues();
-         //this.prepareTableForDisplay();
+         this.prepareTableForDisplay();
       };
 
       this.prepareTableForDisplay = function() {
-         this.displayedTable = []
-         var k = this.startXIndex;
-         for (var i = 0; i < maximumTableRowsNumber; i++) {
-            this.displayedTable.push([]);
-            var l = this.startTIndex;
-            for (var j = 0; j < maximumTableColumnsNumber; j++) {
-               this.displayedTable[i].push(this.resultTable[k][l]);
+         this.displayedTable([]);
+         var k = parseInt(this.startXIndex());
+         var l = parseInt(this.startTIndex());
+         var xBegin = Math.max(k, 0);
+         var tBegin = Math.max(l, 0);
+         var xEnd = Math.min(k + maximumTableColumnsNumber,
+                             parseInt(this.solverDimensionsX()) + 1);
+         var tEnd = Math.min(l + maximumTableRowsNumber,
+                             parseInt(this.solverDimensionsT()) + 1);
+         for (var i = tBegin; i < tEnd; i++) {
+            this.displayedTable.push(ko.observableArray([]));
+            for (var j = xBegin; j < xEnd; j++) {
+               this.displayedTable()[i - tBegin].push(this.resultTable[i][j].toExponential(4));
                l++;
             }
             k++;
@@ -209,6 +217,10 @@ var hesproject = (function() {
          };
          this.maxTableValue = maxValue;
          this.minTableValue = minValue;
+      };
+
+      this.compareWithExactSolution = function() {
+         $(".modal").modal("show");
       };
    }
 
