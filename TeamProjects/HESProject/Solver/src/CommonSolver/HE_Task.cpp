@@ -1,4 +1,5 @@
 #include "HE_Task.h"
+#include <math.h>
 HE_Task::HE_Task()
 {}
 void HE_Task::SetTimeLimit(double T, HES_Status* stat)
@@ -19,7 +20,7 @@ void HE_Task::SetDimensions(int dimX, int dimY, HES_Status* stat)
 	if (n < 2 || m < 2)
 	{
 		stat->ErrCode = HES_ERRNO_ERR;
-		strcpy(stat->Message, "Grid dimentions must be greater than 2.");
+		strcpy(stat->Message, "Grid dimensions must be greater than 2.");
 	}
 }
 void HE_Task::SetInitialConditions(const char* iCFunc, HES_Status* stat)
@@ -107,7 +108,7 @@ void HE_Task::SetRHSFunction(const char* rhsF, HES_Status* stat)
 {
 	rhsFunction = MP_Parse(rhsF, &errObj);
 	int dims = MP_GetDimensions(rhsFunction, &errObj);
-	if (errObj.ErrCode != MP_ERRNO_NONE || dims>2)
+	if (errObj.ErrCode != MP_ERRNO_NONE || dims > 2)
 	{
 		stat->ErrCode = HES_ERRNO_ERR;
 		strcpy(stat->Message, errObj.Message);
@@ -228,11 +229,6 @@ double HE_Task::GetSolution(int layer, int index, HES_Status* stat)
 		return 0;
 	}
 }
-int HE_Task::CheckTaskConditions()
-{
-	int check_result = 0;
-	return check_result;
-}
 HE_Task::~HE_Task()
 {
 	if (gridPoints)
@@ -243,4 +239,109 @@ HE_Task::~HE_Task()
 		MP_Delete(&leftBoundaryCondition, &errObj);
 	if (rightBoundaryCondition)
 		MP_Delete(&rightBoundaryCondition, &errObj);
+}
+double HE_Task::GetMaxFromTable(HES_Status* stat)
+{
+	if (gridPoints)
+	{
+		double max = gridPoints[0];
+		for (int i = 0; i < (m + 1)*(n + 1); i++)
+			if (gridPoints[i]>max)
+				max = gridPoints[i];
+		stat->ErrCode = HES_ERRNO_NONE;
+		return max;
+	}
+	else
+	{
+		stat->ErrCode = HES_ERRNO_ERR;
+		strcpy(stat->Message, "Error. The task is not decided yet.");
+		return 0;
+	}
+}
+double HE_Task::GetMinFromTable(HES_Status* stat)
+{
+	if (gridPoints)
+	{
+		double min = gridPoints[0];
+		for (int i = 0; i < (m + 1)*(n + 1); i++)
+			if (gridPoints[i] < min)
+				min = gridPoints[i];
+		stat->ErrCode = HES_ERRNO_NONE;
+		return min;
+	}
+	else
+	{
+		stat->ErrCode = HES_ERRNO_ERR;
+		strcpy(stat->Message, "Error. The task is not decided yet.");
+		return 0;
+	}
+}
+double HE_Task::GetErrorNorm(const char* F, HES_Status* stat)
+{
+	MPFunction func = MP_Parse(F, &errObj);
+	int dims = MP_GetDimensions(func, &errObj);
+	if (errObj.ErrCode != MP_ERRNO_NONE || dims > 2)
+	{
+		stat->ErrCode = HES_ERRNO_ERR;
+		strcpy(stat->Message, errObj.Message);
+		return 0;
+	}
+	varBuffers[0] = new char[MP_GetMaxIdentifierSize(&errObj)];
+	varBuffers[1] = new char[MP_GetMaxIdentifierSize(&errObj)];
+	MP_GetVariables(func, varBuffers, &errObj);
+	if ((varBuffers[1][0] != 't' && varBuffers[1][0] != 'x' || varBuffers[0][0] != 't' && varBuffers[0][0] != 'x') && dims == 2)
+	{
+		stat->ErrCode = HES_ERRNO_ERR;
+		strcpy(stat->Message, "The variables must be called x and t.");
+		return 0;
+	}
+	else if (varBuffers[0][0] != 't' && varBuffers[0][0] != 'x' && dims != 0)
+	{
+		stat->ErrCode = HES_ERRNO_ERR;
+		strcpy(stat->Message, "The variables must be called x and t.");
+		return 0;
+	}
+	delete[] varBuffers[0];
+	delete[] varBuffers[1];
+	MP_SetVariable(func, "x", 0, &errObj);
+	MP_SetVariable(func, "t", 1, &errObj);
+	stat->ErrCode = HES_ERRNO_NONE;
+	if (errObj.ErrCode != MP_ERRNO_NONE)
+	{
+		stat->ErrCode = HES_ERRNO_ERR;
+		strcpy(stat->Message, errObj.Message);
+	}
+
+	if (gridPoints && stat->ErrCode == HES_ERRNO_NONE)
+	{
+		double max_err = 0, err;
+		double args[2], h = (x_end - x_start) / n, k = timeLimit / m;
+
+		for (int j = 0; j <= m; j++)
+		{
+			args[1] = j*k;
+			err = 0;
+			for (int i = 0; i <= n; i++)
+			{
+				args[0] = x_start + h*i;
+				err += pow(gridPoints[(n + 1)*j + i] - MP_CalcUnsafe((func), args), 2);
+			}
+			err = sqrt(err / (n - 1));
+			if (err > max_err)
+				max_err = err;
+		}
+
+		double min = gridPoints[0];
+		for (int i = 0; i < (m + 1)*(n + 1); i++)
+			if (gridPoints[i] < min)
+				min = gridPoints[i];
+
+		return max_err;
+	}
+	else
+	{
+		stat->ErrCode = HES_ERRNO_ERR;
+		strcpy(stat->Message, "Error. The task is not decided yet or incorrect syntax in test function.");
+		return 0;
+	}
 }

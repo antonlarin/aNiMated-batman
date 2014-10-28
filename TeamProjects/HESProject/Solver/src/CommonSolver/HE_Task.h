@@ -33,7 +33,9 @@ public:
 	double GetTimeLimit();
 	double GetLeftBound();
 	double GetRightBound();
-	int CheckTaskConditions();
+	double GetMaxFromTable(HES_Status* stat);
+	double GetMinFromTable(HES_Status* stat);
+	double GetErrorNorm(const char* F, HES_Status* stat);
 	~HE_Task();
 };
 #endif

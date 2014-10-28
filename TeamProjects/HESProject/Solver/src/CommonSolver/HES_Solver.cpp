@@ -51,3 +51,15 @@ EXPORT_API double STD_CALL HES_GetSolution(HES_Task task, int layer, int index, 
 {
 	return ((HE_Task*)task)->GetSolution(layer, index, stat);
 }
+EXPORT_API double STD_CALL HES_GetMaxFormTable(HES_Task task, HES_Status* stat)
+{
+	return ((HE_Task*)task)->GetMaxFromTable(stat);
+}
+EXPORT_API double STD_CALL HES_GetMinFormTable(HES_Task task, HES_Status* stat)
+{
+	return ((HE_Task*)task)->GetMinFromTable(stat);
+}
+EXPORT_API double STD_CALL HES_GetErrorNorm(HES_Task task, HES_Str funcStr, HES_Status* stat)
+{
+	return ((HE_Task*)task)->GetErrorNorm(funcStr, stat);
+}
