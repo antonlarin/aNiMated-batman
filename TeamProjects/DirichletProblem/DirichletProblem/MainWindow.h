@@ -476,7 +476,7 @@ private: System::Void solveButton_Click(System::Object^  sender, System::EventAr
 	double y, k = 2.0 / yDim;
 	for (int i = 0; i <= xDim; i++)
 	{
-		x = 1 - i*h;
+		x = -1 + i*h;
 		columns[i] = gcnew System::Windows::Forms::DataGridViewTextBoxColumn();
 		columns[i]->Width = 60;
 		columns[i]->ReadOnly = true;
@@ -495,7 +495,7 @@ private: System::Void solveButton_Click(System::Object^  sender, System::EventAr
 
 		for (int i = 0; i <= xDim; i++)
 		{
-			x = 1 - i*h;
+			x = -1 + i*h;
 			if (Math::Abs(grid[i + (xDim + 1)*(yDim-j)] - (1 - x*x - y*y)) > solutionEps)
 				solutionEps = Math::Abs(grid[i + (xDim + 1)*(yDim - j)] - (1 - x*x - y*y));
 			cellValues[i] = grid[i + (xDim + 1)*(yDim - j)].ToString("F5");
