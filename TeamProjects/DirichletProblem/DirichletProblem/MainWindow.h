@@ -496,9 +496,9 @@ private: System::Void solveButton_Click(System::Object^  sender, System::EventAr
 		for (int i = 0; i <= xDim; i++)
 		{
 			x = 1 - i*h;
-			if (Math::Abs(grid[(xDim-i) + (xDim + 1)*(yDim-j)] - (1 - x*x - y*y)) > solutionEps)
-				solutionEps = Math::Abs(grid[(xDim - i) + (xDim + 1)*(yDim - j)] - (1 - x*x - y*y));
-			cellValues[i] = grid[(xDim-i) + (xDim + 1)*(yDim - j)].ToString("F5");
+			if (Math::Abs(grid[i + (xDim + 1)*(yDim-j)] - (1 - x*x - y*y)) > solutionEps)
+				solutionEps = Math::Abs(grid[i + (xDim + 1)*(yDim - j)] - (1 - x*x - y*y));
+			cellValues[i] = grid[i + (xDim + 1)*(yDim - j)].ToString("F5");
 		}
 
 		tmpRow->CreateCells(solutionGridView, cellValues);
