@@ -506,10 +506,5 @@ private: System::Void solveButton_Click(System::Object^  sender, System::EventAr
 	}
 	solutionEpsLlabel->Text = solutionEps.ToString("E4");
 }
-private: System::Void FillTable() {
-
-
-
-}
 };
 }
