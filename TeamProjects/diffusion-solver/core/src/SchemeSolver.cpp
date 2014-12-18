@@ -109,11 +109,11 @@ int SchemeSolver::GetMaximumIterations() const {
    return mMaximumIterations;
 }
 
-void SchemeSolver::SetInitialConditions(SchemeInitialConditions value) {
+void SchemeSolver::SetInitialConditions(ISchemeInitialConditions* value) {
    mInitialConditions = value;
    mIsSolved = false;
 }
-SchemeInitialConditions SchemeSolver::GetInitialConditions() const {
+ISchemeInitialConditions* SchemeSolver::GetInitialConditions() const {
    return mInitialConditions;
 }
 

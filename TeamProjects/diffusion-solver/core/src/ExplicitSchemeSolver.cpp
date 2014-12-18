@@ -38,7 +38,7 @@ void ExplicitSchemeSolver::SolveOverride()
 		assert(0);
 	}
 
-	SchemeInitialConditions iConditions = GetInitialConditions();
+	ISchemeInitialConditions* iConditions = GetInitialConditions();
 	for (int i = 0; i <= n; i++)
 	{
 		u1Grid[i] = std::sin(i*h)/2 + 1;//iConditions.GetValueU1(i*h);

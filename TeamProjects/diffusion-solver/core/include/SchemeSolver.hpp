@@ -3,7 +3,7 @@
 
 #include "CoreGlobal.hpp"
 #include "SchemeLayer.hpp"
-#include "SchemeInitialConditions.hpp"
+#include "ISchemeInitialConditions.hpp"
 
 namespace diffusioncore {
    class EXPORT_API SchemeSolver {
@@ -19,7 +19,7 @@ namespace diffusioncore {
       double mAccuracy;
       int mIntervalsCount;
       int mMaximumIterations;
-      SchemeInitialConditions mInitialConditions;
+      ISchemeInitialConditions* mInitialConditions;
    
       bool mIsSolved;
 
@@ -41,7 +41,7 @@ namespace diffusioncore {
       PROPERTY(double, Accuracy);
       PROPERTY(int, IntervalsCount);
       PROPERTY(int, MaximumIterations);
-      PROPERTY(SchemeInitialConditions, InitialConditions);
+      PROPERTY(ISchemeInitialConditions*, InitialConditions);
 
       bool IsSolved() const;
       double GetMaximumTime() const;

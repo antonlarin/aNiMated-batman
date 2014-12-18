@@ -17,7 +17,7 @@
 #pragma warning Unknown dynamic link import/export semantics.
 #endif
 
-#define PROPERTY(T, N)  \
+#define PROPERTY(T, N)     \
    T Get ## N() const;     \
    void Set ## N(T value);
 
