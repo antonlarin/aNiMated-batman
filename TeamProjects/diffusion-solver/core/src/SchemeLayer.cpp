@@ -1,4 +1,7 @@
+#include <cmath>
 #include <cassert>
+#include <algorithm>
+#include <stdexcept>
 #include "SchemeLayer.hpp"
 using namespace diffusioncore;
 
@@ -22,12 +25,32 @@ double SchemeLayer::operator[] (int index) const {
 }
 
 int SchemeLayer::GetLength() const {
-   return mVector.size();
+   return static_cast<int>(mVector.size());
 }
 
 
 double SchemeLayer::MaxDifference(const SchemeLayer& lhs, 
                                   const SchemeLayer& rhs) {
-   // TODO
-   return 0;
+   SchemeLayer& minLayer = const_cast<SchemeLayer&>(lhs);
+   SchemeLayer& maxLayer = const_cast<SchemeLayer&>(rhs);
+   if (lhs.GetLength() > rhs.GetLength()) {
+      minLayer = rhs;
+      maxLayer = lhs;
+   }
+
+   int minSize = minLayer.GetLength() - 1;
+   int maxSize = maxLayer.GetLength() - 1;
+   int overflow = maxSize % minSize;
+   if (overflow > 0)
+      throw std::runtime_error("Vectors are incompatible");
+
+   int i, j;
+   double maxDifference = 0;
+   int step = maxSize / minSize;
+   for (i = 0, j = 0; i <= minSize; i++, j += step) {
+      double diff = std::abs(minLayer[i] - maxLayer[j]);
+      maxDifference = std::max(maxDifference, diff);
+   }
+
+   return maxDifference;
 }
