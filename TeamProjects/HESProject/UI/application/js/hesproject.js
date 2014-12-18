@@ -49,16 +49,18 @@ var hesproject = (function() {
 
    // default solver parameters
    var defaultSolverTimeLimit       = 1;
-   var defaultSolverDimensionsX     = 2;
-   var defaultSolverDimensionsT     = 100;
-   var defaultSolverInitConditions  = "0";
+   var defaultSolverDimensionsX     = 15;
+   var defaultSolverDimensionsT     = 460;
+   var defaultSolverInitConditions  = "sin(2*pi*x)";
    var defaultSolverLeftConditions  = "0";
    var defaultSolverRightConditions = "0";
    var defaultSolverRHSFunction     = "0";
+   var defaultSampleFunction        = "exp(-4*pi^2*t)*sin(2*pi*x)";
    var defaultSolverDescriptor = getDefaultSolverDescriptor();
 
    var maximumTableColumnsNumber = 10;
    var maximumTableRowsNumber = 10;
+   var maxPlotPoints = 200;
 
    function MainModel() {
       this.solverDescriptors        = loadSolverDescriptors();
@@ -71,15 +73,17 @@ var hesproject = (function() {
       this.solverRightConditions    = ko.observable(defaultSolverRightConditions);
       this.solverRHSFunction        = ko.observable(defaultSolverRHSFunction);
 
-      this.solver = undefined;
-      this.taskIsSolved = ko.observable(false);
+      this.solver          = undefined;
+      this.taskIsSolved    = ko.observable(false);
+      this.errorNorm       = ko.observable(undefined);
+      this.sampleFunction  = ko.observable(defaultSampleFunction);
 
       // View specific properties
-      this.showingTable   = ko.observable(false);
-      this.displayedTable = ko.observableArray(undefined);
-      this.currentLayer   = ko.observable(0);
-      this.startTIndex    = ko.observable(0);
-      this.startXIndex    = ko.observable(0);
+      this.showingTable    = ko.observable(false);
+      this.displayedTable  = ko.observableArray(undefined);
+      this.currentLayer    = ko.observable(0);
+      this.startTIndex     = ko.observable(0);
+      this.startXIndex     = ko.observable(0);
 
       this.resultTable = null;
       this.plot = null;
@@ -94,11 +98,20 @@ var hesproject = (function() {
          var plottingData = [];
          var x = 0.0;
          var xStep = 1 / this.solverDimensionsX();
-         for (var i = 0; i < currentLayerData.length; i++) {
-            var layerValue = currentLayerData[i]
+         var plottingStep;
+         var layerValue = 0;
+         if (currentLayerData.length <= maxPlotPoints)
+            plottingStep = 1;
+         else
+            plottingStep = Math.ceil(currentLayerData.length / maxPlotPoints);
+
+         for (var i = 0; i < currentLayerData.length - 1; i += plottingStep) {
+            layerValue = currentLayerData[i]
             plottingData.push([x, layerValue]);
-            x += xStep;
+            x += plottingStep * xStep;
          }
+         layerValue = currentLayerData[currentLayerData.length - 1];
+         plottingData.push([1, layerValue]);
 
          this.plot = $.jqplot("plotOutput", [plottingData], {
             axes: { 
@@ -168,15 +181,24 @@ var hesproject = (function() {
             this.updateDisplayedTable(this.solver.getTable());
             this.taskIsSolved(true);
             this.displayLayer(this.currentLayer());
+            var layer = this.solver.getLayer(1);
+            var layerNorm = 0;
+            var layerNormSquared = 0;
+            for (var i = 0; i < layer.length; i++)
+               layerNormSquared += layer[i] * layer[i];
+            layerNorm = Math.sqrt(layerNormSquared);
+
+            alert("Problem solved.\nX nodes: ".concat(
+                  (dimensionsX + 1).toString().concat(
+                  "\nT nodes: ".concat(
+                  (dimensionsT + 1).toString().concat(
+                  "\nSecond layer's norm: ".concat(
+                  layerNorm.toString()))))));
          }
          catch (e) {
             reportError("Solver initialization error: " + e.toString());
             return;
          }
-
-         // debug only
-         var layer = this.solver.getLayer(0);
-         console.log(layer);
       };
 
       this.updateDisplayedTable = function(table) {
@@ -211,7 +233,14 @@ var hesproject = (function() {
       };
 
       this.compareWithExactSolution = function() {
-         $(".modal").modal("show");
+         if (this.sampleFunction() === "")
+            $(".ui.small.fluid.action.input").addClass("error");
+         else {
+            $(".ui.small.fluid.action.input").removeClass("error");
+            this.errorNorm(this.solver.getErrorNorm(this.sampleFunction()));
+
+            alert("Norm of error: " + this.errorNorm().toExponential(6));
+         }
       };
    }
 

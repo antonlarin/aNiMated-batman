@@ -2,10 +2,10 @@
 	"main": "application/index.html",
 	"name": "HESProject",
 	"description": "Heat equation solver",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"window": {
 		"title": "Heat equation solver",
-		"toolbar": true,
+		"toolbar": false,
 		"frame": true,
 		"width": 800,
 		"height": 500,
