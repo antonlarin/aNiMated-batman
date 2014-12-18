@@ -1,0 +1,4 @@
+# excluded directories
+[Dd]ebug/
+[Rr]elease/
+[Bb]in/
