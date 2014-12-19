@@ -9,6 +9,7 @@ namespace diffusioncore {
 	public:
 		ExplicitSchemeSolver();
 		~ExplicitSchemeSolver();
+		double EvaluateStableTimeStep(int xGridDim);
 	private:
 		double *u1Grid, *u2Grid;
 	protected:

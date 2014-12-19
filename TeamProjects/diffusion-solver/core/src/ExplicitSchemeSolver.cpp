@@ -13,6 +13,10 @@ ExplicitSchemeSolver::~ExplicitSchemeSolver()
 	if (u2Grid)
 		delete u2Grid;
 }
+double ExplicitSchemeSolver::EvaluateStableTimeStep(int xGridDim)
+{
+	return 0.5 / (xGridDim*xGridDim);
+}
 void ExplicitSchemeSolver::SolveOverride()
 {
 	int n = GetIntervalsCount();
@@ -30,6 +34,10 @@ void ExplicitSchemeSolver::SolveOverride()
 	double mLambda2 = GetLambda2();
 
 	try{
+		if (u1Grid)
+			delete[] u1Grid;
+		if (u2Grid)
+			delete[] u2Grid;
 		u1Grid = new double[(n + 1)*(m + 1)];
 		u2Grid = new double[(n + 1)*(m + 1)];
 	}
@@ -41,8 +49,8 @@ void ExplicitSchemeSolver::SolveOverride()
 	ISchemeInitialConditions* iConditions = GetInitialConditions();
 	for (int i = 0; i <= n; i++)
 	{
-		u1Grid[i] = std::sin(i*h)/2 + 1;//iConditions.GetValueU1(i*h);
-		u2Grid[i] = std::cos(i*h)/2 + 1;//iConditions.GetValueU2(i*h);
+		u1Grid[i] = iConditions->GetValueU1(i*h);
+		u2Grid[i] = iConditions->GetValueU2(i*h);
 	}
 
 	if (k <= h*h / 2)
@@ -61,11 +69,11 @@ void ExplicitSchemeSolver::SolveOverride()
 				u2_curr_layer[i] = k*(mLambda2*(u2_prev_layer[i - 1] - 2 * u2_prev_layer[i] + u2_prev_layer[i + 1]) / (h * h)
 					+ mC*std::pow(u1_prev_layer[i], 2) - mNu*u2_prev_layer[i]) + u2_prev_layer[i];
 			}
-			u1_curr_layer[0] = (4 * u1_curr_layer[1] + u1_curr_layer[2]) / 3;
-			u1_curr_layer[n] = (4 * u1_curr_layer[n-1] + u1_curr_layer[n-2]) / 3;
+			u1_curr_layer[0] = (4 * u1_curr_layer[1] - u1_curr_layer[2]) / 3;
+			u1_curr_layer[n] = (4 * u1_curr_layer[n-1] - u1_curr_layer[n-2]) / 3;
 
-			u2_curr_layer[0] = (4 * u2_curr_layer[1] + u2_curr_layer[2]) / 3;
-			u2_curr_layer[n] = (4 * u2_curr_layer[n - 1] + u2_curr_layer[n - 2]) / 3;
+			u2_curr_layer[0] = (4 * u2_curr_layer[1] - u2_curr_layer[2]) / 3;
+			u2_curr_layer[n] = (4 * u2_curr_layer[n - 1] - u2_curr_layer[n - 2]) / 3;
 		}
 	}
 	else
@@ -76,11 +84,10 @@ void ExplicitSchemeSolver::SolveOverride()
 
 SchemeLayer ExplicitSchemeSolver::GetSolutionU1Override(int index)
 {
-
 	return SchemeLayer(u1Grid + (GetIntervalsCount() + 1)*index, GetIntervalsCount() + 1);
 }
 
 SchemeLayer ExplicitSchemeSolver::GetSolutionU2Override(int index)
 {
-	return SchemeLayer(u1Grid + (GetIntervalsCount() + 1)*index, GetIntervalsCount() + 1);
+	return SchemeLayer(u2Grid + (GetIntervalsCount() + 1)*index, GetIntervalsCount() + 1);
 }
