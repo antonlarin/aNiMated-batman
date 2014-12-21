@@ -4,8 +4,10 @@
 #include "CoreGlobal.hpp"
 #include "SchemeLayer.hpp"
 #include "SchemeSolver.hpp"
+#include "SchemeResult.hpp"
 #include "ExplicitSchemeSolver.hpp"
 #include "ImplicitSchemeSolver.hpp"
-#include "SchemeInitialConditions.hpp"
+#include "ISchemeInitialConditions.hpp"
+#include "DefaultSchemeInitialConditions.hpp"
 
 #endif
