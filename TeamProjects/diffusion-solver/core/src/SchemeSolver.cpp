@@ -1,202 +1,191 @@
 #include <cmath>
 #include <cassert>
+#include <stdexcept>
 #include "SchemeSolver.hpp"
 using namespace diffusioncore;
 
 SchemeSolver::SchemeSolver() {
-   // TODO: Set default parameters
+   mIsSolving = false;
+   mIsStop = false;
 }
 
 SchemeSolver::~SchemeSolver() { }
 
 
 void SchemeSolver::SetK(double value) {
+   CheckSolverThreadStatus();
    assert(value >= 0);
    mK = value;
-   mIsSolved = false;
 }
 double SchemeSolver::GetK() const {
    return mK;
 }
 
 void SchemeSolver::SetC(double value) {
+   CheckSolverThreadStatus();
    assert(value >= 0);
    mC = value;
-   mIsSolved = false;
 }
 double SchemeSolver::GetC() const {
    return mC;
 }
 
 void SchemeSolver::SetNu(double value) {
+   CheckSolverThreadStatus();
    assert(value >= 0);
    mNu = value;
-   mIsSolved = false;
 }
 double SchemeSolver::GetNu() const {
    return mNu;
 }
 
 void SchemeSolver::SetMu(double value) {
+   CheckSolverThreadStatus();
    assert(value >= 0);
    mMu = value;
-   mIsSolved = false;
 } 
 double SchemeSolver::GetMu() const {
    return mMu;
 }
 
 void SchemeSolver::SetRho(double value) {
+   CheckSolverThreadStatus();
    assert(value >= 0);
    mRho = value;
-   mIsSolved = false;
 }
 double SchemeSolver::GetRho() const {
    return mRho;
 }
 
 void SchemeSolver::SetLambda1(double value) {
+   CheckSolverThreadStatus();
    assert(value > 0);
    mLambda1 = value;
-   mIsSolved = false;
 }
 double SchemeSolver::GetLambda1() const {
    return mLambda1;
 }
 
 void SchemeSolver::SetLambda2(double value) {
+   CheckSolverThreadStatus();
    assert(value > 0);
    mLambda2 = value;
-   mIsSolved = false;
 }
 double SchemeSolver::GetLambda2() const {
    return mLambda2;
 }
 
 void SchemeSolver::SetStepTime(double value) {
+   CheckSolverThreadStatus();
    assert(value > 0);
    mStepTime = value;
-   mIsSolved = false;
 }
 double SchemeSolver::GetStepTime() const {
    return mStepTime;
 }
 
 void SchemeSolver::SetAccuracy(double value) {
+   CheckSolverThreadStatus();
    assert(value > 0);
    mAccuracy = value;
-   mIsSolved = false;
 }
 double SchemeSolver::GetAccuracy() const {
    return mAccuracy;
 }
 
 void SchemeSolver::SetIntervalsCount(int value) {
+   CheckSolverThreadStatus();
    assert(value > 0);
    mIntervalsCount = value;
-   mIsSolved = false;
 }
 int SchemeSolver::GetIntervalsCount() const {
    return mIntervalsCount;
 }
 
 void SchemeSolver::SetMaximumIterations(int value) {
+   CheckSolverThreadStatus();
    assert(value > 0);
    mMaximumIterations = value;
-   mIsSolved = false;
 }
 int SchemeSolver::GetMaximumIterations() const {
    return mMaximumIterations;
 }
 
+void SchemeSolver::SetSolvingMode(SchemeSolvingMode value) {
+   CheckSolverThreadStatus();
+   mSolvingMode = value;
+}
+SchemeSolvingMode SchemeSolver::GetSolvingMode() const {
+   return mSolvingMode;
+}
+
 void SchemeSolver::SetInitialConditions(ISchemeInitialConditions* value) {
+   CheckSolverThreadStatus();
    mInitialConditions = value;
-   mIsSolved = false;
 }
 ISchemeInitialConditions* SchemeSolver::GetInitialConditions() const {
    return mInitialConditions;
 }
 
 
-bool SchemeSolver::IsSolved() const {
-   return mIsSolved;
-}
-
-double SchemeSolver::GetMaximumTime() const {
-   assert(IsSolved());
+double SchemeSolver::GetMaximumTime() {
+   CheckSolverThreadStatus();
    return (GetIterationsCount() - 1) * GetStepTime();
 }
 
-int SchemeSolver::GetIterationsCount() const {
-   assert(IsSolved());
+int SchemeSolver::GetIterationsCount() {
+   CheckSolverThreadStatus();
    return mIterationsCount;
 }
 
 
-SchemeLayer SchemeSolver::GetSolutionU1(int index) {
-   assert(IsSolved());
-   return GetSolutionU1Override(index);
+bool SchemeSolver::IsSolving() {
+   mSolverMutex.lock();
+   bool isSolving = mIsSolving;
+   mSolverMutex.unlock();
+   return isSolving;
 }
 
-SchemeLayer SchemeSolver::GetSolutionU2(int index) {
-   assert(IsSolved());
-   return GetSolutionU2Override(index);
-}
-
-SchemeLayer SchemeSolver::GetSolutionU1(double t) {
-   assert(IsSolved());
-   assert(t >= 0);
-   assert(t <= GetMaximumTime());
-
-   int index = TimeToIndex(t);
-   return GetSolutionU1Override(index);
-}
-
-SchemeLayer SchemeSolver::GetSolutionU2(double t) {
-   assert(IsSolved());
-   assert(t >= 0);
-   assert(t <= GetMaximumTime());
-
-   int index = TimeToIndex(t);
-   return GetSolutionU2Override(index);
+void SchemeSolver::StopSolving() {
+   mSolverMutex.lock();
+   mIsStop = true;
+   mSolverMutex.unlock();
+   mSolverThread.join();
 }
 
 
-double SchemeSolver::GetSolutionU1Maximum() {
-   assert(IsSolved());
-   // TODO
-   return 1;
+void SchemeSolver::BeginSolve(SolverCallback callback) {
+   CheckSolverThreadStatus();
+
+   mIsSolving = true;
+   mIsStop = false;
+   mSolverThread = std::thread(
+      &SchemeSolver::SolveNewThread,
+      this, callback);
 }
 
-double SchemeSolver::GetSolutionU1Minimum() {
-   assert(IsSolved());
-   // TODO
-   return 0;
-}
-
-double SchemeSolver::GetSolutionU2Maximum() {
-   assert(IsSolved());
-   // TODO
-   return 1;
-}
-
-double SchemeSolver::GetSolutionU2Minimum() {
-   assert(IsSolved());
-   // TODO
-   return 0;
+bool SchemeSolver::IsStoped() {
+   mSolverMutex.lock();
+   bool isStoped = mIsStop;
+   mSolverMutex.unlock(); 
+   return isStoped;
 }
 
 
-void SchemeSolver::Solve() {
-   SolveOverride();
-   mIsSolved = true;
+void SchemeSolver::SolveNewThread(SolverCallback callback) {
+   SolveOverride([&](SchemeResult& res) -> void {
+      mSolverMutex.lock();
+      mIsSolving = false;
+      mSolverMutex.unlock(); 
+      callback(res);
+   });
 }
 
-int SchemeSolver::TimeToIndex(double t) {
-   int index = static_cast<int>(std::round(t / GetStepTime()));
-   int iterationsCount = GetIterationsCount();
-   if (index >= iterationsCount)
-      index = iterationsCount - 1;
+void SchemeSolver::CheckSolverThreadStatus() {
+   mSolverMutex.lock();
+   bool isNotFinished = mIsSolving;
+   mSolverMutex.unlock();
 
-   return index;
+   if (isNotFinished)
+      throw std::runtime_error("Solving in progress");
 }

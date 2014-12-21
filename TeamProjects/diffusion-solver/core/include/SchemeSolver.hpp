@@ -1,11 +1,24 @@
 #ifndef SchemeSolver_H
 #define SchemeSolver_H
 
+#include <mutex>
+#include <memory>
+#include <thread>
+#include <functional>
 #include "CoreGlobal.hpp"
 #include "SchemeLayer.hpp"
+#include "SchemeResult.hpp"
 #include "ISchemeInitialConditions.hpp"
 
 namespace diffusioncore {
+
+   typedef std::function<void(SchemeResult&)> SolverCallback;
+
+   enum SchemeSolvingMode {
+      AllLayers,
+      StableLayer
+   };
+
    class EXPORT_API SchemeSolver {
    private:
       double mK;
@@ -19,9 +32,13 @@ namespace diffusioncore {
       double mAccuracy;
       int mIntervalsCount;
       int mMaximumIterations;
+      SchemeSolvingMode mSolvingMode;
       ISchemeInitialConditions* mInitialConditions;
    
-      bool mIsSolved;
+      bool mIsSolving;
+      bool mIsStop;
+      std::thread mSolverThread;
+      std::mutex mSolverMutex;
 
    protected:
       int mIterationsCount;
@@ -41,31 +58,25 @@ namespace diffusioncore {
       PROPERTY(double, Accuracy);
       PROPERTY(int, IntervalsCount);
       PROPERTY(int, MaximumIterations);
+      PROPERTY(SchemeSolvingMode, SolvingMode);
       PROPERTY(ISchemeInitialConditions*, InitialConditions);
 
-      bool IsSolved() const;
-      double GetMaximumTime() const;
-      int GetIterationsCount() const;
+      double GetMaximumTime();
+      int GetIterationsCount();
 
-      SchemeLayer GetSolutionU1(int index);
-      SchemeLayer GetSolutionU2(int index);
-      SchemeLayer GetSolutionU1(double time);
-      SchemeLayer GetSolutionU2(double time);
+      bool IsSolving();
+      void StopSolving();
 
-      double GetSolutionU1Maximum();
-      double GetSolutionU1Minimum();
-      double GetSolutionU2Maximum();
-      double GetSolutionU2Minimum();
-
-      void Solve();
+      void BeginSolve(SolverCallback callback);
 
    protected:
-      virtual void SolveOverride() = 0;
-      virtual SchemeLayer GetSolutionU1Override(int index) = 0;
-      virtual SchemeLayer GetSolutionU2Override(int index) = 0;
+
+      bool IsStoped();
+      virtual void SolveOverride(SolverCallback callback) = 0;
 
    private:
-      int TimeToIndex(double t);
+      void CheckSolverThreadStatus();
+      void SolveNewThread(SolverCallback callback);
 
    };
 }

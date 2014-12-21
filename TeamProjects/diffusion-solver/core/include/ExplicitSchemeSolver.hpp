@@ -1,8 +1,10 @@
 #ifndef ExplicitSchemeSolver_H
 #define ExplicitSchemeSolver_H
 
+#include <memory>
 #include "CoreGlobal.hpp"
 #include "SchemeSolver.hpp"
+#include "SchemeResult.hpp"
 
 namespace diffusioncore {
 	class EXPORT_API ExplicitSchemeSolver : public SchemeSolver {
@@ -11,11 +13,11 @@ namespace diffusioncore {
 		~ExplicitSchemeSolver();
 		double EvaluateStableTimeStep(int xGridDim);
 	private:
-		double *u1Grid, *u2Grid;
+		std::shared_ptr<double> u1GridPtr;
+		std::shared_ptr<double> u2GridPtr;
+
 	protected:
-		virtual void SolveOverride();
-		virtual SchemeLayer GetSolutionU1Override(int index);
-		virtual SchemeLayer GetSolutionU2Override(int index);
+		virtual void SolveOverride(SolverCallback callback);
 	};
 }
 
