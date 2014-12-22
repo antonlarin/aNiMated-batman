@@ -18,6 +18,7 @@ namespace diffusioncore {
 
 	protected:
 		virtual void SolveOverride(SolverCallback callback);
+		double GetLayersDifference(double* layer1, double* layer2, int layerSize);
 	};
 }
 

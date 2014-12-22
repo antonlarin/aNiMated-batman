@@ -2,6 +2,13 @@
 #include <cassert>
 using namespace diffusioncore;
 
+template<typename T>
+void PointerSwap(T** a, T** b)
+{
+	T *c = *a;
+	*a = *b;
+	*b = c;
+}
 // helper class for shared_ptr
 template<typename T>
 struct array_deleter {
@@ -11,20 +18,20 @@ struct array_deleter {
 };
 
 
-ExplicitSchemeSolver::ExplicitSchemeSolver()
-{
-	// We use shared_ptr instead c-style pointers
-	// u1Grid = u2Grid = 0;
-}
-ExplicitSchemeSolver::~ExplicitSchemeSolver()
-{
-	// We don't need to release memory explicit 
-	// because we use shared_ptr.
+ExplicitSchemeSolver::ExplicitSchemeSolver(){}
 
-	// if (u1Grid)
-	// 	delete[] u1Grid;
-	// if (u2Grid)
-	// 	delete[] u2Grid;
+ExplicitSchemeSolver::~ExplicitSchemeSolver(){}
+
+double ExplicitSchemeSolver::GetLayersDifference(double* layer1, double* layer2, int layerSize)
+{
+	double maxDifference = 0, currentDifference;
+	for (int i = 0; i < layerSize; i++)
+	{
+		currentDifference = std::abs(layer1[i] - layer2[i]);
+		if (currentDifference > maxDifference)
+			maxDifference = currentDifference;
+	}
+	return maxDifference;
 }
 double ExplicitSchemeSolver::EvaluateStableTimeStep(int xGridDim)
 {
@@ -34,6 +41,7 @@ void ExplicitSchemeSolver::SolveOverride(SolverCallback callback)
 {
 	int n = GetIntervalsCount();
 	int m = GetMaximumIterations();
+	int solvingMode = GetSolvingMode();
 	mIterationsCount = GetMaximumIterations();
 	double k = GetStepTime();
 	double h = 1.0 / n;
@@ -48,14 +56,30 @@ void ExplicitSchemeSolver::SolveOverride(SolverCallback callback)
 
 	double* u1Grid;
 	double* u2Grid;
+	double* u1_curr_layer;
+	double* u1_prev_layer;
+	double* u2_curr_layer;
+	double* u2_prev_layer;
 
 	try{
-		// use shared_pointer to hold allocated memory
-		u1Grid = new double[(n + 1)*(m + 1)];
-		u1GridPtr = std::shared_ptr<double>(u1Grid, array_deleter<double>());
-		
-		u2Grid = new double[(n + 1)*(m + 1)];
-		u2GridPtr = std::shared_ptr<double>(u2Grid, array_deleter<double>());
+		if (solvingMode == AllLayers)
+		{
+			u1Grid = new double[(n + 1)*(m + 1)];
+			u1GridPtr = std::shared_ptr<double>(u1Grid, array_deleter<double>());
+
+			u2Grid = new double[(n + 1)*(m + 1)];
+			u2GridPtr = std::shared_ptr<double>(u2Grid, array_deleter<double>());
+		}
+		else if (solvingMode == StableLayer)
+		{ 
+			u1Grid = new double[(n + 1) * 3];
+			u1GridPtr = std::shared_ptr<double>(u1Grid, array_deleter<double>());
+
+			u2Grid = new double[(n + 1) * 3];
+			u2GridPtr = std::shared_ptr<double>(u2Grid, array_deleter<double>());
+		}
+		else
+			assert(0);
 	}
 	catch (std::bad_alloc)
 	{
@@ -68,6 +92,10 @@ void ExplicitSchemeSolver::SolveOverride(SolverCallback callback)
 		u1Grid[i] = iConditions->GetValueU1(i*h);
 		u2Grid[i] = iConditions->GetValueU2(i*h);
 	}
+	u1_curr_layer = u1Grid; 
+	u1_prev_layer = u1Grid + n + 1;
+	u2_curr_layer = u2Grid;
+	u2_prev_layer = u2Grid + n + 1;
 
 	int layersCount = 1;
 	if (k <= h*h / 2)
@@ -76,11 +104,18 @@ void ExplicitSchemeSolver::SolveOverride(SolverCallback callback)
 		{
 			if (IsStoped())
 				break;
-
-			double* u1_curr_layer = u1Grid + (n + 1)*(j + 1);
-			double* u1_prev_layer = u1Grid + (n + 1)*j;
-			double* u2_curr_layer = u2Grid + (n + 1)*(j + 1);
-			double* u2_prev_layer = u2Grid + (n + 1)*j;
+			if (solvingMode == AllLayers)
+			{
+				u1_curr_layer = u1Grid + (n + 1)*(j + 1);
+				u1_prev_layer = u1Grid + (n + 1)*j;
+				u2_curr_layer = u2Grid + (n + 1)*(j + 1);
+				u2_prev_layer = u2Grid + (n + 1)*j;
+			}
+			else
+			{
+				PointerSwap(&u1_curr_layer, &u1_prev_layer);
+				PointerSwap(&u2_curr_layer, &u2_prev_layer);
+			}
 			for (int i = 1; i < n; i++)
 			{
 				u1_curr_layer[i] = k*(mLambda1*(u1_prev_layer[i - 1] - 2 * u1_prev_layer[i]	+ u1_prev_layer[i + 1]) / (h * h)
@@ -96,6 +131,22 @@ void ExplicitSchemeSolver::SolveOverride(SolverCallback callback)
 			u2_curr_layer[n] = (4 * u2_curr_layer[n - 1] - u2_curr_layer[n - 2]) / 3;
 		
 			layersCount++;
+			
+			if (solvingMode == StableLayer && j + 1 % 1000 == 0)
+			{
+				if (GetLayersDifference(u1_curr_layer, u1_prev_layer, n + 1) < GetAccuracy() &&
+					GetLayersDifference(u2_curr_layer, u2_prev_layer, n + 1) < GetAccuracy())
+				{
+					mIterationsCount = j;
+					if (u1_curr_layer != u1Grid)
+						for (int i = 0; i <= n; i++)
+						{
+							u1Grid[i] = u1Grid[i + n + 1];
+							u2Grid[i] = u2Grid[i + n + 1];
+						}
+					break;
+				}
+			}
 			if (IsStoped())
 				break;
 		}
@@ -105,6 +156,8 @@ void ExplicitSchemeSolver::SolveOverride(SolverCallback callback)
 		assert(0);
 	}
 
+	if (solvingMode == StableLayer)
+		layersCount = 1;
 	double timeStep = k;
 	int intervalsCount = n;
 	SchemeResult res(
