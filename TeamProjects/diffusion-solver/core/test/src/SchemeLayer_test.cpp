@@ -2,7 +2,7 @@
 #include <random>
 #include <algorithm>
 #include <gtest/gtest.h>
-#include <SchemeLayer.hpp>
+#include <diffusioncore>
 using namespace diffusioncore;
 
 void FillArrayRand(double* dest, size_t length, int seed) {
