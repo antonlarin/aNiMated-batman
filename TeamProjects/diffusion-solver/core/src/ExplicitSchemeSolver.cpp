@@ -38,7 +38,7 @@ double ExplicitSchemeSolver::EvaluateStableTimeStep(int xGridDim)
 {
 	return 0.5 / (xGridDim*xGridDim);
 }
-void ExplicitSchemeSolver::SolveOverride(SolverCallback callback)
+SchemeResult ExplicitSchemeSolver::SolveOverride()
 {
 	int n = GetIntervalsCount();
 	int m = GetMaximumIterations();
@@ -159,6 +159,7 @@ void ExplicitSchemeSolver::SolveOverride(SolverCallback callback)
 
 	if (solvingMode == StableLayer)
 		layersCount = 1;
+
 	double timeStep = k;
 	int intervalsCount = n;
 	SchemeResult res(
@@ -168,5 +169,17 @@ void ExplicitSchemeSolver::SolveOverride(SolverCallback callback)
 	   layersCount, 
 	   timeStep);
 
-	callback(res);	
+	return res;	
+}
+
+void ExplicitSchemeSolver::CheckParametersOverride() {
+	double k = GetStepTime();
+	int n = GetIntervalsCount();
+	double h = 1.0 / n;
+
+	if (k > h * h / 2) { 
+		throw std::runtime_error(
+			"Incompatible intervlas "
+			"count and time step");
+	}
 }

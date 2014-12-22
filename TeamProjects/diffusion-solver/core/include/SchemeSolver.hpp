@@ -4,6 +4,7 @@
 #include <mutex>
 #include <memory>
 #include <thread>
+#include <exception>
 #include <functional>
 #include "CoreGlobal.hpp"
 #include "SchemeLayer.hpp"
@@ -13,6 +14,8 @@
 namespace diffusioncore {
 
    typedef std::function<void(SchemeResult&)> SolverCallback;
+   typedef std::function<void(std::exception&)> ExceptionCallback;
+
    typedef std::shared_ptr<ISchemeInitialConditions> InitialConditionsPtr;
 
    enum SchemeSolvingMode {
@@ -42,6 +45,9 @@ namespace diffusioncore {
       std::mutex mSolverMutex;
 
    protected:
+      const double SCHEME_X_BEGIN = 0.0;
+      const double SCHEME_X_END = 1.0;
+
       int mIterationsCount;
 
    public:
@@ -68,17 +74,23 @@ namespace diffusioncore {
       bool IsSolving();
       void StopSolving();
 
-      void BeginSolve(SolverCallback callback);
+      void BeginSolve(
+         SolverCallback callback,
+         ExceptionCallback exCallback);
+
       void WaitSolve();
 
    protected:
 
       bool IsStoped();
-      virtual void SolveOverride(SolverCallback callback) = 0;
+      virtual SchemeResult SolveOverride() = 0;
+      virtual void CheckParametersOverride() = 0;
 
    private:
       void CheckSolverThreadStatus();
-      void SolveNewThread(SolverCallback callback);
+      void SolveNewThread(SolverCallback callback, 
+                          ExceptionCallback exCallback);
+      void CheckParameters();
 
    };
 }

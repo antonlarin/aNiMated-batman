@@ -21,7 +21,10 @@ namespace diffusioncore {
       double mU2Max;
       double mU2Min;
 
+      bool mIsInitialized;
+
    public:
+      SchemeResult();
       SchemeResult(std::shared_ptr<double> solutionU1,
                    std::shared_ptr<double> solutionU2,
                    int intervalsCount,
@@ -46,6 +49,8 @@ namespace diffusioncore {
 
    private:
       int TimeToIndex(double t);
+      void InitializeDefault();
+      void CheckIsInitialized() const;
 
    };
 }

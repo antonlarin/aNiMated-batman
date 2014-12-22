@@ -1,10 +1,16 @@
 #include <cmath>
 #include <limits>
 #include <cassert>
+#include <stdexcept>
 #include "SchemeResult.hpp"
 using namespace diffusioncore;
 
 const double SIGNALING_NAN = std::numeric_limits<double>::signaling_NaN();
+
+
+SchemeResult::SchemeResult() {
+   mIsInitialized = false;
+}
 
 SchemeResult::SchemeResult(std::shared_ptr<double> solutionU1,
                            std::shared_ptr<double> solutionU2,
@@ -14,11 +20,6 @@ SchemeResult::SchemeResult(std::shared_ptr<double> solutionU1,
    assert(intervalsCount > 0);
    assert(layersCount > 0);
 
-   mU1Max = SIGNALING_NAN;
-   mU1Min = SIGNALING_NAN;
-   mU2Max = SIGNALING_NAN;
-   mU2Min = SIGNALING_NAN;
-
    mSolutionU1 = solutionU1;
    mSolutionU2 = solutionU2;
 
@@ -26,33 +27,41 @@ SchemeResult::SchemeResult(std::shared_ptr<double> solutionU1,
    mLayersCount = layersCount;
    mIntervalsCount = intervalsCount;
    mSolutionLength = (intervalsCount + 1) * layersCount;
+
+   InitializeDefault();
+   mIsInitialized = true;
 }
 
 SchemeResult::~SchemeResult() { }
 
 
-int SchemeResult::GetLayersCount() const{
+int SchemeResult::GetLayersCount() const {
+   CheckIsInitialized();
    return mLayersCount;
 }
 
 int SchemeResult::GetIntervalsCount() const {
+   CheckIsInitialized();
    return mIntervalsCount;
 }
 
 
 SchemeLayer SchemeResult::GetSolutionU1(int index) {
+   CheckIsInitialized();
    int pointsCount = mIntervalsCount + 1;
    double* layer = mSolutionU1.get() + pointsCount * index;
    return SchemeLayer(layer, pointsCount);
 }
 
 SchemeLayer SchemeResult::GetSolutionU2(int index) {
+   CheckIsInitialized();
    int pointsCount = mIntervalsCount + 1;
    double* layer = mSolutionU2.get() + pointsCount * index;
    return SchemeLayer(layer, pointsCount);
 }
 
 SchemeLayer SchemeResult::GetSolutionU1(double t) {
+   CheckIsInitialized();
    assert(t >= 0);
 
    int index = TimeToIndex(t);
@@ -60,6 +69,7 @@ SchemeLayer SchemeResult::GetSolutionU1(double t) {
 }
 
 SchemeLayer SchemeResult::GetSolutionU2(double t) {
+   CheckIsInitialized();
    assert(t >= 0);
 
    int index = TimeToIndex(t);
@@ -67,15 +77,18 @@ SchemeLayer SchemeResult::GetSolutionU2(double t) {
 }
 
 SchemeLayer SchemeResult::GetLastLayerU1() {
+   CheckIsInitialized();
    return GetSolutionU1(mLayersCount - 1);
 }
 
 SchemeLayer SchemeResult::GetLastLayerU2() {
+   CheckIsInitialized();
    return GetSolutionU2(mLayersCount - 1);
 }
 
 
 double SchemeResult::GetSolutionU1Maximum() {
+   CheckIsInitialized();
    if (mU1Max != SIGNALING_NAN)
       return mU1Max;
 
@@ -89,6 +102,7 @@ double SchemeResult::GetSolutionU1Maximum() {
 }
 
 double SchemeResult::GetSolutionU1Minimum() {
+   CheckIsInitialized();
    if (mU1Min != SIGNALING_NAN)
       return mU1Min;
 
@@ -102,6 +116,7 @@ double SchemeResult::GetSolutionU1Minimum() {
 }
 
 double SchemeResult::GetSolutionU2Maximum() {
+   CheckIsInitialized();
    if (mU2Max != SIGNALING_NAN)
       return mU2Max;
 
@@ -115,6 +130,7 @@ double SchemeResult::GetSolutionU2Maximum() {
 }
 
 double SchemeResult::GetSolutionU2Minimum() {
+   CheckIsInitialized();
    if (mU2Min != SIGNALING_NAN)
       return mU2Min;
 
@@ -129,10 +145,23 @@ double SchemeResult::GetSolutionU2Minimum() {
 
 
 int SchemeResult::TimeToIndex(double t) {
+   CheckIsInitialized();
    int index = static_cast<int>(std::round(t / mTimeStep));
    int iterationsCount = mLayersCount;
    if (index >= iterationsCount)
       index = iterationsCount - 1;
 
    return index;
+}
+
+void SchemeResult::InitializeDefault() {
+   mU1Max = SIGNALING_NAN;
+   mU1Min = SIGNALING_NAN;
+   mU2Max = SIGNALING_NAN;
+   mU2Min = SIGNALING_NAN;
+}
+
+void SchemeResult::CheckIsInitialized() const {
+   if (!mIsInitialized)
+      throw std::runtime_error("Result is not initialized");
 }

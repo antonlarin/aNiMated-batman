@@ -1,5 +1,6 @@
-#include "ImplicitSchemeSolver.hpp"
 #include <cassert>
+#include <stdexcept>
+#include "ImplicitSchemeSolver.hpp"
 using namespace diffusioncore;
 
 template<typename T>
@@ -33,7 +34,7 @@ double ImplicitSchemeSolver::GetLayersDifference(double* layer1, double* layer2,
 	}
 	return maxDifference;
 }
-void ImplicitSchemeSolver::SolveOverride(SolverCallback callback)
+SchemeResult ImplicitSchemeSolver::SolveOverride()
 {
 	int n = GetIntervalsCount();
 	int m = GetMaximumIterations();
@@ -173,8 +174,12 @@ void ImplicitSchemeSolver::SolveOverride(SolverCallback callback)
 		assert(0);
 	}
 
+	delete[] alpha;
+	delete[] beta;
+	
 	if (solvingMode == StableLayer)
 		layersCount = 1;
+
 	double timeStep = k;
 	int intervalsCount = n;
 	SchemeResult res(
@@ -183,7 +188,18 @@ void ImplicitSchemeSolver::SolveOverride(SolverCallback callback)
 		intervalsCount,
 		layersCount,
 		timeStep);
-	delete[] alpha;
-	delete[] beta;
-	callback(res);
+	
+	return res;
+}
+
+void ImplicitSchemeSolver::CheckParametersOverride() {
+	double k = GetStepTime();
+	int n = GetIntervalsCount();
+	double h = 1.0 / n;
+
+	if (k > h * h / 2) { 
+		throw std::runtime_error(
+			"Incompatible intervlas "
+			"count and time step");
+	}
 }
