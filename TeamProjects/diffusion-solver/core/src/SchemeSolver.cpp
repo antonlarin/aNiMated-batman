@@ -1,12 +1,22 @@
 #include <cmath>
+#include <memory>
 #include <cassert>
 #include <stdexcept>
 #include "SchemeSolver.hpp"
+#include "DefaultSchemeInitialConditions.hpp"
 using namespace diffusioncore;
 
 SchemeSolver::SchemeSolver() {
    mIsSolving = false;
    mIsStop = true;
+
+   mC = 0;
+   mK = 0;
+   mMu = 0;
+   mNu = 0;
+   mRho = 0;
+   mLambda1 = 1;
+   mLambda2 = 1;
 }
 
 SchemeSolver::~SchemeSolver() { }
@@ -119,11 +129,12 @@ SchemeSolvingMode SchemeSolver::GetSolvingMode() const {
    return mSolvingMode;
 }
 
-void SchemeSolver::SetInitialConditions(ISchemeInitialConditions* value) {
+void SchemeSolver::SetInitialConditions(InitialConditionsPtr value) {
+   
    CheckSolverThreadStatus();
    mInitialConditions = value;
 }
-ISchemeInitialConditions* SchemeSolver::GetInitialConditions() const {
+InitialConditionsPtr SchemeSolver::GetInitialConditions() const {
    return mInitialConditions;
 }
 

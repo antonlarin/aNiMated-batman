@@ -13,6 +13,7 @@
 namespace diffusioncore {
 
    typedef std::function<void(SchemeResult&)> SolverCallback;
+   typedef std::shared_ptr<ISchemeInitialConditions> InitialConditionsPtr;
 
    enum SchemeSolvingMode {
       AllLayers,
@@ -33,7 +34,7 @@ namespace diffusioncore {
       int mIntervalsCount;
       int mMaximumIterations;
       SchemeSolvingMode mSolvingMode;
-      ISchemeInitialConditions* mInitialConditions;
+      InitialConditionsPtr mInitialConditions;
    
       bool mIsSolving;
       bool mIsStop;
@@ -59,7 +60,7 @@ namespace diffusioncore {
       PROPERTY(int, IntervalsCount);
       PROPERTY(int, MaximumIterations);
       PROPERTY(SchemeSolvingMode, SolvingMode);
-      PROPERTY(ISchemeInitialConditions*, InitialConditions);
+      PROPERTY(InitialConditionsPtr, InitialConditions);
 
       double GetMaximumTime();
       int GetIterationsCount();

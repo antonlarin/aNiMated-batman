@@ -87,7 +87,7 @@ void ExplicitSchemeSolver::SolveOverride(SolverCallback callback)
 		assert(0);
 	}
 
-	ISchemeInitialConditions* iConditions = GetInitialConditions();
+	auto iConditions = GetInitialConditions();
 	for (int i = 0; i <= n; i++)
 	{
 		u1Grid[i] = iConditions->GetValueU1(i*h);
