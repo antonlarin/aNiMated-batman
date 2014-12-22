@@ -69,6 +69,7 @@ namespace diffusioncore {
       void StopSolving();
 
       void BeginSolve(SolverCallback callback);
+      void WaitSolve();
 
    protected:
 

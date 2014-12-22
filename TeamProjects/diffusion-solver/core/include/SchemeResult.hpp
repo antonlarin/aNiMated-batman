@@ -8,12 +8,18 @@
 namespace diffusioncore {
    class EXPORT_API SchemeResult {
    private:
+      int mSolutionLength;
       int mIntervalsCount;
       int mLayersCount;
       double mTimeStep;
 
       std::shared_ptr<double> mSolutionU1;
       std::shared_ptr<double> mSolutionU2;
+
+      double mU1Max;
+      double mU1Min;
+      double mU2Max;
+      double mU2Min;
 
    public:
       SchemeResult(std::shared_ptr<double> solutionU1,

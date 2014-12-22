@@ -1,5 +1,6 @@
 #include <cmath>
 #include <memory>
+#include <vector>
 #include <cassert>
 #include <stdexcept>
 #include "SchemeSolver.hpp"
@@ -17,6 +18,15 @@ SchemeSolver::SchemeSolver() {
    mRho = 0;
    mLambda1 = 1;
    mLambda2 = 1;
+   mAccuracy = 0.001;
+   mStepTime = 0.00001;
+   mIntervalsCount = 100;
+   mMaximumIterations = 1000;
+   mSolvingMode = SchemeSolvingMode::StableLayer;
+
+   std::vector<double> cond(1, 1);
+   auto defaultCond = new DefaultSchemeInitialConditions(cond, cond);
+   mInitialConditions = InitialConditionsPtr(defaultCond);
 }
 
 SchemeSolver::~SchemeSolver() { }
@@ -173,6 +183,11 @@ void SchemeSolver::BeginSolve(SolverCallback callback) {
    mSolverThread = std::thread(
       &SchemeSolver::SolveNewThread,
       this, callback);
+}
+
+void SchemeSolver::WaitSolve() {
+   if (mSolverThread.joinable())
+      mSolverThread.join();
 }
 
 bool SchemeSolver::IsStoped() {
