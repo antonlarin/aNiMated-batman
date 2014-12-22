@@ -1,12 +1,12 @@
-#define _USE_MATH_DEFINES
 #include <cmath>
 #include <cassert>
 #include <stdexcept>
 #include "DefaultSchemeInitialConditions.hpp"
 using namespace diffusioncore;
 
+const double PI_CONST = 3.14159265358979323846;
 inline double EvaluateCos(double x, int index) {
-   return std::cos(M_PI * x * index);
+   return std::cos(PI_CONST * x * index);
 }
 
 DefaultSchemeInitialConditions::DefaultSchemeInitialConditions(

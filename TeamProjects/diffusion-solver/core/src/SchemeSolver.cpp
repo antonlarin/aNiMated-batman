@@ -6,7 +6,7 @@ using namespace diffusioncore;
 
 SchemeSolver::SchemeSolver() {
    mIsSolving = false;
-   mIsStop = false;
+   mIsStop = true;
 }
 
 SchemeSolver::~SchemeSolver() { }

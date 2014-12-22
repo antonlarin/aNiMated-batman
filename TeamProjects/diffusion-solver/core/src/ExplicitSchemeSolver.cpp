@@ -1,5 +1,6 @@
 #include "ExplicitSchemeSolver.hpp"
 #include <cassert>
+#include <cmath>
 using namespace diffusioncore;
 
 template<typename T>
