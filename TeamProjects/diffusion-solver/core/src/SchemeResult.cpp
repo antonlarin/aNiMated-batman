@@ -1,4 +1,5 @@
 #include <cassert>
+#include <cmath>
 #include "SchemeResult.hpp"
 using namespace diffusioncore;
 
