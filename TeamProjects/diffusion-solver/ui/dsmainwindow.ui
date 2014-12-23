@@ -548,8 +548,41 @@
      <height>25</height>
     </rect>
    </property>
+   <widget class="QMenu" name="parametersMenu">
+    <property name="title">
+     <string>Параметры</string>
+    </property>
+    <addaction name="initConditionsAction"/>
+   </widget>
+   <widget class="QMenu" name="analysisMenu">
+    <property name="title">
+     <string>Анализ</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="fileMenu">
+    <property name="title">
+     <string>Файл</string>
+    </property>
+    <addaction name="quitAction"/>
+   </widget>
+   <addaction name="fileMenu"/>
+   <addaction name="parametersMenu"/>
+   <addaction name="analysisMenu"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <action name="initConditionsAction">
+   <property name="text">
+    <string>Начальные условия</string>
+   </property>
+  </action>
+  <action name="quitAction">
+   <property name="text">
+    <string>Выход</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>

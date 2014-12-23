@@ -53,6 +53,9 @@ DSMainWindow::DSMainWindow(QWidget *parent) :
     connect(ui->finiteRunButton, SIGNAL(clicked()),
             this, SLOT(startFiniteRun()));
 
+    connect(ui->quitAction, SIGNAL(triggered()),
+            this, SLOT(close()));
+
     initPlots();
 }
 
