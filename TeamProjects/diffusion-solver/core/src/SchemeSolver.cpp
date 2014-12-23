@@ -29,7 +29,10 @@ SchemeSolver::SchemeSolver() {
    mInitialConditions = InitialConditionsPtr(defaultCond);
 }
 
-SchemeSolver::~SchemeSolver() { }
+SchemeSolver::~SchemeSolver() {
+   if (mSolverThread.joinable())
+      mSolverThread.join();
+}
 
 
 void SchemeSolver::SetK(double value) {

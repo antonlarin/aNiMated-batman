@@ -1,5 +1,6 @@
 #include <cassert>
 #include <stdexcept>
+#include <cmath>
 #include "ImplicitSchemeSolver.hpp"
 using namespace diffusioncore;
 
