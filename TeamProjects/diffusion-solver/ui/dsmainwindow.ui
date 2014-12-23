@@ -574,6 +574,9 @@
    <property name="text">
     <string>Начальные условия</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
+   </property>
   </action>
   <action name="quitAction">
    <property name="text">

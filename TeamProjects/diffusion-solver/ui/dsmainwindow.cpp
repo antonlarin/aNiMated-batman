@@ -6,6 +6,7 @@
 DSMainWindow::DSMainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::DSMainWindow),
+    initConditionsDialog(nullptr),
     model(nullptr)
 {
     ui->setupUi(this);
@@ -55,6 +56,8 @@ DSMainWindow::DSMainWindow(QWidget *parent) :
 
     connect(ui->quitAction, SIGNAL(triggered()),
             this, SLOT(close()));
+    connect(ui->initConditionsAction, SIGNAL(triggered()),
+            this, SLOT(openInitConditionsDialog()));
 
     initPlots();
 }
@@ -231,6 +234,11 @@ void DSMainWindow::changeLayerStep(const QString& newLayerStep)
         model->SetLayerStep(value);
 }
 
+void DSMainWindow::openInitConditionsDialog()
+{
+    initConditionsDialog.reset(new DSInitConditionsDialog(model, this));
+    initConditionsDialog->show();
+}
 
 
 

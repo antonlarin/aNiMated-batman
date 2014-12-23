@@ -5,6 +5,7 @@
 
 #include "dsmodel.hpp"
 #include "iobserver.hpp"
+#include "dsinitconditionsdialog.hpp"
 
 namespace Ui {
 class DSMainWindow;
@@ -44,6 +45,8 @@ public slots:
 
     void startFiniteRun();
 
+    void openInitConditionsDialog();
+
 private:
     static int maxPlotPointsNumber() { return 400; }
 
@@ -54,6 +57,7 @@ private:
     void displayInhibitorLayer(const SchemeLayer& layer);
 
     Ui::DSMainWindow *ui;
+    unique_ptr<DSInitConditionsDialog> initConditionsDialog;
     DSModel* model;
 };
 
