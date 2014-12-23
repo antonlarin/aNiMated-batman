@@ -55,6 +55,7 @@ TEST(ExplicitSchemeSolverClass, SolvingAbort) {
 
    solver.BeginSolve(callback, exCallback);
    solver.StopSolving();
+   solver.StopSolving();
 
    solver.BeginSolve(callback, exCallback);
    solver.WaitSolve();

@@ -174,7 +174,7 @@ void SchemeSolver::StopSolving() {
    mSolverMutex.lock();
    mIsStop = true;
    mSolverMutex.unlock();
-   mSolverThread.join();
+   WaitSolve();
 }
 
 
