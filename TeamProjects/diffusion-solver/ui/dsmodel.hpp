@@ -8,6 +8,7 @@
 #include "ExplicitSchemeSolver.hpp"
 #include "DefaultSchemeInitialConditions.hpp"
 
+using std::shared_ptr;
 using std::unique_ptr;
 using std::vector;
 using namespace diffusioncore;
@@ -49,7 +50,7 @@ private:
     int iterationsLimit;
 
     ExplicitSchemeSolver solver;
-    unique_ptr<DefaultSchemeInitialConditions> iconditions;
+    shared_ptr<DefaultSchemeInitialConditions> iconditions;
     unique_ptr<SchemeResult> result;
 };
 

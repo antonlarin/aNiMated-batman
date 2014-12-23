@@ -152,12 +152,13 @@ void DSModel::StartFiniteRun()
     solver.SetAccuracy(GetAccuracy());
     solver.SetIntervalsCount(GetGridDimension());
     solver.SetMaximumIterations(GetIterationsLimit());
-    solver.SetInitialConditions(iconditions.get());
+    solver.SetInitialConditions(iconditions);
     solver.SetSolvingMode(AllLayers);
 
     std::function<void(SchemeResult&)> acquireResult =
             std::bind(&DSModel::AcquireResult, this, _1);
-    solver.BeginSolve(acquireResult);
+    std::function<void(std::exception&)> exceptionCallback = [&](std::exception&) -> void {};
+    solver.BeginSolve(acquireResult, exceptionCallback);
 }
 
 void DSModel::AcquireResult(SchemeResult &result)
