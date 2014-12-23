@@ -14,9 +14,11 @@ TEMPLATE = app
 QMAKE_CXXFLAGS += -std=c++11
 
 SOURCES += main.cpp\
-        dsmainwindow.cpp
+        dsmainwindow.cpp \
+    dsmodel.cpp
 
-HEADERS  += dsmainwindow.hpp
+HEADERS  += dsmainwindow.hpp \
+    dsmodel.hpp
 
 FORMS    += dsmainwindow.ui
 

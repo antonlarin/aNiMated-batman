@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 
+#include "dsmodel.hpp"
+
 namespace Ui {
 class DSMainWindow;
 }
@@ -14,6 +16,8 @@ class DSMainWindow : public QMainWindow
 public:
     explicit DSMainWindow(QWidget *parent = 0);
     ~DSMainWindow();
+
+    void setModel(DSModel *newModel);
 
 public slots:
     void lambda1CoeffChanged(const QString& newLambda1);
@@ -28,8 +32,11 @@ public slots:
     void accuracyChanged(const QString& newAccuracy);
     void iterationsLimitChanged(const QString& newIterationsLimit);
 
+    void finiteRunStart();
+
 private:
     Ui::DSMainWindow *ui;
+    DSModel* model;
 };
 
 #endif // DSMAINWINDOW_HPP
