@@ -33,6 +33,10 @@ DSMainWindow::DSMainWindow(QWidget *parent) :
     connect(ui->iterationsEdit, SIGNAL(textEdited(QString)),
             this, SLOT(iterationsLimitChanged(QString)));
 
+    connect(ui->explicitSolverRadioButton, SIGNAL(toggled(bool)),
+            this, SLOT(changeSolverType()));
+    connect(ui->implicitSolverRadioButton, SIGNAL(toggled(bool)),
+            this, SLOT(changeSolverType()));
     connect(ui->currentLayerEdit, SIGNAL(textEdited(QString)),
             this, SLOT(goToLayer(QString)));
     connect(ui->prevLayerButton, SIGNAL(clicked()),
@@ -47,7 +51,7 @@ DSMainWindow::DSMainWindow(QWidget *parent) :
             this, SLOT(changeLayerStep(QString)));
 
     connect(ui->finiteRunButton, SIGNAL(clicked()),
-            this, SLOT(finiteRunStart()));
+            this, SLOT(startFiniteRun()));
 
     initPlots();
 }
@@ -172,7 +176,16 @@ void DSMainWindow::iterationsLimitChanged(const QString& newIterationsLimit)
         model->SetIterationsLimit(value);
 }
 
-void DSMainWindow::finiteRunStart()
+void DSMainWindow::changeSolverType()
+{
+    SolverType oldType = model->GetSolverType();
+    SolverType newType = (ui->explicitSolverRadioButton->isChecked()) ?
+                SolverType::EXPLICIT_SOLVER : SolverType::IMPLICIT_SOLVER;
+    if (oldType != newType)
+        model->SetSolverType(newType);
+}
+
+void DSMainWindow::startFiniteRun()
 {
     model->StartFiniteRun();
 }

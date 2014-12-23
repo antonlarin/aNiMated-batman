@@ -17,6 +17,7 @@ DSModel::DSModel() :
     accuracy(0.001),
     gridDimension(100),
     iterationsLimit(1000),
+    solverType(SolverType::EXPLICIT_SOLVER),
     solver(new ExplicitSchemeSolver()),
     iconditions(nullptr),
     result(nullptr),
@@ -177,6 +178,28 @@ void DSModel::SetLayerStep(int value)
     layerStep = value;
 }
 
+SolverType DSModel::GetSolverType() const
+{
+    return solverType;
+}
+
+void DSModel::SetSolverType(SolverType value)
+{
+    SolverType oldType = solverType;
+    solverType = value;
+    if (oldType != solverType)
+    {
+        if (solverType == SolverType::EXPLICIT_SOLVER)
+        {
+            solver.reset(new ExplicitSchemeSolver());
+        }
+        else
+        {
+            solver.reset(new ImplicitSchemeSolver());
+        }
+    }
+}
+
 
 
 /*
@@ -249,7 +272,6 @@ int DSModel::GetLayerCount() const
 
 void DSModel::AcquireResult(SchemeResult &newResult)
 {
-
     result.reset(new SchemeResult(newResult));
     NotifyViews();
 }

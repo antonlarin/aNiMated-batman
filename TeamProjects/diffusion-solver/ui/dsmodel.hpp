@@ -6,6 +6,7 @@
 
 #include "CoreGlobal.hpp"
 #include "ExplicitSchemeSolver.hpp"
+#include "ImplicitSchemeSolver.hpp"
 #include "DefaultSchemeInitialConditions.hpp"
 #include "iobserver.hpp"
 
@@ -13,6 +14,8 @@ using std::shared_ptr;
 using std::unique_ptr;
 using std::vector;
 using namespace diffusioncore;
+
+enum class SolverType { EXPLICIT_SOLVER, IMPLICIT_SOLVER };
 
 class DSModel
 {
@@ -34,6 +37,7 @@ public:
     PROPERTY(int, IterationsLimit)
     PROPERTY(int, CurrentLayerIndex)
     PROPERTY(int, LayerStep)
+    PROPERTY(SolverType, SolverType)
 
     void SetInitialConditions(vector<double>& U1InitConditions,
                               vector<double>& U2InitConditions);
@@ -63,8 +67,9 @@ private:
     double accuracy;
     int gridDimension;
     int iterationsLimit;
+    SolverType solverType;
 
-    unique_ptr<ExplicitSchemeSolver> solver;
+    unique_ptr<SchemeSolver> solver;
     shared_ptr<DefaultSchemeInitialConditions> iconditions;
     unique_ptr<SchemeResult> result;
     vector<IObserver*> views;

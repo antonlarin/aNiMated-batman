@@ -33,6 +33,7 @@ public slots:
     void timeStepChanged(const QString& newTimeStep);
     void accuracyChanged(const QString& newAccuracy);
     void iterationsLimitChanged(const QString& newIterationsLimit);
+    void changeSolverType();
 
     void goToPrevLayer();
     void goToNextLayer();
@@ -41,7 +42,7 @@ public slots:
     void goToLayer(const QString& newLayer);
     void changeLayerStep(const QString& newLayerStep);
 
-    void finiteRunStart();
+    void startFiniteRun();
 
 private:
     static int maxPlotPointsNumber() { return 400; }
