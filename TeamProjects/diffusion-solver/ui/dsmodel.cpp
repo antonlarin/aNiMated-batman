@@ -146,7 +146,7 @@ void DSModel::StartFiniteRun()
     solver.SetK(GetK());
     solver.SetC(GetC());
     solver.SetRho(GetRho());
-    //solver.SetGamma(GetGamma());
+    solver.SetMu(GetGamma());
     solver.SetNu(GetNu());
     solver.SetStepTime(GetTimeStep());
     solver.SetAccuracy(GetAccuracy());
@@ -157,7 +157,8 @@ void DSModel::StartFiniteRun()
 
     std::function<void(SchemeResult&)> acquireResult =
             std::bind(&DSModel::AcquireResult, this, _1);
-    std::function<void(std::exception&)> exceptionCallback = [&](std::exception&) -> void {};
+    std::function<void(std::exception&)> exceptionCallback =
+            [&](std::exception&) -> void {};
     solver.BeginSolve(acquireResult, exceptionCallback);
 }
 

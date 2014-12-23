@@ -6,7 +6,7 @@
 
 QT       += core gui
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
 TARGET = ui
 TEMPLATE = app
@@ -15,10 +15,12 @@ QMAKE_CXXFLAGS += -std=c++11
 
 SOURCES += main.cpp\
         dsmainwindow.cpp \
-    dsmodel.cpp
+    dsmodel.cpp \
+    ext/qcustomplot.cpp
 
 HEADERS  += dsmainwindow.hpp \
-    dsmodel.hpp
+    dsmodel.hpp \
+    ext/qcustomplot.h
 
 FORMS    += dsmainwindow.ui
 
