@@ -46,7 +46,9 @@ public slots:
 private:
     static int maxPlotPointsNumber() { return 400; }
 
-    void resetPlots();
+    void initPlots();
+    void resetPlots(double activatorMin, double activatorMax,
+                    double inhibitorMin, double inhibitorMax);
     void displayActivatorLayer(const SchemeLayer& layer);
     void displayInhibitorLayer(const SchemeLayer& layer);
 

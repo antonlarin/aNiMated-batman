@@ -17,7 +17,7 @@ DSModel::DSModel() :
     accuracy(0.001),
     gridDimension(100),
     iterationsLimit(1000),
-    solver(),
+    solver(new ExplicitSchemeSolver()),
     iconditions(nullptr),
     result(nullptr),
     currentLayerIndex(0),
@@ -191,25 +191,25 @@ void DSModel::SetInitialConditions(vector<double>& U1InitConditions,
 
 void DSModel::StartFiniteRun()
 {
-    solver.SetLambda1(GetLambda1());
-    solver.SetLambda2(GetLambda2());
-    solver.SetK(GetK());
-    solver.SetC(GetC());
-    solver.SetRho(GetRho());
-    solver.SetMu(GetGamma());
-    solver.SetNu(GetNu());
-    solver.SetStepTime(GetTimeStep());
-    solver.SetAccuracy(GetAccuracy());
-    solver.SetIntervalsCount(GetGridDimension());
-    solver.SetMaximumIterations(GetIterationsLimit());
-    solver.SetInitialConditions(iconditions);
-    solver.SetSolvingMode(AllLayers);
+    solver->SetLambda1(GetLambda1());
+    solver->SetLambda2(GetLambda2());
+    solver->SetK(GetK());
+    solver->SetC(GetC());
+    solver->SetRho(GetRho());
+    solver->SetMu(GetGamma());
+    solver->SetNu(GetNu());
+    solver->SetStepTime(GetTimeStep());
+    solver->SetAccuracy(GetAccuracy());
+    solver->SetIntervalsCount(GetGridDimension());
+    solver->SetMaximumIterations(GetIterationsLimit());
+    solver->SetInitialConditions(iconditions);
+    solver->SetSolvingMode(AllLayers);
 
     std::function<void(SchemeResult&)> acquireResult =
             std::bind(&DSModel::AcquireResult, this, _1);
     std::function<void(std::exception&)> exceptionCallback =
             [&](std::exception&) -> void {};
-    solver.BeginSolve(acquireResult, exceptionCallback);
+    solver->BeginSolve(acquireResult, exceptionCallback);
 }
 
 const SchemeLayer DSModel::GetCurrentActivatorLayer()
@@ -222,7 +222,27 @@ const SchemeLayer DSModel::GetCurrentInhibitorLayer()
     return result->GetSolutionU2(GetCurrentLayerIndex());
 }
 
-int DSModel::GetLayerCount()
+double DSModel::GetActivatorMaximum() const
+{
+    return result->GetSolutionU1Maximum();
+}
+
+double DSModel::GetActivatorMinimum() const
+{
+    return result->GetSolutionU1Minimum();
+}
+
+double DSModel::GetInhibitorMaximum() const
+{
+    return result->GetSolutionU2Maximum();
+}
+
+double DSModel::GetInhibitorMinimum() const
+{
+    return result->GetSolutionU2Minimum();
+}
+
+int DSModel::GetLayerCount() const
 {
     return result->GetLayersCount();
 }

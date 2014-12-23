@@ -44,7 +44,12 @@ public:
 
     const SchemeLayer GetCurrentActivatorLayer();
     const SchemeLayer GetCurrentInhibitorLayer();
-    int GetLayerCount();
+    double GetActivatorMaximum() const;
+    double GetActivatorMinimum() const;
+    double GetInhibitorMaximum() const;
+    double GetInhibitorMinimum() const;
+
+    int GetLayerCount() const;
 
 private:
     double lambda1;
@@ -59,7 +64,7 @@ private:
     int gridDimension;
     int iterationsLimit;
 
-    ExplicitSchemeSolver solver;
+    unique_ptr<ExplicitSchemeSolver> solver;
     shared_ptr<DefaultSchemeInitialConditions> iconditions;
     unique_ptr<SchemeResult> result;
     vector<IObserver*> views;
