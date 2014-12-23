@@ -183,6 +183,9 @@ void SchemeSolver::BeginSolve(SolverCallback callback,
    CheckSolverThreadStatus();
    CheckParameters();
 
+   if (mSolverThread.joinable())
+      mSolverThread.detach();
+
    mIsSolving = true;
    mIsStop = false;
    mSolverThread = std::thread(
