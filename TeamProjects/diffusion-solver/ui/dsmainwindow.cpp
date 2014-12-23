@@ -33,16 +33,18 @@ DSMainWindow::DSMainWindow(QWidget *parent) :
     connect(ui->iterationsEdit, SIGNAL(textEdited(QString)),
             this, SLOT(iterationsLimitChanged(QString)));
 
-    connect(ui->currentLayerEdit, SIGNAL(textChanged(QString)),
-            this, SLOT());
+    connect(ui->currentLayerEdit, SIGNAL(textEdited(QString)),
+            this, SLOT(goToLayer(QString)));
     connect(ui->prevLayerButton, SIGNAL(clicked()),
-            this, SLOT());
+            this, SLOT(goToPrevLayer()));
     connect(ui->nextLayerButton, SIGNAL(clicked()),
-            this, SLOT());
+            this, SLOT(goToNextLayer()));
     connect(ui->firstLayerButton, SIGNAL(clicked()),
-            this, SLOT());
+            this, SLOT(goToFirstLayer()));
     connect(ui->lastLayerButton, SIGNAL(clicked()),
-            this, SLOT());
+            this, SLOT(goToLastLayer()));
+    connect(ui->layerStepEdit, SIGNAL(textEdited(QString)),
+            this, SLOT(changeLayerStep(QString)));
 
     connect(ui->finiteRunButton, SIGNAL(clicked()),
             this, SLOT(finiteRunStart()));
@@ -67,6 +69,12 @@ void DSMainWindow::setModel(DSModel *newModel)
 
 void DSMainWindow::update()
 {
+    ui->totalLayerNumLabel->setText(tr("из %1, шаг").
+                                    arg(model->GetLayerCount()));
+    ui->currentLayerEdit->setText(tr("%1").
+                                  arg(model->GetCurrentLayerIndex()));
+    ui->layerStepEdit->setText(tr("%1").
+                               arg(model->GetLayerStep()));
     displayActivatorLayer(model->GetCurrentActivatorLayer());
     displayInhibitorLayer(model->GetCurrentInhibitorLayer());
 }
@@ -166,6 +174,51 @@ void DSMainWindow::finiteRunStart()
 {
     model->StartFiniteRun();
 }
+
+void DSMainWindow::goToPrevLayer()
+{
+    model->SetCurrentLayerIndex(model->GetCurrentLayerIndex() -
+                                model->GetLayerStep());
+}
+
+void DSMainWindow::goToNextLayer()
+{
+    model->SetCurrentLayerIndex(model->GetCurrentLayerIndex() +
+                                model->GetLayerStep());
+}
+
+void DSMainWindow::goToFirstLayer()
+{
+    model->SetCurrentLayerIndex(0);
+}
+
+void DSMainWindow::goToLastLayer()
+{
+    model->SetCurrentLayerIndex(model->GetLayerCount() - 1);
+}
+
+void DSMainWindow::goToLayer(const QString& newLayer)
+{
+    bool ok;
+    int value = newLayer.toInt(&ok);
+    if (ok)
+        model->SetCurrentLayerIndex(value);
+}
+
+void DSMainWindow::changeLayerStep(const QString& newLayerStep)
+{
+    bool ok;
+    int value = newLayerStep.toInt(&ok);
+    if (ok && value > 0)
+        model->SetLayerStep(value);
+}
+
+
+
+
+/*
+ * Private worker methods implementation
+ */
 
 void DSMainWindow::resetPlots()
 {

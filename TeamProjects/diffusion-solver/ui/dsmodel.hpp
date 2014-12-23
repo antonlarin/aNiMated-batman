@@ -33,6 +33,7 @@ public:
     PROPERTY(int, GridDimension)
     PROPERTY(int, IterationsLimit)
     PROPERTY(int, CurrentLayerIndex)
+    PROPERTY(int, LayerStep)
 
     void SetInitialConditions(vector<double>& U1InitConditions,
                               vector<double>& U2InitConditions);
@@ -40,8 +41,9 @@ public:
     void AcquireResult(SchemeResult& newResult);
 
     void StartFiniteRun();
-    const SchemeLayer& GetCurrentActivatorLayer();
-    const SchemeLayer& GetCurrentInhibitorLayer();
+
+    const SchemeLayer GetCurrentActivatorLayer();
+    const SchemeLayer GetCurrentInhibitorLayer();
     int GetLayerCount();
 
 private:
@@ -63,6 +65,7 @@ private:
     vector<IObserver*> views;
 
     int currentLayerIndex;
+    int layerStep;
 };
 
 #endif // DSVIEWMODEL_HPP

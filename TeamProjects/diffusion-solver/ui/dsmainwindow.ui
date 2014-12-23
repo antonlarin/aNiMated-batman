@@ -327,14 +327,14 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="totalLayerNumEdit">
+           <widget class="QLabel" name="totalLayerNumLabel">
             <property name="text">
              <string>из NNNNNN, шаг</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="lineEdit">
+           <widget class="QLineEdit" name="layerStepEdit">
             <property name="minimumSize">
              <size>
               <width>50</width>

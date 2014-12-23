@@ -19,7 +19,9 @@ DSModel::DSModel() :
     iterationsLimit(1000),
     solver(),
     iconditions(nullptr),
-    result(nullptr)
+    result(nullptr),
+    currentLayerIndex(0),
+    layerStep(1)
 {}
 
 void DSModel::RegisterView(IObserver *view)
@@ -32,6 +34,12 @@ void DSModel::NotifyViews()
     for (IObserver* view : views)
         view->update();
 }
+
+
+
+/*
+ * Properties implementation
+ */
 
 double DSModel::GetLambda1() const
 {
@@ -150,9 +158,30 @@ int DSModel::GetCurrentLayerIndex() const
 
 void DSModel::SetCurrentLayerIndex(int value)
 {
-    currentLayerIndex = value;
+    if (value < 0)
+        currentLayerIndex = 0;
+    else if (value >= GetLayerCount())
+        currentLayerIndex = GetLayerCount() - 1;
+    else
+        currentLayerIndex = value;
+    NotifyViews();
 }
 
+int DSModel::GetLayerStep() const
+{
+    return layerStep;
+}
+
+void DSModel::SetLayerStep(int value)
+{
+    layerStep = value;
+}
+
+
+
+/*
+ * Other methods implementation
+ */
 void DSModel::SetInitialConditions(vector<double>& U1InitConditions,
                                    vector<double>& U2InitConditions)
 {
@@ -183,14 +212,14 @@ void DSModel::StartFiniteRun()
     solver.BeginSolve(acquireResult, exceptionCallback);
 }
 
-const SchemeLayer& DSModel::GetCurrentActivatorLayer()
+const SchemeLayer DSModel::GetCurrentActivatorLayer()
 {
-    return result->GetSolutionU1(0);
+    return result->GetSolutionU1(GetCurrentLayerIndex());
 }
 
-const SchemeLayer& DSModel::GetCurrentInhibitorLayer()
+const SchemeLayer DSModel::GetCurrentInhibitorLayer()
 {
-    return result->GetSolutionU2(0);
+    return result->GetSolutionU2(GetCurrentLayerIndex());
 }
 
 int DSModel::GetLayerCount()

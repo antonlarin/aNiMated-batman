@@ -34,6 +34,13 @@ public slots:
     void accuracyChanged(const QString& newAccuracy);
     void iterationsLimitChanged(const QString& newIterationsLimit);
 
+    void goToPrevLayer();
+    void goToNextLayer();
+    void goToFirstLayer();
+    void goToLastLayer();
+    void goToLayer(const QString& newLayer);
+    void changeLayerStep(const QString& newLayerStep);
+
     void finiteRunStart();
 
 private:
