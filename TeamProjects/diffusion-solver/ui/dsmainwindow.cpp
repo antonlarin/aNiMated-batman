@@ -45,10 +45,16 @@ DSMainWindow::~DSMainWindow()
 void DSMainWindow::setModel(DSModel *newModel)
 {
     model = newModel;
+    model->RegisterView(this);
 
     std::vector<double> u1 = { 1.0 };
     std::vector<double> u2 = { 0.5 };
     model->SetInitialConditions(u1, u2);
+}
+
+void DSMainWindow::update()
+{
+    ui->totalLayerNumEdit->setText(tr("из %1").arg(model->GetAccuracy()));
 }
 
 /*

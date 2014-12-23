@@ -22,6 +22,17 @@ DSModel::DSModel() :
     result(nullptr)
 {}
 
+void DSModel::RegisterView(IObserver *view)
+{
+    views.push_back(view);
+}
+
+void DSModel::NotifyViews()
+{
+    for (IObserver* view : views)
+        view->update();
+}
+
 double DSModel::GetLambda1() const
 {
     return lambda1;
@@ -166,5 +177,5 @@ void DSModel::AcquireResult(SchemeResult &result)
 {
 
     this->result.reset(new SchemeResult(result));
-    std::cout << this->result->GetSolutionU1(1).Get(1) << '\n';
+    NotifyViews();
 }

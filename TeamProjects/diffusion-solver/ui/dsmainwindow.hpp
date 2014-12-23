@@ -4,20 +4,22 @@
 #include <QMainWindow>
 
 #include "dsmodel.hpp"
+#include "iobserver.hpp"
 
 namespace Ui {
 class DSMainWindow;
 }
 
-class DSMainWindow : public QMainWindow
+class DSMainWindow : public QMainWindow, public IObserver
 {
     Q_OBJECT
 
 public:
     explicit DSMainWindow(QWidget *parent = 0);
-    ~DSMainWindow();
+    virtual ~DSMainWindow();
 
     void setModel(DSModel *newModel);
+    virtual void update();
 
 public slots:
     void lambda1CoeffChanged(const QString& newLambda1);

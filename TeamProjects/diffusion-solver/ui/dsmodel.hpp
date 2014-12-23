@@ -7,6 +7,7 @@
 #include "CoreGlobal.hpp"
 #include "ExplicitSchemeSolver.hpp"
 #include "DefaultSchemeInitialConditions.hpp"
+#include "iobserver.hpp"
 
 using std::shared_ptr;
 using std::unique_ptr;
@@ -17,6 +18,8 @@ class DSModel
 {
 public:
     explicit DSModel();
+    void RegisterView(IObserver* view);
+    void NotifyViews();
 
     PROPERTY(double, Lambda1)
     PROPERTY(double, Lambda2)
@@ -52,6 +55,7 @@ private:
     ExplicitSchemeSolver solver;
     shared_ptr<DefaultSchemeInitialConditions> iconditions;
     unique_ptr<SchemeResult> result;
+    vector<IObserver*> views;
 };
 
 #endif // DSVIEWMODEL_HPP

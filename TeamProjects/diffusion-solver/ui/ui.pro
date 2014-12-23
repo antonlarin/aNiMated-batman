@@ -20,7 +20,8 @@ SOURCES += main.cpp\
 
 HEADERS  += dsmainwindow.hpp \
     dsmodel.hpp \
-    ext/qcustomplot.h
+    ext/qcustomplot.h \
+    iobserver.hpp
 
 FORMS    += dsmainwindow.ui
 
