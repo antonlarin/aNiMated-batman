@@ -1,12 +1,32 @@
 #include <cmath>
+#include <memory>
+#include <vector>
 #include <cassert>
 #include <stdexcept>
 #include "SchemeSolver.hpp"
+#include "DefaultSchemeInitialConditions.hpp"
 using namespace diffusioncore;
 
 SchemeSolver::SchemeSolver() {
    mIsSolving = false;
    mIsStop = true;
+
+   mC = 0;
+   mK = 0;
+   mMu = 0;
+   mNu = 0;
+   mRho = 0;
+   mLambda1 = 1;
+   mLambda2 = 1;
+   mAccuracy = 0.001;
+   mStepTime = 0.00001;
+   mIntervalsCount = 100;
+   mMaximumIterations = 1000;
+   mSolvingMode = SchemeSolvingMode::StableLayer;
+
+   std::vector<double> cond(1, 1);
+   auto defaultCond = new DefaultSchemeInitialConditions(cond, cond);
+   mInitialConditions = InitialConditionsPtr(defaultCond);
 }
 
 SchemeSolver::~SchemeSolver() { }
@@ -119,11 +139,12 @@ SchemeSolvingMode SchemeSolver::GetSolvingMode() const {
    return mSolvingMode;
 }
 
-void SchemeSolver::SetInitialConditions(ISchemeInitialConditions* value) {
+void SchemeSolver::SetInitialConditions(InitialConditionsPtr value) {
+   
    CheckSolverThreadStatus();
    mInitialConditions = value;
 }
-ISchemeInitialConditions* SchemeSolver::GetInitialConditions() const {
+InitialConditionsPtr SchemeSolver::GetInitialConditions() const {
    return mInitialConditions;
 }
 
@@ -154,14 +175,21 @@ void SchemeSolver::StopSolving() {
 }
 
 
-void SchemeSolver::BeginSolve(SolverCallback callback) {
+void SchemeSolver::BeginSolve(SolverCallback callback, 
+                              ExceptionCallback exCallback) {
    CheckSolverThreadStatus();
+   CheckParameters();
 
    mIsSolving = true;
    mIsStop = false;
    mSolverThread = std::thread(
       &SchemeSolver::SolveNewThread,
-      this, callback);
+      this, callback, exCallback);
+}
+
+void SchemeSolver::WaitSolve() {
+   if (mSolverThread.joinable())
+      mSolverThread.join();
 }
 
 bool SchemeSolver::IsStoped() {
@@ -171,14 +199,42 @@ bool SchemeSolver::IsStoped() {
    return isStoped;
 }
 
+void SchemeSolver::CheckParametersOverride() { }
 
-void SchemeSolver::SolveNewThread(SolverCallback callback) {
-   SolveOverride([&](SchemeResult& res) -> void {
-      mSolverMutex.lock();
-      mIsSolving = false;
-      mSolverMutex.unlock(); 
+
+void SchemeSolver::SolveNewThread(SolverCallback callback,
+                                  ExceptionCallback exCallback) {
+   bool isSolved = true;
+   SchemeResult res;
+   try {
+      res = SolveOverride();    
+   }
+   catch (std::exception ex) {
+      exCallback(ex);
+      isSolved = false;
+   }
+
+   if (isSolved)
       callback(res);
-   });
+
+   mSolverMutex.lock();
+   mIsSolving = false;
+   mSolverMutex.unlock();
+}
+
+void SchemeSolver::CheckParameters() {
+   if (!mInitialConditions)
+      throw std::runtime_error("Initial conditions is not set");
+
+   bool isConditionsRight = mInitialConditions->CheckConditions(
+      SCHEME_X_BEGIN, 
+      SCHEME_X_END, 
+      mIntervalsCount);
+   
+   if (!isConditionsRight)
+      throw std::runtime_error("Invalid initial conditions");
+
+   CheckParametersOverride();
 }
 
 void SchemeSolver::CheckSolverThreadStatus() {

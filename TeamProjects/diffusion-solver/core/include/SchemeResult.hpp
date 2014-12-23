@@ -8,6 +8,7 @@
 namespace diffusioncore {
    class EXPORT_API SchemeResult {
    private:
+      int mSolutionLength;
       int mIntervalsCount;
       int mLayersCount;
       double mTimeStep;
@@ -15,7 +16,15 @@ namespace diffusioncore {
       std::shared_ptr<double> mSolutionU1;
       std::shared_ptr<double> mSolutionU2;
 
+      double mU1Max;
+      double mU1Min;
+      double mU2Max;
+      double mU2Min;
+
+      bool mIsInitialized;
+
    public:
+      SchemeResult();
       SchemeResult(std::shared_ptr<double> solutionU1,
                    std::shared_ptr<double> solutionU2,
                    int intervalsCount,
@@ -40,6 +49,8 @@ namespace diffusioncore {
 
    private:
       int TimeToIndex(double t);
+      void InitializeDefault();
+      void CheckIsInitialized() const;
 
    };
 }

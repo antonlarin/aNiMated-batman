@@ -17,7 +17,9 @@ namespace diffusioncore {
 		std::shared_ptr<double> u2GridPtr;
 
 	protected:
-		virtual void SolveOverride(SolverCallback callback);
+		virtual SchemeResult SolveOverride();
+		virtual void CheckParametersOverride();
+		
 		double GetLayersDifference(double* layer1, double* layer2, int layerSize);
 	};
 }
