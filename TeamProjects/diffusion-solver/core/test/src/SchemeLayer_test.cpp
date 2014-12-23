@@ -3,15 +3,8 @@
 #include <algorithm>
 #include <gtest/gtest.h>
 #include <diffusioncore>
+#include "TestsCommon.hpp"
 using namespace diffusioncore;
-
-void FillArrayRand(double* dest, size_t length, int seed) {
-   std::default_random_engine generator(seed);
-   std::uniform_real_distribution<double> distribution(0.0, 1.0);
-   for (size_t i = 0; i < length; ++i) {
-      dest[i] = distribution(generator);
-   }
-}
 
 void TestInitialization(size_t length, int seed) {
    double* vector = new double[length];
