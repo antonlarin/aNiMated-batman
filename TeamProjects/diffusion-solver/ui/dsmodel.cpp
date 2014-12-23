@@ -143,6 +143,16 @@ void DSModel::SetIterationsLimit(int value)
     iterationsLimit = value;
 }
 
+int DSModel::GetCurrentLayerIndex() const
+{
+    return currentLayerIndex;
+}
+
+void DSModel::SetCurrentLayerIndex(int value)
+{
+    currentLayerIndex = value;
+}
+
 void DSModel::SetInitialConditions(vector<double>& U1InitConditions,
                                    vector<double>& U2InitConditions)
 {
@@ -173,9 +183,24 @@ void DSModel::StartFiniteRun()
     solver.BeginSolve(acquireResult, exceptionCallback);
 }
 
-void DSModel::AcquireResult(SchemeResult &result)
+const SchemeLayer& DSModel::GetCurrentActivatorLayer()
+{
+    return result->GetSolutionU1(0);
+}
+
+const SchemeLayer& DSModel::GetCurrentInhibitorLayer()
+{
+    return result->GetSolutionU2(0);
+}
+
+int DSModel::GetLayerCount()
+{
+    return result->GetLayersCount();
+}
+
+void DSModel::AcquireResult(SchemeResult &newResult)
 {
 
-    this->result.reset(new SchemeResult(result));
+    result.reset(new SchemeResult(newResult));
     NotifyViews();
 }

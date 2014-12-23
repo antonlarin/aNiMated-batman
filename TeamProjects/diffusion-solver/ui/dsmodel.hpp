@@ -32,12 +32,17 @@ public:
     PROPERTY(double, Accuracy)
     PROPERTY(int, GridDimension)
     PROPERTY(int, IterationsLimit)
+    PROPERTY(int, CurrentLayerIndex)
 
     void SetInitialConditions(vector<double>& U1InitConditions,
                               vector<double>& U2InitConditions);
 
+    void AcquireResult(SchemeResult& newResult);
+
     void StartFiniteRun();
-    void AcquireResult(SchemeResult& result);
+    const SchemeLayer& GetCurrentActivatorLayer();
+    const SchemeLayer& GetCurrentInhibitorLayer();
+    int GetLayerCount();
 
 private:
     double lambda1;
@@ -56,6 +61,8 @@ private:
     shared_ptr<DefaultSchemeInitialConditions> iconditions;
     unique_ptr<SchemeResult> result;
     vector<IObserver*> views;
+
+    int currentLayerIndex;
 };
 
 #endif // DSVIEWMODEL_HPP

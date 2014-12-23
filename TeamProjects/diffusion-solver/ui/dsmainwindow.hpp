@@ -37,6 +37,12 @@ public slots:
     void finiteRunStart();
 
 private:
+    static int maxPlotPointsNumber() { return 400; }
+
+    void resetPlots();
+    void displayActivatorLayer(const SchemeLayer& layer);
+    void displayInhibitorLayer(const SchemeLayer& layer);
+
     Ui::DSMainWindow *ui;
     DSModel* model;
 };

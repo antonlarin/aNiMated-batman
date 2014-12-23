@@ -33,8 +33,21 @@ DSMainWindow::DSMainWindow(QWidget *parent) :
     connect(ui->iterationsEdit, SIGNAL(textEdited(QString)),
             this, SLOT(iterationsLimitChanged(QString)));
 
+    connect(ui->currentLayerEdit, SIGNAL(textChanged(QString)),
+            this, SLOT());
+    connect(ui->prevLayerButton, SIGNAL(clicked()),
+            this, SLOT());
+    connect(ui->nextLayerButton, SIGNAL(clicked()),
+            this, SLOT());
+    connect(ui->firstLayerButton, SIGNAL(clicked()),
+            this, SLOT());
+    connect(ui->lastLayerButton, SIGNAL(clicked()),
+            this, SLOT());
+
     connect(ui->finiteRunButton, SIGNAL(clicked()),
             this, SLOT(finiteRunStart()));
+
+    resetPlots();
 }
 
 DSMainWindow::~DSMainWindow()
@@ -54,7 +67,8 @@ void DSMainWindow::setModel(DSModel *newModel)
 
 void DSMainWindow::update()
 {
-    ui->totalLayerNumEdit->setText(tr("из %1").arg(model->GetAccuracy()));
+    displayActivatorLayer(model->GetCurrentActivatorLayer());
+    displayInhibitorLayer(model->GetCurrentInhibitorLayer());
 }
 
 /*
@@ -151,4 +165,53 @@ void DSMainWindow::iterationsLimitChanged(const QString& newIterationsLimit)
 void DSMainWindow::finiteRunStart()
 {
     model->StartFiniteRun();
+}
+
+void DSMainWindow::resetPlots()
+{
+    ui->activatorPlot->addGraph();
+    ui->activatorPlot->xAxis->setLabel("x");
+    ui->activatorPlot->yAxis->setLabel("Концентрация активатора");
+    ui->activatorPlot->xAxis->setRange(0, 1);
+
+    ui->inhibitorPlot->addGraph();
+    ui->inhibitorPlot->xAxis->setLabel("x");
+    ui->inhibitorPlot->yAxis->setLabel("Концентрация ингибитора");
+    ui->inhibitorPlot->xAxis->setRange(0, 1);
+}
+
+void DSMainWindow::displayActivatorLayer(const SchemeLayer& layer)
+{
+    QVector<double> xs, ys;
+    int layerLength = layer.GetLength();
+    int arrayStep = layerLength / maxPlotPointsNumber() + 1;
+    double xStep = 1.0 / model->GetGridDimension();
+    for (int i = 0; i < layerLength - 1; i += arrayStep)
+    {
+        xs.push_back(xStep * i);
+        ys.push_back(layer.Get(i));
+    }
+    xs.push_back(1.0);
+    ys.push_back(layer.Get(layerLength - 1));
+
+    ui->activatorPlot->graph(0)->setData(xs, ys);
+    ui->activatorPlot->replot();
+}
+
+void DSMainWindow::displayInhibitorLayer(const SchemeLayer& layer)
+{
+    QVector<double> xs, ys;
+    int layerLength = layer.GetLength();
+    int arrayStep = layerLength / maxPlotPointsNumber() + 1;
+    double xStep = 1.0 / model->GetGridDimension();
+    for (int i = 0; i < layerLength - 1; i += arrayStep)
+    {
+        xs.push_back(xStep * i);
+        ys.push_back(layer.Get(i));
+    }
+    xs.push_back(1.0);
+    ys.push_back(layer.Get(layerLength - 1));
+
+    ui->inhibitorPlot->graph(0)->setData(xs, ys);
+    ui->inhibitorPlot->replot();
 }

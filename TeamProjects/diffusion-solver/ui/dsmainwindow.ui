@@ -234,7 +234,7 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1,0,1,0">
+         <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,1,0,1,0,0,0">
           <property name="topMargin">
            <number>2</number>
           </property>
@@ -242,7 +242,38 @@
            <number>2</number>
           </property>
           <item>
+           <widget class="QPushButton" name="firstLayerButton">
+            <property name="minimumSize">
+             <size>
+              <width>55</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>55</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Начало</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QPushButton" name="prevLayerButton">
+            <property name="minimumSize">
+             <size>
+              <width>25</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>25</width>
+              <height>16777215</height>
+             </size>
+            </property>
             <property name="text">
              <string>&lt;</string>
             </property>
@@ -250,6 +281,18 @@
           </item>
           <item>
            <widget class="QLabel" name="label">
+            <property name="minimumSize">
+             <size>
+              <width>31</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>16777215</height>
+             </size>
+            </property>
             <property name="layoutDirection">
              <enum>Qt::LeftToRight</enum>
             </property>
@@ -277,7 +320,7 @@
             </property>
             <property name="maximumSize">
              <size>
-              <width>70</width>
+              <width>75</width>
               <height>16777215</height>
              </size>
             </property>
@@ -286,14 +329,61 @@
           <item>
            <widget class="QLabel" name="totalLayerNumEdit">
             <property name="text">
-             <string>из N</string>
+             <string>из NNNNNN, шаг</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="lineEdit">
+            <property name="minimumSize">
+             <size>
+              <width>50</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>75</width>
+              <height>16777215</height>
+             </size>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QPushButton" name="nextLayerButton">
+            <property name="minimumSize">
+             <size>
+              <width>25</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>25</width>
+              <height>16777215</height>
+             </size>
+            </property>
             <property name="text">
              <string>&gt;</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="lastLayerButton">
+            <property name="minimumSize">
+             <size>
+              <width>55</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>55</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Конец</string>
             </property>
            </widget>
           </item>
