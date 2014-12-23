@@ -13,10 +13,10 @@ void SetSolverDefaultParameters(SchemeSolver& solver) {
    solver.SetRho(0);
    solver.SetLambda1(1);
    solver.SetLambda2(1);
-   solver.SetAccuracy(0.001);
+   solver.SetAccuracy(0.00001);
    solver.SetStepTime(0.00001);
-   solver.SetIntervalsCount(100);
-   solver.SetMaximumIterations(1000);
+   solver.SetIntervalsCount(200);
+   solver.SetMaximumIterations(200000);
    solver.SetSolvingMode(SchemeSolvingMode::StableLayer);
 }
 
@@ -35,5 +35,32 @@ TEST(ExplicitSchemeSolverClass, Initialization) {
 
    solver.BeginSolve(callback, exCallback);
    solver.WaitSolve();
+
+   solver.BeginSolve(callback, exCallback);
+   solver.WaitSolve();
+}
+
+TEST(ExplicitSchemeSolverClass, SolvingAbort) {
+   ExplicitSchemeSolver solver; 
+   SetSolverDefaultParameters(solver);
+
+   std::function<void(SchemeResult&)> callback = 
+      [](SchemeResult& res) -> void {
+         SUCCEED();
+      };
+   std::function<void(std::exception&)> exCallback = 
+      [](std::exception& ex) -> void {
+         FAIL();
+      };
+
+   solver.BeginSolve(callback, exCallback);
+   solver.StopSolving();
+   solver.StopSolving();
+
+   solver.BeginSolve(callback, exCallback);
+   solver.WaitSolve();
+
+   solver.BeginSolve(callback, exCallback);
+   solver.StopSolving();
 }
 
