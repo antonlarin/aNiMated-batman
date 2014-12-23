@@ -1,12 +1,11 @@
-#include <cmath>
 #include <limits>
 #include <cassert>
+#include <algorithm>
 #include <stdexcept>
 #include "SchemeResult.hpp"
 using namespace diffusioncore;
 
-const double SIGNALING_NAN = std::numeric_limits<double>::signaling_NaN();
-
+const double NOT_INITIALIZED = std::numeric_limits<double>::infinity();
 
 SchemeResult::SchemeResult() {
    mIsInitialized = false;
@@ -89,7 +88,7 @@ SchemeLayer SchemeResult::GetLastLayerU2() {
 
 double SchemeResult::GetSolutionU1Maximum() {
    CheckIsInitialized();
-   if (mU1Max != SIGNALING_NAN)
+   if (mU1Max != NOT_INITIALIZED)
       return mU1Max;
 
    double* u1 = mSolutionU1.get();
@@ -103,7 +102,7 @@ double SchemeResult::GetSolutionU1Maximum() {
 
 double SchemeResult::GetSolutionU1Minimum() {
    CheckIsInitialized();
-   if (mU1Min != SIGNALING_NAN)
+   if (mU1Min != NOT_INITIALIZED)
       return mU1Min;
 
    double* u1 = mSolutionU1.get();
@@ -117,12 +116,12 @@ double SchemeResult::GetSolutionU1Minimum() {
 
 double SchemeResult::GetSolutionU2Maximum() {
    CheckIsInitialized();
-   if (mU2Max != SIGNALING_NAN)
+   if (mU2Max != NOT_INITIALIZED)
       return mU2Max;
 
    double* u2 = mSolutionU2.get();
    double u2Max = u2[0];
-   for (int i = 2; i < mSolutionLength; ++i)
+   for (int i = 1; i < mSolutionLength; ++i)
       u2Max = std::max(u2Max, u2[i]);
 
    mU2Max = u2Max;
@@ -131,12 +130,12 @@ double SchemeResult::GetSolutionU2Maximum() {
 
 double SchemeResult::GetSolutionU2Minimum() {
    CheckIsInitialized();
-   if (mU2Min != SIGNALING_NAN)
+   if (mU2Min != NOT_INITIALIZED)
       return mU2Min;
 
    double* u2 = mSolutionU2.get();
    double u2Min = u2[0];
-   for (int i = 2; i < mSolutionLength; ++i)
+   for (int i = 1; i < mSolutionLength; ++i)
       u2Min = std::min(u2Min, u2[i]);
 
    mU2Min = u2Min;
@@ -155,10 +154,10 @@ int SchemeResult::TimeToIndex(double t) {
 }
 
 void SchemeResult::InitializeDefault() {
-   mU1Max = SIGNALING_NAN;
-   mU1Min = SIGNALING_NAN;
-   mU2Max = SIGNALING_NAN;
-   mU2Min = SIGNALING_NAN;
+   mU1Max = NOT_INITIALIZED;
+   mU1Min = NOT_INITIALIZED;
+   mU2Max = NOT_INITIALIZED;
+   mU2Min = NOT_INITIALIZED;
 }
 
 void SchemeResult::CheckIsInitialized() const {

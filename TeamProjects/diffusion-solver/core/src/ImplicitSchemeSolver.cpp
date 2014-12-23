@@ -186,17 +186,4 @@ SchemeResult ImplicitSchemeSolver::SolveOverride()
 }
 
 void ImplicitSchemeSolver::CheckParametersOverride() {
-<<<<<<< HEAD
-	double k = GetStepTime();
-	int n = GetIntervalsCount();
-	double h = 1.0 / n;
-
-	if (k > h * h / 2) { 
-		throw std::runtime_error(
-			"Incompatible intervlas "
-			"count and time step");
-	}
 }
-=======
-}
->>>>>>> c3417dd2054ac1a93b13d99702522e91117f6ff2
