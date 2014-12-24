@@ -37,10 +37,9 @@ public:
     PROPERTY(int, IterationsLimit)
     PROPERTY(int, CurrentLayerIndex)
     PROPERTY(int, LayerStep)
+    PROPERTY(vector<double>, ActivatorInitialConditions)
+    PROPERTY(vector<double>, InhibitorInitialConditions)
     PROPERTY(SolverType, SolverType)
-
-    void SetInitialConditions(vector<double>& U1InitConditions,
-                              vector<double>& U2InitConditions);
 
     void AcquireResult(SchemeResult& newResult);
 
@@ -67,11 +66,13 @@ private:
     double accuracy;
     int gridDimension;
     int iterationsLimit;
+    vector<double> activatorInitConditionsCoeffs;
+    vector<double> inhibitorInitConditionsCoeffs;
     SolverType solverType;
 
     unique_ptr<SchemeSolver> solver;
-    shared_ptr<DefaultSchemeInitialConditions> iconditions;
     unique_ptr<SchemeResult> result;
+
     vector<IObserver*> views;
 
     int currentLayerIndex;

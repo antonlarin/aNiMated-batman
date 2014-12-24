@@ -17,9 +17,10 @@ DSModel::DSModel() :
     accuracy(0.001),
     gridDimension(100),
     iterationsLimit(1000),
+    activatorInitConditionsCoeffs(),
+    inhibitorInitConditionsCoeffs(),
     solverType(SolverType::EXPLICIT_SOLVER),
     solver(new ExplicitSchemeSolver()),
-    iconditions(nullptr),
     result(nullptr),
     currentLayerIndex(0),
     layerStep(1)
@@ -205,11 +206,25 @@ void DSModel::SetSolverType(SolverType value)
 /*
  * Other methods implementation
  */
-void DSModel::SetInitialConditions(vector<double>& U1InitConditions,
-                                   vector<double>& U2InitConditions)
+vector<double> DSModel::GetActivatorInitialConditions() const
+
 {
-    iconditions.reset(new DefaultSchemeInitialConditions(U1InitConditions,
-                                                         U2InitConditions));
+    return activatorInitConditionsCoeffs;
+}
+
+void DSModel::SetActivatorInitialConditions(vector<double> value)
+{
+    activatorInitConditionsCoeffs = value;
+}
+
+vector<double> DSModel::GetInhibitorInitialConditions() const
+{
+    return inhibitorInitConditionsCoeffs;
+}
+
+void DSModel::SetInhibitorInitialConditions(vector<double> value)
+{
+    inhibitorInitConditionsCoeffs = value;
 }
 
 void DSModel::StartFiniteRun()
@@ -225,7 +240,12 @@ void DSModel::StartFiniteRun()
     solver->SetAccuracy(GetAccuracy());
     solver->SetIntervalsCount(GetGridDimension());
     solver->SetMaximumIterations(GetIterationsLimit());
-    solver->SetInitialConditions(iconditions);
+    shared_ptr<ISchemeInitialConditions> initConditions(
+                new DefaultSchemeInitialConditions(
+                    GetActivatorInitialConditions(),
+                    GetInhibitorInitialConditions()
+                    ));
+    solver->SetInitialConditions(initConditions);
     solver->SetSolvingMode(AllLayers);
 
     std::function<void(SchemeResult&)> acquireResult =

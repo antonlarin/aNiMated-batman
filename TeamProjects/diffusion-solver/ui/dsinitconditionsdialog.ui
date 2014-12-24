@@ -129,52 +129,62 @@
     <widget class="QLineEdit" name="inhibitorEdit1"/>
    </item>
    <item row="2" column="3">
-    <widget class="QToolButton" name="toolButton_2">
+    <widget class="QToolButton" name="removeHarmonicButton1">
      <property name="text">
       <string>...</string>
      </property>
      <property name="icon">
-      <iconset theme="list-remove"/>
+      <iconset theme="list-remove">
+       <normaloff/>
+      </iconset>
      </property>
     </widget>
    </item>
    <item row="3" column="3">
-    <widget class="QToolButton" name="toolButton_3">
+    <widget class="QToolButton" name="removeHarmonicButton2">
      <property name="text">
       <string>...</string>
      </property>
      <property name="icon">
-      <iconset theme="list-remove"/>
+      <iconset theme="list-remove">
+       <normaloff/>
+      </iconset>
      </property>
     </widget>
    </item>
    <item row="4" column="3">
-    <widget class="QToolButton" name="toolButton">
+    <widget class="QToolButton" name="removeHarmonicButton3">
      <property name="text">
       <string>...</string>
      </property>
      <property name="icon">
-      <iconset theme="list-remove"/>
+      <iconset theme="list-remove">
+       <normaloff/>
+      </iconset>
      </property>
     </widget>
    </item>
    <item row="5" column="3">
-    <widget class="QToolButton" name="toolButton_4">
+    <widget class="QToolButton" name="removeHarmonicButton4">
      <property name="text">
       <string>...</string>
      </property>
      <property name="icon">
-      <iconset theme="list-remove"/>
+      <iconset theme="list-remove">
+       <normaloff/>
+      </iconset>
      </property>
     </widget>
    </item>
    <item row="6" column="3">
-    <widget class="QToolButton" name="toolButton_5">
+    <widget class="QToolButton" name="removeHarmonicButton5">
      <property name="text">
       <string>...</string>
      </property>
      <property name="icon">
-      <iconset theme="list-remove"/>
+      <iconset theme="list-remove">
+       <normaloff/>
+      </iconset>
      </property>
     </widget>
    </item>

@@ -57,7 +57,7 @@ private:
     void displayInhibitorLayer(const SchemeLayer& layer);
 
     Ui::DSMainWindow *ui;
-    unique_ptr<DSInitConditionsDialog> initConditionsDialog;
+    DSInitConditionsDialog* initConditionsDialog;
     DSModel* model;
 };
 

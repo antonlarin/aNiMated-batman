@@ -74,7 +74,8 @@ void DSMainWindow::setModel(DSModel *newModel)
 
     std::vector<double> u1 = { 1.0, 0.5 };
     std::vector<double> u2 = { 1.0, -0.5 };
-    model->SetInitialConditions(u1, u2);
+    model->SetActivatorInitialConditions(u1);
+    model->SetInhibitorInitialConditions(u2);
 }
 
 void DSMainWindow::update()
@@ -236,7 +237,8 @@ void DSMainWindow::changeLayerStep(const QString& newLayerStep)
 
 void DSMainWindow::openInitConditionsDialog()
 {
-    initConditionsDialog.reset(new DSInitConditionsDialog(model, this));
+    initConditionsDialog = new DSInitConditionsDialog(model, this);
+    initConditionsDialog->setAttribute(Qt::WA_DeleteOnClose);
     initConditionsDialog->show();
 }
 
