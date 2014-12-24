@@ -194,7 +194,15 @@ void DSMainWindow::changeSolverType()
 
 void DSMainWindow::startFiniteRun()
 {
-    model->StartFiniteRun();
+    try
+    {
+        model->StartFiniteRun();
+    }
+    catch (std::runtime_error e)
+    {
+        QMessageBox::critical(this, QString("Неверные параметры"),
+                              QString(e.what()));
+    }
 }
 
 void DSMainWindow::goToPrevLayer()
