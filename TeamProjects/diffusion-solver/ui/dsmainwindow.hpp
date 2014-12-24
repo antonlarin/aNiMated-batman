@@ -16,11 +16,8 @@ class DSMainWindow : public QMainWindow, public IObserver
     Q_OBJECT
 
 public:
-    explicit DSMainWindow(QWidget *parent = 0);
+    explicit DSMainWindow(DSModel* newModel, QWidget *parent = 0);
     virtual ~DSMainWindow();
-
-    void setModel(DSModel *newModel);
-    virtual void update();
 
 public slots:
     void lambda1CoeffChanged(const QString& newLambda1);
@@ -44,8 +41,11 @@ public slots:
     void changeLayerStep(const QString& newLayerStep);
 
     void startFiniteRun();
+    void startStabilityRun();
 
     void openInitConditionsDialog();
+
+    void update();
 
 private:
     static int maxPlotPointsNumber() { return 400; }

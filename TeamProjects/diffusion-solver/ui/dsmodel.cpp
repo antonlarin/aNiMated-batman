@@ -6,6 +6,7 @@
 using namespace std::placeholders;
 
 DSModel::DSModel() :
+    QObject(),
     lambda1(1.0),
     lambda2(1.0),
     k(1.0),
@@ -31,11 +32,11 @@ void DSModel::RegisterView(IObserver *view)
     views.push_back(view);
 }
 
-void DSModel::NotifyViews()
-{
-    for (IObserver* view : views)
-        view->update();
-}
+//void DSModel::modelChanged()
+//{
+//    for (IObserver* view : views)
+//        view->update();
+//}
 
 
 
@@ -166,7 +167,7 @@ void DSModel::SetCurrentLayerIndex(int value)
         currentLayerIndex = GetLayerCount() - 1;
     else
         currentLayerIndex = value;
-    NotifyViews();
+    emit modelChanged();
 }
 
 int DSModel::GetLayerStep() const
@@ -227,7 +228,7 @@ void DSModel::SetInhibitorInitialConditions(vector<double> value)
     inhibitorInitConditionsCoeffs = value;
 }
 
-void DSModel::StartFiniteRun()
+void DSModel::StartRun(SchemeSolvingMode mode)
 {
     solver->SetLambda1(GetLambda1());
     solver->SetLambda2(GetLambda2());
@@ -246,7 +247,14 @@ void DSModel::StartFiniteRun()
                     GetInhibitorInitialConditions()
                     ));
     solver->SetInitialConditions(initConditions);
-    solver->SetSolvingMode(AllLayers);
+    switch (mode)
+    {
+    case AllLayers:
+        solver->SetSolvingMode(AllLayers);
+        break;
+    case StableLayer:
+        solver->SetSolvingMode(StableLayer);
+    }
 
     std::function<void(SchemeResult&)> acquireResult =
             std::bind(&DSModel::AcquireResult, this, _1);
@@ -293,5 +301,5 @@ int DSModel::GetLayerCount() const
 void DSModel::AcquireResult(SchemeResult &newResult)
 {
     result.reset(new SchemeResult(newResult));
-    NotifyViews();
+    emit modelChanged();
 }
