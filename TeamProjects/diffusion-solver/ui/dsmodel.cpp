@@ -17,8 +17,10 @@ DSModel::DSModel() :
     accuracy(0.001),
     gridDimension(100),
     iterationsLimit(1000),
-    solver(),
-    iconditions(nullptr),
+    activatorInitConditionsCoeffs(),
+    inhibitorInitConditionsCoeffs(),
+    solverType(SolverType::EXPLICIT_SOLVER),
+    solver(new ExplicitSchemeSolver()),
     result(nullptr),
     currentLayerIndex(0),
     layerStep(1)
@@ -177,39 +179,80 @@ void DSModel::SetLayerStep(int value)
     layerStep = value;
 }
 
+SolverType DSModel::GetSolverType() const
+{
+    return solverType;
+}
+
+void DSModel::SetSolverType(SolverType value)
+{
+    SolverType oldType = solverType;
+    solverType = value;
+    if (oldType != solverType)
+    {
+        if (solverType == SolverType::EXPLICIT_SOLVER)
+        {
+            solver.reset(new ExplicitSchemeSolver());
+        }
+        else
+        {
+            solver.reset(new ImplicitSchemeSolver());
+        }
+    }
+}
+
 
 
 /*
  * Other methods implementation
  */
-void DSModel::SetInitialConditions(vector<double>& U1InitConditions,
-                                   vector<double>& U2InitConditions)
+vector<double> DSModel::GetActivatorInitialConditions() const
+
 {
-    iconditions.reset(new DefaultSchemeInitialConditions(U1InitConditions,
-                                                         U2InitConditions));
+    return activatorInitConditionsCoeffs;
+}
+
+void DSModel::SetActivatorInitialConditions(vector<double> value)
+{
+    activatorInitConditionsCoeffs = value;
+}
+
+vector<double> DSModel::GetInhibitorInitialConditions() const
+{
+    return inhibitorInitConditionsCoeffs;
+}
+
+void DSModel::SetInhibitorInitialConditions(vector<double> value)
+{
+    inhibitorInitConditionsCoeffs = value;
 }
 
 void DSModel::StartFiniteRun()
 {
-    solver.SetLambda1(GetLambda1());
-    solver.SetLambda2(GetLambda2());
-    solver.SetK(GetK());
-    solver.SetC(GetC());
-    solver.SetRho(GetRho());
-    solver.SetMu(GetGamma());
-    solver.SetNu(GetNu());
-    solver.SetStepTime(GetTimeStep());
-    solver.SetAccuracy(GetAccuracy());
-    solver.SetIntervalsCount(GetGridDimension());
-    solver.SetMaximumIterations(GetIterationsLimit());
-    solver.SetInitialConditions(iconditions);
-    solver.SetSolvingMode(AllLayers);
+    solver->SetLambda1(GetLambda1());
+    solver->SetLambda2(GetLambda2());
+    solver->SetK(GetK());
+    solver->SetC(GetC());
+    solver->SetRho(GetRho());
+    solver->SetMu(GetGamma());
+    solver->SetNu(GetNu());
+    solver->SetStepTime(GetTimeStep());
+    solver->SetAccuracy(GetAccuracy());
+    solver->SetIntervalsCount(GetGridDimension());
+    solver->SetMaximumIterations(GetIterationsLimit());
+    shared_ptr<ISchemeInitialConditions> initConditions(
+                new DefaultSchemeInitialConditions(
+                    GetActivatorInitialConditions(),
+                    GetInhibitorInitialConditions()
+                    ));
+    solver->SetInitialConditions(initConditions);
+    solver->SetSolvingMode(AllLayers);
 
     std::function<void(SchemeResult&)> acquireResult =
             std::bind(&DSModel::AcquireResult, this, _1);
     std::function<void(std::exception&)> exceptionCallback =
             [&](std::exception&) -> void {};
-    solver.BeginSolve(acquireResult, exceptionCallback);
+    solver->BeginSolve(acquireResult, exceptionCallback);
 }
 
 const SchemeLayer DSModel::GetCurrentActivatorLayer()
@@ -222,14 +265,33 @@ const SchemeLayer DSModel::GetCurrentInhibitorLayer()
     return result->GetSolutionU2(GetCurrentLayerIndex());
 }
 
-int DSModel::GetLayerCount()
+double DSModel::GetActivatorMaximum() const
+{
+    return result->GetSolutionU1Maximum();
+}
+
+double DSModel::GetActivatorMinimum() const
+{
+    return result->GetSolutionU1Minimum();
+}
+
+double DSModel::GetInhibitorMaximum() const
+{
+    return result->GetSolutionU2Maximum();
+}
+
+double DSModel::GetInhibitorMinimum() const
+{
+    return result->GetSolutionU2Minimum();
+}
+
+int DSModel::GetLayerCount() const
 {
     return result->GetLayersCount();
 }
 
 void DSModel::AcquireResult(SchemeResult &newResult)
 {
-
     result.reset(new SchemeResult(newResult));
     NotifyViews();
 }

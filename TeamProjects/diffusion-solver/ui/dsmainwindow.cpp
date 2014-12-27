@@ -6,6 +6,7 @@
 DSMainWindow::DSMainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::DSMainWindow),
+    initConditionsDialog(nullptr),
     model(nullptr)
 {
     ui->setupUi(this);
@@ -33,6 +34,10 @@ DSMainWindow::DSMainWindow(QWidget *parent) :
     connect(ui->iterationsEdit, SIGNAL(textEdited(QString)),
             this, SLOT(iterationsLimitChanged(QString)));
 
+    connect(ui->explicitSolverRadioButton, SIGNAL(toggled(bool)),
+            this, SLOT(changeSolverType()));
+    connect(ui->implicitSolverRadioButton, SIGNAL(toggled(bool)),
+            this, SLOT(changeSolverType()));
     connect(ui->currentLayerEdit, SIGNAL(textEdited(QString)),
             this, SLOT(goToLayer(QString)));
     connect(ui->prevLayerButton, SIGNAL(clicked()),
@@ -47,9 +52,14 @@ DSMainWindow::DSMainWindow(QWidget *parent) :
             this, SLOT(changeLayerStep(QString)));
 
     connect(ui->finiteRunButton, SIGNAL(clicked()),
-            this, SLOT(finiteRunStart()));
+            this, SLOT(startFiniteRun()));
 
-    resetPlots();
+    connect(ui->quitAction, SIGNAL(triggered()),
+            this, SLOT(close()));
+    connect(ui->initConditionsAction, SIGNAL(triggered()),
+            this, SLOT(openInitConditionsDialog()));
+
+    initPlots();
 }
 
 DSMainWindow::~DSMainWindow()
@@ -62,9 +72,10 @@ void DSMainWindow::setModel(DSModel *newModel)
     model = newModel;
     model->RegisterView(this);
 
-    std::vector<double> u1 = { 1.0 };
-    std::vector<double> u2 = { 0.5 };
-    model->SetInitialConditions(u1, u2);
+    std::vector<double> u1 = { 1.0, 0.5 };
+    std::vector<double> u2 = { 1.0, -0.5 };
+    model->SetActivatorInitialConditions(u1);
+    model->SetInhibitorInitialConditions(u2);
 }
 
 void DSMainWindow::update()
@@ -75,6 +86,8 @@ void DSMainWindow::update()
                                   arg(model->GetCurrentLayerIndex()));
     ui->layerStepEdit->setText(tr("%1").
                                arg(model->GetLayerStep()));
+    resetPlots(model->GetActivatorMinimum(), model->GetActivatorMaximum(),
+               model->GetInhibitorMinimum(), model->GetInhibitorMaximum());
     displayActivatorLayer(model->GetCurrentActivatorLayer());
     displayInhibitorLayer(model->GetCurrentInhibitorLayer());
 }
@@ -170,9 +183,26 @@ void DSMainWindow::iterationsLimitChanged(const QString& newIterationsLimit)
         model->SetIterationsLimit(value);
 }
 
-void DSMainWindow::finiteRunStart()
+void DSMainWindow::changeSolverType()
 {
-    model->StartFiniteRun();
+    SolverType oldType = model->GetSolverType();
+    SolverType newType = (ui->explicitSolverRadioButton->isChecked()) ?
+                SolverType::EXPLICIT_SOLVER : SolverType::IMPLICIT_SOLVER;
+    if (oldType != newType)
+        model->SetSolverType(newType);
+}
+
+void DSMainWindow::startFiniteRun()
+{
+    try
+    {
+        model->StartFiniteRun();
+    }
+    catch (std::runtime_error e)
+    {
+        QMessageBox::critical(this, QString("Неверные параметры"),
+                              QString(e.what()));
+    }
 }
 
 void DSMainWindow::goToPrevLayer()
@@ -213,14 +243,19 @@ void DSMainWindow::changeLayerStep(const QString& newLayerStep)
         model->SetLayerStep(value);
 }
 
+void DSMainWindow::openInitConditionsDialog()
+{
+    initConditionsDialog = new DSInitConditionsDialog(model, this);
+    initConditionsDialog->setAttribute(Qt::WA_DeleteOnClose);
+    initConditionsDialog->show();
+}
 
 
 
 /*
  * Private worker methods implementation
  */
-
-void DSMainWindow::resetPlots()
+void DSMainWindow::initPlots()
 {
     ui->activatorPlot->addGraph();
     ui->activatorPlot->xAxis->setLabel("x");
@@ -231,6 +266,22 @@ void DSMainWindow::resetPlots()
     ui->inhibitorPlot->xAxis->setLabel("x");
     ui->inhibitorPlot->yAxis->setLabel("Концентрация ингибитора");
     ui->inhibitorPlot->xAxis->setRange(0, 1);
+
+    // Scale y axes on plots with some junk values
+    resetPlots(0, 1, 0, 1);
+}
+
+void DSMainWindow::resetPlots(double activatorMin, double activatorMax,
+                              double inhibitorMin, double inhibitorMax)
+{
+    double yrange = activatorMax - activatorMin;
+    ui->activatorPlot->yAxis->setRange(activatorMin - 0.05 * yrange,
+                                       activatorMax + 0.05 * yrange);
+
+
+    yrange = inhibitorMax - inhibitorMin;
+    ui->inhibitorPlot->yAxis->setRange(inhibitorMin - 0.05 * yrange,
+                                       inhibitorMax + 0.05 * yrange);
 }
 
 void DSMainWindow::displayActivatorLayer(const SchemeLayer& layer)

@@ -5,6 +5,7 @@
 
 #include "dsmodel.hpp"
 #include "iobserver.hpp"
+#include "dsinitconditionsdialog.hpp"
 
 namespace Ui {
 class DSMainWindow;
@@ -33,6 +34,7 @@ public slots:
     void timeStepChanged(const QString& newTimeStep);
     void accuracyChanged(const QString& newAccuracy);
     void iterationsLimitChanged(const QString& newIterationsLimit);
+    void changeSolverType();
 
     void goToPrevLayer();
     void goToNextLayer();
@@ -41,16 +43,21 @@ public slots:
     void goToLayer(const QString& newLayer);
     void changeLayerStep(const QString& newLayerStep);
 
-    void finiteRunStart();
+    void startFiniteRun();
+
+    void openInitConditionsDialog();
 
 private:
     static int maxPlotPointsNumber() { return 400; }
 
-    void resetPlots();
+    void initPlots();
+    void resetPlots(double activatorMin, double activatorMax,
+                    double inhibitorMin, double inhibitorMax);
     void displayActivatorLayer(const SchemeLayer& layer);
     void displayInhibitorLayer(const SchemeLayer& layer);
 
     Ui::DSMainWindow *ui;
+    DSInitConditionsDialog* initConditionsDialog;
     DSModel* model;
 };
 

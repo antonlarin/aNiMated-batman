@@ -16,14 +16,17 @@ QMAKE_CXXFLAGS += -std=c++11
 SOURCES += main.cpp\
         dsmainwindow.cpp \
     dsmodel.cpp \
-    ext/qcustomplot.cpp
+    ext/qcustomplot.cpp \
+    dsinitconditionsdialog.cpp
 
 HEADERS  += dsmainwindow.hpp \
     dsmodel.hpp \
     ext/qcustomplot.h \
-    iobserver.hpp
+    iobserver.hpp \
+    dsinitconditionsdialog.hpp
 
-FORMS    += dsmainwindow.ui
+FORMS    += dsmainwindow.ui \
+    dsinitconditionsdialog.ui
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../core-build/release/ -ldiffusion-solver
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../core-build/debug/ -ldiffusion-solver

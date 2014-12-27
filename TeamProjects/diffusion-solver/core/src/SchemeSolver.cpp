@@ -174,7 +174,7 @@ void SchemeSolver::StopSolving() {
    mSolverMutex.lock();
    mIsStop = true;
    mSolverMutex.unlock();
-   mSolverThread.join();
+   WaitSolve();
 }
 
 
@@ -182,6 +182,9 @@ void SchemeSolver::BeginSolve(SolverCallback callback,
                               ExceptionCallback exCallback) {
    CheckSolverThreadStatus();
    CheckParameters();
+
+   if (mSolverThread.joinable())
+      mSolverThread.detach();
 
    mIsSolving = true;
    mIsStop = false;
