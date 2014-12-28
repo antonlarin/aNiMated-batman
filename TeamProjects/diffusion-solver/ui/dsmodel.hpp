@@ -4,6 +4,8 @@
 #include <vector>
 #include <memory>
 
+#include <QObject>
+
 #include "CoreGlobal.hpp"
 #include "ExplicitSchemeSolver.hpp"
 #include "ImplicitSchemeSolver.hpp"
@@ -17,12 +19,14 @@ using namespace diffusioncore;
 
 enum class SolverType { EXPLICIT_SOLVER, IMPLICIT_SOLVER };
 
-class DSModel
+class DSModel : public QObject
 {
+    Q_OBJECT
+
 public:
     explicit DSModel();
+
     void RegisterView(IObserver* view);
-    void NotifyViews();
 
     PROPERTY(double, Lambda1)
     PROPERTY(double, Lambda2)
@@ -43,7 +47,7 @@ public:
 
     void AcquireResult(SchemeResult& newResult);
 
-    void StartFiniteRun();
+    void StartRun(SchemeSolvingMode mode);
 
     const SchemeLayer GetCurrentActivatorLayer();
     const SchemeLayer GetCurrentInhibitorLayer();
@@ -53,6 +57,9 @@ public:
     double GetInhibitorMinimum() const;
 
     int GetLayerCount() const;
+
+signals:
+    void modelChanged();
 
 private:
     double lambda1;

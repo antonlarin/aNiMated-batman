@@ -3,11 +3,11 @@
 
 #include <vector>
 
-DSMainWindow::DSMainWindow(QWidget *parent) :
+DSMainWindow::DSMainWindow(DSModel* newModel, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::DSMainWindow),
     initConditionsDialog(nullptr),
-    model(nullptr)
+    model(newModel)
 {
     ui->setupUi(this);
 
@@ -53,29 +53,27 @@ DSMainWindow::DSMainWindow(QWidget *parent) :
 
     connect(ui->finiteRunButton, SIGNAL(clicked()),
             this, SLOT(startFiniteRun()));
+    connect(ui->stabilityRunButton, SIGNAL(clicked()),
+            this, SLOT(startStabilityRun()));
 
     connect(ui->quitAction, SIGNAL(triggered()),
             this, SLOT(close()));
     connect(ui->initConditionsAction, SIGNAL(triggered()),
             this, SLOT(openInitConditionsDialog()));
 
+    connect(model, SIGNAL(modelChanged()), this, SLOT(update()));
+
     initPlots();
-}
-
-DSMainWindow::~DSMainWindow()
-{
-    delete ui;
-}
-
-void DSMainWindow::setModel(DSModel *newModel)
-{
-    model = newModel;
-    model->RegisterView(this);
 
     std::vector<double> u1 = { 1.0, 0.5 };
     std::vector<double> u2 = { 1.0, -0.5 };
     model->SetActivatorInitialConditions(u1);
     model->SetInhibitorInitialConditions(u2);
+}
+
+DSMainWindow::~DSMainWindow()
+{
+    delete ui;
 }
 
 void DSMainWindow::update()
@@ -196,7 +194,20 @@ void DSMainWindow::startFiniteRun()
 {
     try
     {
-        model->StartFiniteRun();
+        model->StartRun(SchemeSolvingMode::AllLayers);
+    }
+    catch (std::runtime_error e)
+    {
+        QMessageBox::critical(this, QString("Неверные параметры"),
+                              QString(e.what()));
+    }
+}
+
+void DSMainWindow::startStabilityRun()
+{
+    try
+    {
+        model->StartRun(SchemeSolvingMode::StableLayer);
     }
     catch (std::runtime_error e)
     {
