@@ -164,3 +164,13 @@ void SchemeResult::CheckIsInitialized() const {
    if (!mIsInitialized)
       throw std::runtime_error("Result is not initialized");
 }
+
+// TODO
+// double SchemeSolver::GetMaximumTime() {
+//    CheckSolverThreadStatus();
+//    return (mIterationsCount - 1) * mStepTime;
+// }
+// int SchemeSolver::GetIterationsCount() {
+//    CheckSolverThreadStatus();
+//    return mIterationsCount;
+// }

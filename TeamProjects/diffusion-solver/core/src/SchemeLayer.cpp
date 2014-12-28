@@ -2,30 +2,47 @@
 #include <cassert>
 #include <algorithm>
 #include <stdexcept>
+#include "CoreUtils.hpp"
 #include "SchemeLayer.hpp"
 using namespace diffusioncore;
+using namespace diffusioncore::utils;
+
+SchemeLayer::SchemeLayer() {
+   mLength = 0;
+}
+
+SchemeLayer::SchemeLayer(const std::vector<double>& v) {
+   Initialize(v.data(), v.size());
+}
 
 SchemeLayer::SchemeLayer(const double* v, int length) {
    assert(length > 0);
-
-   double* vbegin = const_cast<double*>(v);
-   double* vend = vbegin + length;
-   mVector = std::vector<double>(vbegin, vend);
+   Initialize(v, length);
 }
 
 SchemeLayer::~SchemeLayer() { }
 
 
 double SchemeLayer::Get(int index) const {
-   return mVector[index];
+   assert(index < mLength);
+   assert(index >= 0);
+   return mHolder.get()[index];
 }
 
 double SchemeLayer::operator[] (int index) const {
-   return mVector[index];
+   return Get(index);
 }
 
 int SchemeLayer::GetLength() const {
-   return static_cast<int>(mVector.size());
+   return mLength;
+}
+
+void SchemeLayer::Initialize(const double* v, int length) {
+   mLength = length;
+   double* dest = new double[length];
+   memcpy(dest, v, length * sizeof(double));
+   mHolder = std::shared_ptr<double>(
+      dest, array_deleter<double>());  
 }
 
 

@@ -42,7 +42,7 @@ bool DefaultSchemeInitialConditions::CheckConditions(double start,
 
 double DefaultSchemeInitialConditions::GetValueU1(double x) {
    double sum = 0;
-   for (int i = 0; i < mCoeffU1.size(); ++i)
+   for (size_t i = 0; i < mCoeffU1.size(); ++i)
       sum += mCoeffU1[i] * EvaluateCos(x, i);
 
    return sum;
@@ -50,7 +50,7 @@ double DefaultSchemeInitialConditions::GetValueU1(double x) {
 
 double DefaultSchemeInitialConditions::GetValueU2(double x) {
    double sum = 0;
-   for (int i = 0; i < mCoeffU2.size(); ++i)
+   for (size_t i = 0; i < mCoeffU2.size(); ++i)
       sum += mCoeffU2[i] * EvaluateCos(x, i);
 
    return sum;

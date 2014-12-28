@@ -1,22 +1,27 @@
-#include <thread>
-#include <iostream>
+#include <memory>
 #include <functional>
 #include <gtest/gtest.h>
 #include <diffusioncore>
 using namespace diffusioncore;
 
 void SetSolverDefaultParameters(SchemeSolver& solver) {
-   solver.SetC(0);
-   solver.SetK(0);
-   solver.SetMu(0);
-   solver.SetNu(0);
-   solver.SetRho(0);
-   solver.SetLambda1(1);
-   solver.SetLambda2(1);
-   solver.SetAccuracy(0.00001);
-   solver.SetStepTime(0.00001);
-   solver.SetIntervalsCount(200);
-   solver.SetMaximumIterations(200000);
+   auto params = std::make_shared<SchemeTask>();
+   params->SetC(0);
+   params->SetK(0);
+   params->SetMu(0);
+   params->SetNu(0);
+   params->SetRho(0);
+   params->SetLambda1(1);
+   params->SetLambda2(1);
+   params->SetStepTime(0.00001);
+   params->SetAccuracyU1(0.00001);
+   params->SetAccuracyU2(0.00001);
+   params->SetMaximumIterations(200000);
+
+   SchemeLayer layer(std::vector<double>(200, 0));
+   params->SetInitialLayers(layer, layer);
+
+   solver.BindTask(params);
    solver.SetSolvingMode(SchemeSolvingMode::StableLayer);
 }
 
@@ -33,11 +38,11 @@ TEST(ExplicitSchemeSolverClass, Initialization) {
          FAIL();
       };
 
-   solver.BeginSolve(callback, exCallback);
-   solver.WaitSolve();
+   solver.SolveAsync(callback, exCallback);
+   solver.SolveWait();
 
-   solver.BeginSolve(callback, exCallback);
-   solver.WaitSolve();
+   solver.SolveAsync(callback, exCallback);
+   solver.SolveWait();
 }
 
 TEST(ExplicitSchemeSolverClass, SolvingAbort) {
@@ -53,14 +58,14 @@ TEST(ExplicitSchemeSolverClass, SolvingAbort) {
          FAIL();
       };
 
-   solver.BeginSolve(callback, exCallback);
-   solver.StopSolving();
-   solver.StopSolving();
+   solver.SolveAsync(callback, exCallback);
+   solver.SolveCancel();
+   solver.SolveCancel();
 
-   solver.BeginSolve(callback, exCallback);
-   solver.WaitSolve();
+   solver.SolveAsync(callback, exCallback);
+   solver.SolveWait();
 
-   solver.BeginSolve(callback, exCallback);
-   solver.StopSolving();
+   solver.SolveAsync(callback, exCallback);
+   solver.SolveCancel();
 }
 

@@ -1,6 +1,10 @@
 #ifndef SchemeInitialConditions_H
 #define SchemeInitialConditions_H
 
+#ifdef _MSC_VER
+#pragma warning( disable: 4251 )
+#endif
+
 #include <vector>
 #include "CoreGlobal.hpp"
 #include "ISchemeInitialConditions.hpp"

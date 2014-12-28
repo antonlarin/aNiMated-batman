@@ -1,6 +1,10 @@
 #ifndef ISchemeInitialConditions_H
 #define ISchemeInitialConditions_H
 
+#ifdef _MSC_VER
+#pragma warning( disable: 4251 )
+#endif
+
 #include "CoreGlobal.hpp"
 
 namespace diffusioncore {
