@@ -2,16 +2,16 @@
 #include <cassert>
 #include <algorithm>
 #include <stdexcept>
-#include "SchemeResult.hpp"
+#include "SchemeSolverResult.hpp"
 using namespace diffusioncore;
 
 const double NOT_INITIALIZED = std::numeric_limits<double>::infinity();
 
-SchemeResult::SchemeResult() {
+SchemeSolverResult::SchemeSolverResult() {
    mIsInitialized = false;
 }
 
-SchemeResult::SchemeResult(std::shared_ptr<double> solutionU1,
+SchemeSolverResult::SchemeSolverResult(std::shared_ptr<double> solutionU1,
                            std::shared_ptr<double> solutionU2,
                            int intervalsCount,
                            int layersCount,
@@ -31,35 +31,35 @@ SchemeResult::SchemeResult(std::shared_ptr<double> solutionU1,
    mIsInitialized = true;
 }
 
-SchemeResult::~SchemeResult() { }
+SchemeSolverResult::~SchemeSolverResult() { }
 
 
-int SchemeResult::GetLayersCount() const {
+int SchemeSolverResult::GetLayersCount() const {
    CheckIsInitialized();
    return mLayersCount;
 }
 
-int SchemeResult::GetIntervalsCount() const {
+int SchemeSolverResult::GetIntervalsCount() const {
    CheckIsInitialized();
    return mIntervalsCount;
 }
 
 
-SchemeLayer SchemeResult::GetSolutionU1(int index) {
+SchemeLayer SchemeSolverResult::GetSolutionU1(int index) {
    CheckIsInitialized();
    int pointsCount = mIntervalsCount + 1;
    double* layer = mSolutionU1.get() + pointsCount * index;
    return SchemeLayer(layer, pointsCount);
 }
 
-SchemeLayer SchemeResult::GetSolutionU2(int index) {
+SchemeLayer SchemeSolverResult::GetSolutionU2(int index) {
    CheckIsInitialized();
    int pointsCount = mIntervalsCount + 1;
    double* layer = mSolutionU2.get() + pointsCount * index;
    return SchemeLayer(layer, pointsCount);
 }
 
-SchemeLayer SchemeResult::GetSolutionU1(double t) {
+SchemeLayer SchemeSolverResult::GetSolutionU1(double t) {
    CheckIsInitialized();
    assert(t >= 0);
 
@@ -67,7 +67,7 @@ SchemeLayer SchemeResult::GetSolutionU1(double t) {
    return GetSolutionU1(index);
 }
 
-SchemeLayer SchemeResult::GetSolutionU2(double t) {
+SchemeLayer SchemeSolverResult::GetSolutionU2(double t) {
    CheckIsInitialized();
    assert(t >= 0);
 
@@ -75,18 +75,18 @@ SchemeLayer SchemeResult::GetSolutionU2(double t) {
    return GetSolutionU2(index);
 }
 
-SchemeLayer SchemeResult::GetLastLayerU1() {
+SchemeLayer SchemeSolverResult::GetLastLayerU1() {
    CheckIsInitialized();
    return GetSolutionU1(mLayersCount - 1);
 }
 
-SchemeLayer SchemeResult::GetLastLayerU2() {
+SchemeLayer SchemeSolverResult::GetLastLayerU2() {
    CheckIsInitialized();
    return GetSolutionU2(mLayersCount - 1);
 }
 
 
-double SchemeResult::GetSolutionU1Maximum() {
+double SchemeSolverResult::GetSolutionU1Maximum() {
    CheckIsInitialized();
    if (mU1Max != NOT_INITIALIZED)
       return mU1Max;
@@ -100,7 +100,7 @@ double SchemeResult::GetSolutionU1Maximum() {
    return u1Max;
 }
 
-double SchemeResult::GetSolutionU1Minimum() {
+double SchemeSolverResult::GetSolutionU1Minimum() {
    CheckIsInitialized();
    if (mU1Min != NOT_INITIALIZED)
       return mU1Min;
@@ -114,7 +114,7 @@ double SchemeResult::GetSolutionU1Minimum() {
    return u1Min;
 }
 
-double SchemeResult::GetSolutionU2Maximum() {
+double SchemeSolverResult::GetSolutionU2Maximum() {
    CheckIsInitialized();
    if (mU2Max != NOT_INITIALIZED)
       return mU2Max;
@@ -128,7 +128,7 @@ double SchemeResult::GetSolutionU2Maximum() {
    return u2Max;
 }
 
-double SchemeResult::GetSolutionU2Minimum() {
+double SchemeSolverResult::GetSolutionU2Minimum() {
    CheckIsInitialized();
    if (mU2Min != NOT_INITIALIZED)
       return mU2Min;
@@ -143,7 +143,7 @@ double SchemeResult::GetSolutionU2Minimum() {
 }
 
 
-int SchemeResult::TimeToIndex(double t) {
+int SchemeSolverResult::TimeToIndex(double t) {
    CheckIsInitialized();
    int index = static_cast<int>(std::round(t / mTimeStep));
    int iterationsCount = mLayersCount;
@@ -153,14 +153,14 @@ int SchemeResult::TimeToIndex(double t) {
    return index;
 }
 
-void SchemeResult::InitializeDefault() {
+void SchemeSolverResult::InitializeDefault() {
    mU1Max = NOT_INITIALIZED;
    mU1Min = NOT_INITIALIZED;
    mU2Max = NOT_INITIALIZED;
    mU2Min = NOT_INITIALIZED;
 }
 
-void SchemeResult::CheckIsInitialized() const {
+void SchemeSolverResult::CheckIsInitialized() const {
    if (!mIsInitialized)
       throw std::runtime_error("Result is not initialized");
 }

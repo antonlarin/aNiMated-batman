@@ -9,7 +9,7 @@ using namespace diffusioncore::utils;
 ImplicitSchemeSolver::ImplicitSchemeSolver() { }
 ImplicitSchemeSolver::~ImplicitSchemeSolver() { }
 
-SchemeResult ImplicitSchemeSolver::SolveOverride(SchemeTask task)
+SchemeSolverResult ImplicitSchemeSolver::SolveOverride(SchemeTask task)
 {
    int n = task.GetIntervalsCount();
    int m = task.GetMaximumIterations();
@@ -154,7 +154,7 @@ SchemeResult ImplicitSchemeSolver::SolveOverride(SchemeTask task)
 
    double timeStep = k;
    int intervalsCount = n;
-   SchemeResult res(
+   SchemeSolverResult res(
       u1GridPtr,
       u2GridPtr,
       intervalsCount,

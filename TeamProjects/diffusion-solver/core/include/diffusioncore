@@ -6,7 +6,7 @@
 #include "SchemeTask.hpp"
 #include "SchemeLayer.hpp"
 #include "SchemeSolver.hpp"
-#include "SchemeResult.hpp"
+#include "SchemeSolverResult.hpp"
 #include "ExplicitSchemeSolver.hpp"
 #include "ImplicitSchemeSolver.hpp"
 #include "ISchemeInitialConditions.hpp"

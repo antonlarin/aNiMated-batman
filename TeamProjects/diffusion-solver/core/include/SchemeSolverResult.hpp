@@ -1,12 +1,12 @@
-#ifndef SchemeResult_H
-#define SchemeResult_H
+#ifndef SchemeSolverResult_H
+#define SchemeSolverResult_H
 
 #include <memory>
 #include "CoreGlobal.hpp"
 #include "SchemeLayer.hpp"
 
 namespace diffusioncore {
-   class EXPORT_API SchemeResult {
+   class EXPORT_API SchemeSolverResult {
    private:
       int mSolutionLength;
       int mIntervalsCount;
@@ -24,13 +24,13 @@ namespace diffusioncore {
       bool mIsInitialized;
 
    public:
-      SchemeResult();
-      SchemeResult(std::shared_ptr<double> solutionU1,
+      SchemeSolverResult();
+      SchemeSolverResult(std::shared_ptr<double> solutionU1,
                    std::shared_ptr<double> solutionU2,
                    int intervalsCount,
                    int layersCount,
                    double timeStep);
-      virtual ~SchemeResult();
+      virtual ~SchemeSolverResult();
 
       int GetLayersCount() const;
       int GetIntervalsCount() const;
