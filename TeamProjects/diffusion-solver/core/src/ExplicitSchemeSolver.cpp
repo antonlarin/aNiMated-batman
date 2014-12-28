@@ -129,7 +129,7 @@ SchemeResult ExplicitSchemeSolver::SolveOverride()
 
 		layersCount++;
 
-		if (solvingMode == StableLayer && j + 1 % 1000 == 0)
+		if (solvingMode == StableLayer && (j + 1) % 1000 == 0)
 		{
 			if (GetLayersDifference(u1_curr_layer, u1_prev_layer, n + 1) < GetAccuracy() &&
 				GetLayersDifference(u2_curr_layer, u2_prev_layer, n + 1) < GetAccuracy())
