@@ -81,8 +81,6 @@ SchemeResult ImplicitSchemeSolver::SolveOverride(SchemeTask task)
    int layersCount = 1;
    for (int j = 0; j < m; j++)
    {
-      if (IsStoped())
-         break;
       if (solvingMode == AllLayers)
       {
          u1_curr_layer = u1Grid + (n + 1)*(j + 1);
@@ -129,20 +127,11 @@ SchemeResult ImplicitSchemeSolver::SolveOverride(SchemeTask task)
       ////////////////////////////////
       layersCount++;
 
-      if (solvingMode == StableLayer && j + 1 % 1000 == 0)
+      if (solvingMode == StableLayer && (j + 1) % 1000 == 0)
       {
          if (MaxDifference(u1_curr_layer, u1_prev_layer, n + 1) < mAccuracyU1 &&
             MaxDifference(u2_curr_layer, u2_prev_layer, n + 1) < mAccuracyU2)
-         {
-            mIterationsCount = j;
-            if (u1_curr_layer != u1Grid)
-               for (int i = 0; i <= n; i++)
-               {
-                  u1Grid[i] = u1Grid[i + n + 1];
-                  u2Grid[i] = u2Grid[i + n + 1];
-               }
             break;
-         }
       }
       if (IsStoped())
          break;
@@ -152,7 +141,16 @@ SchemeResult ImplicitSchemeSolver::SolveOverride(SchemeTask task)
    delete[] beta;
 
    if (solvingMode == StableLayer)
+   {
+      mIterationsCount = layersCount - 1;
       layersCount = 1;
+      if (u1_curr_layer != u1Grid)
+         for (int i = 0; i <= n; i++)
+         {
+            u1Grid[i] = u1Grid[i + n + 1];
+            u2Grid[i] = u2Grid[i + n + 1];
+         }
+   }
 
    double timeStep = k;
    int intervalsCount = n;
