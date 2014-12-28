@@ -11,7 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 TARGET = ui
 TEMPLATE = app
 
-QMAKE_CXXFLAGS += -std=c++11
+gcc: QMAKE_CXXFLAGS += -std=c++11
 
 SOURCES += main.cpp\
         dsmainwindow.cpp \
@@ -28,9 +28,10 @@ HEADERS  += dsmainwindow.hpp \
 FORMS    += dsmainwindow.ui \
     dsinitconditionsdialog.ui
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../core-build/release/ -ldiffusion-solver
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../core-build/debug/ -ldiffusion-solver
-else:unix:!macx: LIBS += -L$$PWD/../core-build/ -ldiffusion-solver
+win32: LIBS += -L$$PWD/../core/bin/ -ldiffusion-solver
+else:unix:!macx: LIBS += -L$$PWD/../core-build/ \
+                         -L$$PWD/../core/bin \
+                         -ldiffusion-solver
 
 INCLUDEPATH += $$PWD/../core/include
 DEPENDPATH += $$PWD/../core/include
