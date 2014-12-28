@@ -298,6 +298,11 @@ int DSModel::GetLayerCount() const
     return result->GetLayersCount();
 }
 
+int DSModel::GetPerformedIterationsCount() const
+{
+    return solver->GetIterationsCount();
+}
+
 void DSModel::AcquireResult(SchemeResult &newResult)
 {
     result.reset(new SchemeResult(newResult));

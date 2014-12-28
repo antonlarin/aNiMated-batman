@@ -88,6 +88,8 @@ void DSMainWindow::update()
                model->GetInhibitorMinimum(), model->GetInhibitorMaximum());
     displayActivatorLayer(model->GetCurrentActivatorLayer());
     displayInhibitorLayer(model->GetCurrentInhibitorLayer());
+    ui->statusBar->showMessage(tr("Пройдено итераций: %1").
+                               arg(model->GetPerformedIterationsCount()));
 }
 
 /*

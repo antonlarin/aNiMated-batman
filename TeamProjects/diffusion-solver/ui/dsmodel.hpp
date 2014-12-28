@@ -57,6 +57,7 @@ public:
     double GetInhibitorMinimum() const;
 
     int GetLayerCount() const;
+    int GetPerformedIterationsCount() const;
 
 signals:
     void modelChanged();
