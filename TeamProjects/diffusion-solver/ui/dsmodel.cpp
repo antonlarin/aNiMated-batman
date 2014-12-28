@@ -256,6 +256,8 @@ void DSModel::StartRun(SchemeSolvingMode mode)
         solver->SetSolvingMode(StableLayer);
     }
 
+    currentLayerIndex = 0;
+
     std::function<void(SchemeResult&)> acquireResult =
             std::bind(&DSModel::AcquireResult, this, _1);
     std::function<void(std::exception&)> exceptionCallback =
