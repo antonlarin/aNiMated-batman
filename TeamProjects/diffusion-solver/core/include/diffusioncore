@@ -1,0 +1,15 @@
+#ifndef DIFFUSION_CORE_H
+#define DIFFUSION_CORE_H
+
+#include "CoreUtils.hpp"
+#include "CoreGlobal.hpp"
+#include "SchemeTask.hpp"
+#include "SchemeLayer.hpp"
+#include "SchemeSolver.hpp"
+#include "SchemeSolverResult.hpp"
+#include "ExplicitSchemeSolver.hpp"
+#include "ImplicitSchemeSolver.hpp"
+#include "ISchemeInitialConditions.hpp"
+#include "DefaultSchemeInitialConditions.hpp"
+
+#endif
