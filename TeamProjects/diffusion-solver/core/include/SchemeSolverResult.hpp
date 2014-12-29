@@ -5,6 +5,7 @@
 #include "CoreGlobal.hpp"
 #include "SchemeTask.hpp"
 #include "SchemeSolution.hpp"
+#include "SchemeStatistic.hpp"
 
 namespace diffusioncore {
    class EXPORT_API SchemeSolverResult final {
@@ -12,28 +13,23 @@ namespace diffusioncore {
       SchemeTask mTask;
       SchemeSolution mSolutionU1;
       SchemeSolution mSolutionU2;
+      SchemeStatistic mStatistic;
+
       int mLayersCount;
       int mIterationsCount;
       bool mIsInitialized;
 
    public:
       SchemeSolverResult();
-      SchemeSolverResult(std::shared_ptr<double> solutionU1,
-                         std::shared_ptr<double> solutionU2,
-                         const SchemeTask& task,
-                         int iterationsCount,
-                         int layersCount);
       SchemeSolverResult(const SchemeSolution& solutionU1,
                          const SchemeSolution& solutionU2,
-                         const SchemeTask& task,
-                         int iterationsCount);
+                         const SchemeStatistic& statistic,
+                         const SchemeTask& task);
       ~SchemeSolverResult();
-
-      int GetIterationsCount() const;
-      int GetLayersCount() const;
 
       SchemeSolution GetSolutionU1() const;
       SchemeSolution GetSolutionU2() const;
+      SchemeStatistic GetStatistic() const;
       SchemeTask GetTask() const;
 
    private:
