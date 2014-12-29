@@ -29,7 +29,8 @@ public slots:
     void gammaCoeffChanged(const QString& newGamma);
     void gridDimensionChanged(const QString& newGridDimension);
     void timeStepChanged(const QString& newTimeStep);
-    void accuracyChanged(const QString& newAccuracy);
+    void activatorAccuracyChanged(const QString& newAccuracy);
+    void inhibitorAccuracyChanged(const QString& newAccuracy);
     void iterationsLimitChanged(const QString& newIterationsLimit);
     void changeSolverType();
 

@@ -7,6 +7,7 @@
 #include <QObject>
 
 #include "CoreGlobal.hpp"
+#include "SchemeTask.hpp"
 #include "ExplicitSchemeSolver.hpp"
 #include "ImplicitSchemeSolver.hpp"
 #include "DefaultSchemeInitialConditions.hpp"
@@ -36,7 +37,8 @@ public:
     PROPERTY(double, Gamma)
     PROPERTY(double, Nu)
     PROPERTY(double, TimeStep)
-    PROPERTY(double, Accuracy)
+    PROPERTY(double, ActivatorAccuracy)
+    PROPERTY(double, InhibitorAccuracy)
     PROPERTY(int, GridDimension)
     PROPERTY(int, IterationsLimit)
     PROPERTY(int, CurrentLayerIndex)
@@ -71,13 +73,15 @@ private:
     double gamma;
     double nu;
     double timeStep;
-    double accuracy;
+    double activatorAccuracy;
+    double inhibitorAccuracy;
     int gridDimension;
     int iterationsLimit;
     vector<double> activatorInitConditionsCoeffs;
     vector<double> inhibitorInitConditionsCoeffs;
     SolverType solverType;
 
+    shared_ptr<SchemeTask> task;
     unique_ptr<SchemeSolver> solver;
     unique_ptr<SchemeResult> result;
 

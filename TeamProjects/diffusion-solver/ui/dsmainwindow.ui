@@ -67,55 +67,18 @@
        <property name="spacing">
         <number>2</number>
        </property>
-       <item row="0" column="0">
-        <widget class="QLabel" name="lambda1Label">
-         <property name="font">
-          <font>
-           <stylestrategy>PreferAntialias</stylestrategy>
-          </font>
+       <item row="12" column="0" colspan="2">
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
          </property>
-         <property name="layoutDirection">
-          <enum>Qt::LeftToRight</enum>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
          </property>
-         <property name="text">
-          <string>λ1</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QLineEdit" name="lambda1Edit">
-         <property name="text">
-          <string>1.0</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="lambda2Label">
-         <property name="font">
-          <font>
-           <stylestrategy>PreferAntialias</stylestrategy>
-          </font>
-         </property>
-         <property name="layoutDirection">
-          <enum>Qt::LeftToRight</enum>
-         </property>
-         <property name="text">
-          <string>λ2</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLineEdit" name="lambda2Edit">
-         <property name="text">
-          <string>1.0</string>
-         </property>
-        </widget>
+        </spacer>
        </item>
        <item row="2" column="0">
         <widget class="QLabel" name="kLabel">
@@ -135,8 +98,8 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="cLabel">
+       <item row="0" column="0">
+        <widget class="QLabel" name="lambda1Label">
          <property name="font">
           <font>
            <stylestrategy>PreferAntialias</stylestrategy>
@@ -146,40 +109,15 @@
           <enum>Qt::LeftToRight</enum>
          </property>
          <property name="text">
-          <string>c</string>
+          <string>λ1</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
          </property>
         </widget>
        </item>
-       <item row="2" column="1">
-        <widget class="QLineEdit" name="kEdit">
-         <property name="text">
-          <string>1.0</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="rhoLabel">
-         <property name="font">
-          <font>
-           <stylestrategy>PreferAntialias</stylestrategy>
-          </font>
-         </property>
-         <property name="layoutDirection">
-          <enum>Qt::LeftToRight</enum>
-         </property>
-         <property name="text">
-          <string>ρ</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1">
-        <widget class="QLineEdit" name="cEdit">
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="lambda2Edit">
          <property name="text">
           <string>1.0</string>
          </property>
@@ -203,8 +141,8 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="1">
-        <widget class="QLineEdit" name="rhoEdit">
+       <item row="5" column="1">
+        <widget class="QLineEdit" name="nuEdit">
          <property name="text">
           <string>1.0</string>
          </property>
@@ -228,6 +166,56 @@
          </property>
         </widget>
        </item>
+       <item row="3" column="1">
+        <widget class="QLineEdit" name="cEdit">
+         <property name="text">
+          <string>1.0</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="rhoLabel">
+         <property name="font">
+          <font>
+           <stylestrategy>PreferAntialias</stylestrategy>
+          </font>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="text">
+          <string>ρ</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="11" column="0">
+        <widget class="QLabel" name="iterationsLabel">
+         <property name="font">
+          <font>
+           <stylestrategy>PreferAntialias</stylestrategy>
+          </font>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="text">
+          <string>Макс. число шагов</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLineEdit" name="kEdit">
+         <property name="text">
+          <string>1.0</string>
+         </property>
+        </widget>
+       </item>
        <item row="6" column="1">
         <widget class="QLineEdit" name="gammaEdit">
          <property name="text">
@@ -235,17 +223,10 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="1">
-        <widget class="QLineEdit" name="nuEdit">
+       <item row="8" column="1">
+        <widget class="QLineEdit" name="timeStepEdit">
          <property name="text">
-          <string>1.0</string>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="1">
-        <widget class="QLineEdit" name="gridDimEdit">
-         <property name="text">
-          <string>100</string>
+          <string>0.00001</string>
          </property>
         </widget>
        </item>
@@ -267,6 +248,13 @@
          </property>
         </widget>
        </item>
+       <item row="11" column="1">
+        <widget class="QLineEdit" name="iterationsEdit">
+         <property name="text">
+          <string>1000</string>
+         </property>
+        </widget>
+       </item>
        <item row="8" column="0">
         <widget class="QLabel" name="timeStepLabel">
          <property name="font">
@@ -285,15 +273,8 @@
          </property>
         </widget>
        </item>
-       <item row="8" column="1">
-        <widget class="QLineEdit" name="timeStepEdit">
-         <property name="text">
-          <string>0.00001</string>
-         </property>
-        </widget>
-       </item>
-       <item row="9" column="0">
-        <widget class="QLabel" name="accuracyLabel">
+       <item row="1" column="0">
+        <widget class="QLabel" name="lambda2Label">
          <property name="font">
           <font>
            <stylestrategy>PreferAntialias</stylestrategy>
@@ -303,22 +284,36 @@
           <enum>Qt::LeftToRight</enum>
          </property>
          <property name="text">
-          <string>Точность</string>
+          <string>λ2</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
          </property>
         </widget>
        </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="lambda1Edit">
+         <property name="text">
+          <string>1.0</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QLineEdit" name="rhoEdit">
+         <property name="text">
+          <string>1.0</string>
+         </property>
+        </widget>
+       </item>
        <item row="9" column="1">
-        <widget class="QLineEdit" name="accuracyEdit">
+        <widget class="QLineEdit" name="activatorAccuracyEdit">
          <property name="text">
           <string>0.001</string>
          </property>
         </widget>
        </item>
-       <item row="10" column="0">
-        <widget class="QLabel" name="iterationsLabel">
+       <item row="9" column="0">
+        <widget class="QLabel" name="activatorAccuracyLabel">
          <property name="font">
           <font>
            <stylestrategy>PreferAntialias</stylestrategy>
@@ -328,7 +323,42 @@
           <enum>Qt::LeftToRight</enum>
          </property>
          <property name="text">
-          <string>Макс. число шагов</string>
+          <string>ε по активатору</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="1">
+        <widget class="QLineEdit" name="gridDimEdit">
+         <property name="text">
+          <string>100</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="cLabel">
+         <property name="font">
+          <font>
+           <stylestrategy>PreferAntialias</stylestrategy>
+          </font>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="text">
+          <string>c</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="0">
+        <widget class="QLabel" name="inhibitorAccuracyLabel">
+         <property name="text">
+          <string>ε по ингибитору</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -336,24 +366,11 @@
         </widget>
        </item>
        <item row="10" column="1">
-        <widget class="QLineEdit" name="iterationsEdit">
+        <widget class="QLineEdit" name="inhibitorAccuracyEdit">
          <property name="text">
-          <string>1000</string>
+          <string>0.001</string>
          </property>
         </widget>
-       </item>
-       <item row="11" column="0" colspan="2">
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
        </item>
       </layout>
      </widget>

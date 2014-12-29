@@ -29,8 +29,10 @@ DSMainWindow::DSMainWindow(DSModel* newModel, QWidget *parent) :
             this, SLOT(gridDimensionChanged(QString)));
     connect(ui->timeStepEdit, SIGNAL(textEdited(QString)),
             this, SLOT(timeStepChanged(QString)));
-    connect(ui->accuracyEdit, SIGNAL(textEdited(QString)),
-            this, SLOT(accuracyChanged(QString)));
+    connect(ui->activatorAccuracyEdit, SIGNAL(textEdited(QString)),
+            this, SLOT(activatorAccuracyChanged(QString)));
+    connect(ui->inhibitorAccuracyEdit, SIGNAL(textEdited(QString)),
+            this, SLOT(inhibitorAccuracyChanged(QString)));
     connect(ui->iterationsEdit, SIGNAL(textEdited(QString)),
             this, SLOT(iterationsLimitChanged(QString)));
 
@@ -167,12 +169,20 @@ void DSMainWindow::timeStepChanged(const QString& newTimeStep)
         model->SetTimeStep(value);
 }
 
-void DSMainWindow::accuracyChanged(const QString& newAccuracy)
+void DSMainWindow::activatorAccuracyChanged(const QString& newAccuracy)
 {
     bool ok;
     double value = newAccuracy.toDouble(&ok);
     if (ok)
-        model->SetAccuracy(value);
+        model->SetActivatorAccuracy(value);
+}
+
+void DSMainWindow::inhibitorAccuracyChanged(const QString& newAccuracy)
+{
+    bool ok;
+    double value = newAccuracy.toDouble(&ok);
+    if (ok)
+        model->SetActivatorAccuracy(value);
 }
 
 void DSMainWindow::iterationsLimitChanged(const QString& newIterationsLimit)
