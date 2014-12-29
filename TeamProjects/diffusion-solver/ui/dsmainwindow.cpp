@@ -3,11 +3,11 @@
 
 #include <vector>
 
-DSMainWindow::DSMainWindow(QWidget *parent) :
+DSMainWindow::DSMainWindow(DSModel* newModel, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::DSMainWindow),
     initConditionsDialog(nullptr),
-    model(nullptr)
+    model(newModel)
 {
     ui->setupUi(this);
 
@@ -29,8 +29,10 @@ DSMainWindow::DSMainWindow(QWidget *parent) :
             this, SLOT(gridDimensionChanged(QString)));
     connect(ui->timeStepEdit, SIGNAL(textEdited(QString)),
             this, SLOT(timeStepChanged(QString)));
-    connect(ui->accuracyEdit, SIGNAL(textEdited(QString)),
-            this, SLOT(accuracyChanged(QString)));
+    connect(ui->activatorAccuracyEdit, SIGNAL(textEdited(QString)),
+            this, SLOT(activatorAccuracyChanged(QString)));
+    connect(ui->inhibitorAccuracyEdit, SIGNAL(textEdited(QString)),
+            this, SLOT(inhibitorAccuracyChanged(QString)));
     connect(ui->iterationsEdit, SIGNAL(textEdited(QString)),
             this, SLOT(iterationsLimitChanged(QString)));
 
@@ -53,29 +55,27 @@ DSMainWindow::DSMainWindow(QWidget *parent) :
 
     connect(ui->finiteRunButton, SIGNAL(clicked()),
             this, SLOT(startFiniteRun()));
+    connect(ui->stabilityRunButton, SIGNAL(clicked()),
+            this, SLOT(startStabilityRun()));
 
     connect(ui->quitAction, SIGNAL(triggered()),
             this, SLOT(close()));
     connect(ui->initConditionsAction, SIGNAL(triggered()),
             this, SLOT(openInitConditionsDialog()));
 
+    connect(model, SIGNAL(modelChanged()), this, SLOT(update()));
+
     initPlots();
-}
-
-DSMainWindow::~DSMainWindow()
-{
-    delete ui;
-}
-
-void DSMainWindow::setModel(DSModel *newModel)
-{
-    model = newModel;
-    model->RegisterView(this);
 
     std::vector<double> u1 = { 1.0, 0.5 };
     std::vector<double> u2 = { 1.0, -0.5 };
     model->SetActivatorInitialConditions(u1);
     model->SetInhibitorInitialConditions(u2);
+}
+
+DSMainWindow::~DSMainWindow()
+{
+    delete ui;
 }
 
 void DSMainWindow::update()
@@ -90,6 +90,8 @@ void DSMainWindow::update()
                model->GetInhibitorMinimum(), model->GetInhibitorMaximum());
     displayActivatorLayer(model->GetCurrentActivatorLayer());
     displayInhibitorLayer(model->GetCurrentInhibitorLayer());
+    ui->statusBar->showMessage(tr("Пройдено итераций: %1").
+                               arg(model->GetPerformedIterationsCount()));
 }
 
 /*
@@ -167,12 +169,20 @@ void DSMainWindow::timeStepChanged(const QString& newTimeStep)
         model->SetTimeStep(value);
 }
 
-void DSMainWindow::accuracyChanged(const QString& newAccuracy)
+void DSMainWindow::activatorAccuracyChanged(const QString& newAccuracy)
 {
     bool ok;
     double value = newAccuracy.toDouble(&ok);
     if (ok)
-        model->SetAccuracy(value);
+        model->SetActivatorAccuracy(value);
+}
+
+void DSMainWindow::inhibitorAccuracyChanged(const QString& newAccuracy)
+{
+    bool ok;
+    double value = newAccuracy.toDouble(&ok);
+    if (ok)
+        model->SetActivatorAccuracy(value);
 }
 
 void DSMainWindow::iterationsLimitChanged(const QString& newIterationsLimit)
@@ -196,7 +206,20 @@ void DSMainWindow::startFiniteRun()
 {
     try
     {
-        model->StartFiniteRun();
+        model->StartRun(SchemeSolvingMode::AllLayers);
+    }
+    catch (std::runtime_error e)
+    {
+        QMessageBox::critical(this, QString("Неверные параметры"),
+                              QString(e.what()));
+    }
+}
+
+void DSMainWindow::startStabilityRun()
+{
+    try
+    {
+        model->StartRun(SchemeSolvingMode::StableLayer);
     }
     catch (std::runtime_error e)
     {

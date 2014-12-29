@@ -1,7 +1,9 @@
 #ifndef DIFFUSION_CORE_H
 #define DIFFUSION_CORE_H
 
+#include "CoreUtils.hpp"
 #include "CoreGlobal.hpp"
+#include "SchemeTask.hpp"
 #include "SchemeLayer.hpp"
 #include "SchemeSolver.hpp"
 #include "SchemeResult.hpp"

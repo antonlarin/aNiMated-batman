@@ -4,7 +4,10 @@
 #include <vector>
 #include <memory>
 
+#include <QObject>
+
 #include "CoreGlobal.hpp"
+#include "SchemeTask.hpp"
 #include "ExplicitSchemeSolver.hpp"
 #include "ImplicitSchemeSolver.hpp"
 #include "DefaultSchemeInitialConditions.hpp"
@@ -17,12 +20,14 @@ using namespace diffusioncore;
 
 enum class SolverType { EXPLICIT_SOLVER, IMPLICIT_SOLVER };
 
-class DSModel
+class DSModel : public QObject
 {
+    Q_OBJECT
+
 public:
     explicit DSModel();
+
     void RegisterView(IObserver* view);
-    void NotifyViews();
 
     PROPERTY(double, Lambda1)
     PROPERTY(double, Lambda2)
@@ -32,7 +37,8 @@ public:
     PROPERTY(double, Gamma)
     PROPERTY(double, Nu)
     PROPERTY(double, TimeStep)
-    PROPERTY(double, Accuracy)
+    PROPERTY(double, ActivatorAccuracy)
+    PROPERTY(double, InhibitorAccuracy)
     PROPERTY(int, GridDimension)
     PROPERTY(int, IterationsLimit)
     PROPERTY(int, CurrentLayerIndex)
@@ -43,7 +49,7 @@ public:
 
     void AcquireResult(SchemeResult& newResult);
 
-    void StartFiniteRun();
+    void StartRun(SchemeSolvingMode mode);
 
     const SchemeLayer GetCurrentActivatorLayer();
     const SchemeLayer GetCurrentInhibitorLayer();
@@ -53,6 +59,10 @@ public:
     double GetInhibitorMinimum() const;
 
     int GetLayerCount() const;
+    int GetPerformedIterationsCount() const;
+
+signals:
+    void modelChanged();
 
 private:
     double lambda1;
@@ -63,13 +73,15 @@ private:
     double gamma;
     double nu;
     double timeStep;
-    double accuracy;
+    double activatorAccuracy;
+    double inhibitorAccuracy;
     int gridDimension;
     int iterationsLimit;
     vector<double> activatorInitConditionsCoeffs;
     vector<double> inhibitorInitConditionsCoeffs;
     SolverType solverType;
 
+    shared_ptr<SchemeTask> task;
     unique_ptr<SchemeSolver> solver;
     unique_ptr<SchemeResult> result;
 

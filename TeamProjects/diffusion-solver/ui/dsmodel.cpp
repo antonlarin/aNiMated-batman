@@ -6,6 +6,7 @@
 using namespace std::placeholders;
 
 DSModel::DSModel() :
+    QObject(),
     lambda1(1.0),
     lambda2(1.0),
     k(1.0),
@@ -14,12 +15,14 @@ DSModel::DSModel() :
     gamma(1.0),
     nu(1.0),
     timeStep(0.00001),
-    accuracy(0.001),
+    activatorAccuracy(0.001),
+    inhibitorAccuracy(0.001),
     gridDimension(100),
     iterationsLimit(1000),
     activatorInitConditionsCoeffs(),
     inhibitorInitConditionsCoeffs(),
     solverType(SolverType::EXPLICIT_SOLVER),
+    task(new SchemeTask),
     solver(new ExplicitSchemeSolver()),
     result(nullptr),
     currentLayerIndex(0),
@@ -31,11 +34,11 @@ void DSModel::RegisterView(IObserver *view)
     views.push_back(view);
 }
 
-void DSModel::NotifyViews()
-{
-    for (IObserver* view : views)
-        view->update();
-}
+//void DSModel::modelChanged()
+//{
+//    for (IObserver* view : views)
+//        view->update();
+//}
 
 
 
@@ -123,14 +126,24 @@ void DSModel::SetTimeStep(double value)
     timeStep = value;
 }
 
-double DSModel::GetAccuracy() const
+double DSModel::GetActivatorAccuracy() const
 {
-    return accuracy;
+    return activatorAccuracy;
 }
 
-void DSModel::SetAccuracy(double value)
+void DSModel::SetActivatorAccuracy(double value)
 {
-    accuracy = value;
+    activatorAccuracy = value;
+}
+
+double DSModel::GetInhibitorAccuracy() const
+{
+    return inhibitorAccuracy;
+}
+
+void DSModel::SetInhibitorAccuracy(double value)
+{
+    inhibitorAccuracy = value;
 }
 
 int DSModel::GetGridDimension() const
@@ -166,7 +179,7 @@ void DSModel::SetCurrentLayerIndex(int value)
         currentLayerIndex = GetLayerCount() - 1;
     else
         currentLayerIndex = value;
-    NotifyViews();
+    emit modelChanged();
 }
 
 int DSModel::GetLayerStep() const
@@ -227,32 +240,62 @@ void DSModel::SetInhibitorInitialConditions(vector<double> value)
     inhibitorInitConditionsCoeffs = value;
 }
 
-void DSModel::StartFiniteRun()
+void DSModel::StartRun(SchemeSolvingMode mode)
 {
-    solver->SetLambda1(GetLambda1());
-    solver->SetLambda2(GetLambda2());
-    solver->SetK(GetK());
-    solver->SetC(GetC());
-    solver->SetRho(GetRho());
-    solver->SetMu(GetGamma());
-    solver->SetNu(GetNu());
-    solver->SetStepTime(GetTimeStep());
-    solver->SetAccuracy(GetAccuracy());
-    solver->SetIntervalsCount(GetGridDimension());
-    solver->SetMaximumIterations(GetIterationsLimit());
-    shared_ptr<ISchemeInitialConditions> initConditions(
-                new DefaultSchemeInitialConditions(
-                    GetActivatorInitialConditions(),
-                    GetInhibitorInitialConditions()
-                    ));
-    solver->SetInitialConditions(initConditions);
-    solver->SetSolvingMode(AllLayers);
+    task->SetLambda1(GetLambda1());
+    task->SetLambda2(GetLambda2());
+    task->SetK(GetK());
+    task->SetC(GetC());
+    task->SetRho(GetRho());
+    task->SetMu(GetGamma());
+    task->SetNu(GetNu());
+    task->SetStepTime(GetTimeStep());
+    task->SetAccuracyU1(GetActivatorAccuracy());
+    task->SetAccuracyU2(GetInhibitorAccuracy());
+    task->SetMaximumIterations(GetIterationsLimit());
+
+    vector<double> activatorInitLayer;
+    vector<double> inhibitorInitLayer;
+    for (int i = 0; i <= gridDimension; ++i)
+    {
+        double activatorValue = 0.0;
+        double inhibitorValue = 0.0;
+        double x = i * 1.0 / double(gridDimension);
+
+        for (int j = 0; j < activatorInitConditionsCoeffs.size(); ++j)
+        {
+            activatorValue += activatorInitConditionsCoeffs[j] *
+                    cos(M_PI * j * x);
+            activatorValue += activatorInitConditionsCoeffs[j] *
+                    cos(M_PI * j * x);
+        }
+
+        activatorInitLayer.push_back(activatorValue);
+        inhibitorInitLayer.push_back(inhibitorValue);
+    }
+
+    SchemeLayer activatorIC(activatorInitLayer);
+    SchemeLayer inhibitorIC(activatorInitLayer);
+
+    task->SetInitialLayers(activatorIC, inhibitorIC);
+
+    solver->BindTask(task);
+    switch (mode)
+    {
+    case AllLayers:
+        solver->SetSolvingMode(AllLayers);
+        break;
+    case StableLayer:
+        solver->SetSolvingMode(StableLayer);
+    }
+
+    currentLayerIndex = 0;
 
     std::function<void(SchemeResult&)> acquireResult =
             std::bind(&DSModel::AcquireResult, this, _1);
     std::function<void(std::exception&)> exceptionCallback =
             [&](std::exception&) -> void {};
-    solver->BeginSolve(acquireResult, exceptionCallback);
+    solver->SolveAsync(acquireResult, exceptionCallback);
 }
 
 const SchemeLayer DSModel::GetCurrentActivatorLayer()
@@ -290,8 +333,13 @@ int DSModel::GetLayerCount() const
     return result->GetLayersCount();
 }
 
+int DSModel::GetPerformedIterationsCount() const
+{
+    return /*solver->GetIterationsCount()*/1;
+}
+
 void DSModel::AcquireResult(SchemeResult &newResult)
 {
     result.reset(new SchemeResult(newResult));
-    NotifyViews();
+    emit modelChanged();
 }
