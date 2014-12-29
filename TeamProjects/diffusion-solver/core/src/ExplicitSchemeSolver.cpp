@@ -20,7 +20,7 @@ SchemeSolverResult ExplicitSchemeSolver::SolveOverride(SchemeTask task)
    double h = 1.0 / n;
    double k = task.GetStepTime();
 
-   double mIterationsCount = task.GetMaximumIterations();
+   int mIterationsCount = task.GetMaximumIterations();
    SchemeSolvingMode solvingMode = GetSolvingMode();
 
    double mK = task.GetK();
@@ -138,9 +138,9 @@ SchemeSolverResult ExplicitSchemeSolver::SolveOverride(SchemeTask task)
    SchemeSolverResult res(
       u1GridPtr,
       u2GridPtr,
-      intervalsCount,
-      layersCount,
-      timeStep);
+      task,
+      mIterationsCount,
+      layersCount);
 
    return res;
 }
