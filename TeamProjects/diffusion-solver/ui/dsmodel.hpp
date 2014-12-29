@@ -6,11 +6,7 @@
 
 #include <QObject>
 
-#include "CoreGlobal.hpp"
-#include "SchemeTask.hpp"
-#include "ExplicitSchemeSolver.hpp"
-#include "ImplicitSchemeSolver.hpp"
-#include "DefaultSchemeInitialConditions.hpp"
+#include <diffusioncore>
 #include "iobserver.hpp"
 
 using std::shared_ptr;
@@ -47,7 +43,7 @@ public:
     PROPERTY(vector<double>, InhibitorInitialConditions)
     PROPERTY(SolverType, SolverType)
 
-    void AcquireResult(SchemeResult& newResult);
+    void AcquireResult(SchemeSolverResult& newResult);
 
     void StartRun(SchemeSolvingMode mode);
 
@@ -83,7 +79,7 @@ private:
 
     shared_ptr<SchemeTask> task;
     unique_ptr<SchemeSolver> solver;
-    unique_ptr<SchemeResult> result;
+    unique_ptr<SchemeSolverResult> result;
 
     vector<IObserver*> views;
 

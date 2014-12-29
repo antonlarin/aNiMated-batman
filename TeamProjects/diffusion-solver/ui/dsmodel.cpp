@@ -220,7 +220,6 @@ void DSModel::SetSolverType(SolverType value)
  * Other methods implementation
  */
 vector<double> DSModel::GetActivatorInitialConditions() const
-
 {
     return activatorInitConditionsCoeffs;
 }
@@ -262,12 +261,13 @@ void DSModel::StartRun(SchemeSolvingMode mode)
         double inhibitorValue = 0.0;
         double x = i * 1.0 / double(gridDimension);
 
-        for (int j = 0; j < activatorInitConditionsCoeffs.size(); ++j)
+        // TODO: Use SchemeLayerGenerator to create initial layer.
+        for (size_t j = 0; j < activatorInitConditionsCoeffs.size(); ++j)
         {
             activatorValue += activatorInitConditionsCoeffs[j] *
-                    cos(M_PI * j * x);
+                    cos(3.14 * j * x);
             activatorValue += activatorInitConditionsCoeffs[j] *
-                    cos(M_PI * j * x);
+                    cos(3.14 * j * x);
         }
 
         activatorInitLayer.push_back(activatorValue);
@@ -291,7 +291,7 @@ void DSModel::StartRun(SchemeSolvingMode mode)
 
     currentLayerIndex = 0;
 
-    std::function<void(SchemeResult&)> acquireResult =
+    std::function<void(SchemeSolverResult&)> acquireResult =
             std::bind(&DSModel::AcquireResult, this, _1);
     std::function<void(std::exception&)> exceptionCallback =
             [&](std::exception&) -> void {};
@@ -300,32 +300,40 @@ void DSModel::StartRun(SchemeSolvingMode mode)
 
 const SchemeLayer DSModel::GetCurrentActivatorLayer()
 {
-    return result->GetSolutionU1(GetCurrentLayerIndex());
+    int layerIndex = GetCurrentLayerIndex();
+    auto solutionActivator = result->GetSolutionU1();
+    return solutionActivator.GetLayer(layerIndex);
 }
 
 const SchemeLayer DSModel::GetCurrentInhibitorLayer()
 {
-    return result->GetSolutionU2(GetCurrentLayerIndex());
+    int layerIndex = GetCurrentLayerIndex();
+    auto solutionInhibitor = result->GetSolutionU2();
+    return solutionInhibitor.GetLayer(layerIndex);
 }
 
 double DSModel::GetActivatorMaximum() const
 {
-    return result->GetSolutionU1Maximum();
+    auto solutionActivator = result->GetSolutionU1();
+    return solutionActivator.GetMaximum();
 }
 
 double DSModel::GetActivatorMinimum() const
 {
-    return result->GetSolutionU1Minimum();
+    auto solutionActivator = result->GetSolutionU1();
+    return solutionActivator.GetMinimum();
 }
 
 double DSModel::GetInhibitorMaximum() const
 {
-    return result->GetSolutionU2Maximum();
+    auto solutionInhibitor = result->GetSolutionU2();
+    return solutionInhibitor.GetMaximum();
 }
 
 double DSModel::GetInhibitorMinimum() const
 {
-    return result->GetSolutionU2Minimum();
+    auto solutionInhibitor = result->GetSolutionU2();
+    return solutionInhibitor.GetMinimum();
 }
 
 int DSModel::GetLayerCount() const
@@ -335,11 +343,12 @@ int DSModel::GetLayerCount() const
 
 int DSModel::GetPerformedIterationsCount() const
 {
-    return /*solver->GetIterationsCount()*/1;
+    auto schemeStat = result->GetStatistic();
+    return schemeStat.GetIterationsCount();
 }
 
-void DSModel::AcquireResult(SchemeResult &newResult)
+void DSModel::AcquireResult(SchemeSolverResult &newResult)
 {
-    result.reset(new SchemeResult(newResult));
+    result.reset(new SchemeSolverResult(newResult));
     emit modelChanged();
 }
