@@ -13,8 +13,7 @@ double ExplicitSchemeSolver::EvaluateStableTimeStep(int xGridDim) {
    return 0.5 / (xGridDim*xGridDim);
 }
 
-SchemeSolverResult ExplicitSchemeSolver::SolveOverride(SchemeTask task)
-{
+SchemeSolverResult ExplicitSchemeSolver::SolveOverride(SchemeTask task) {
    int n = task.GetIntervalsCount();
    int m = task.GetMaximumIterations();
    double h = 1.0 / n;

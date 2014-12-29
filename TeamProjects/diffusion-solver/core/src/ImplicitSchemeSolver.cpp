@@ -9,8 +9,7 @@ using namespace diffusioncore::utils;
 ImplicitSchemeSolver::ImplicitSchemeSolver() { }
 ImplicitSchemeSolver::~ImplicitSchemeSolver() { }
 
-SchemeSolverResult ImplicitSchemeSolver::SolveOverride(SchemeTask task)
-{
+SchemeSolverResult ImplicitSchemeSolver::SolveOverride(SchemeTask task) {
    int n = task.GetIntervalsCount();
    int m = task.GetMaximumIterations();
    double h = 1.0 / n;

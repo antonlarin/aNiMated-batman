@@ -6,18 +6,18 @@
 
 namespace diffusioncore {
    class EXPORT_API ImplicitSchemeSolver : public SchemeSolver {
-   public:
-	   ImplicitSchemeSolver();
-	   ~ImplicitSchemeSolver();
    private:
-	   std::shared_ptr<double> u1GridPtr;
-	   std::shared_ptr<double> u2GridPtr;
-
+      std::shared_ptr<double> u1GridPtr;
+      std::shared_ptr<double> u2GridPtr;
+   
+   public:
+      ImplicitSchemeSolver();
+      ~ImplicitSchemeSolver();
+   
    protected:
-	   virtual SchemeSolverResult SolveOverride(SchemeTask task);
-	   virtual void CheckParametersOverride(SchemeTask task);
+      virtual SchemeSolverResult SolveOverride(SchemeTask task);
+      virtual void CheckParametersOverride(SchemeTask task);
 
-	   double GetLayersDifference(double* layer1, double* layer2, int layerSize);
    };
 }
 
