@@ -35,3 +35,6 @@ else:unix:!macx: LIBS += -L$$PWD/../core-build/ \
 
 INCLUDEPATH += $$PWD/../core/include
 DEPENDPATH += $$PWD/../core/include
+
+RESOURCES += \
+    resources.qrc
