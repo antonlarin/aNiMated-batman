@@ -1,5 +1,6 @@
 #include <cassert>
 #include <stdexcept>
+#include <cmath>
 #include "CoreUtils.hpp"
 #include "SchemeSolution.hpp"
 
