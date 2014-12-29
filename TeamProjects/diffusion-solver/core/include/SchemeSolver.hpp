@@ -9,11 +9,11 @@
 #include "CoreGlobal.hpp"
 #include "SchemeTask.hpp"
 #include "SchemeLayer.hpp"
-#include "SchemeResult.hpp"
+#include "SchemeSolverResult.hpp"
 
 namespace diffusioncore {
 
-   typedef std::function<void(SchemeResult&)> SolverCallback;
+   typedef std::function<void(SchemeSolverResult&)> SolverCallback;
    typedef std::function<void(std::exception&)> ExceptionCallback;
 
    enum SchemeSolvingMode {
@@ -49,7 +49,7 @@ namespace diffusioncore {
    protected:
 
       bool IsStoped();
-      virtual SchemeResult SolveOverride(SchemeTask task) = 0;
+      virtual SchemeSolverResult SolveOverride(SchemeTask task) = 0;
       virtual void CheckParametersOverride(SchemeTask task) = 0;
 
    private:

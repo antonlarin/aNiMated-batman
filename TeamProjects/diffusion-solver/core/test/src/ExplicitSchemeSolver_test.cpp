@@ -29,8 +29,8 @@ TEST(ExplicitSchemeSolverClass, Initialization) {
    ExplicitSchemeSolver solver; 
    SetSolverDefaultParameters(solver);
 
-   std::function<void(SchemeResult&)> callback = 
-      [](SchemeResult& res) -> void {
+   std::function<void(SchemeSolverResult&)> callback = 
+      [](SchemeSolverResult& res) -> void {
          SUCCEED();
       };
    std::function<void(std::exception&)> exCallback = 
@@ -49,8 +49,8 @@ TEST(ExplicitSchemeSolverClass, SolvingAbort) {
    ExplicitSchemeSolver solver; 
    SetSolverDefaultParameters(solver);
 
-   std::function<void(SchemeResult&)> callback = 
-      [](SchemeResult& res) -> void {
+   std::function<void(SchemeSolverResult&)> callback = 
+      [](SchemeSolverResult& res) -> void {
          SUCCEED();
       };
    std::function<void(std::exception&)> exCallback = 

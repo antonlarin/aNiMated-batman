@@ -1,6 +1,7 @@
 #include <cmath>
 #include <stdexcept>
 #include "CoreUtils.hpp"
+#include "SchemeStatistic.hpp"
 #include "ExplicitSchemeSolver.hpp"
 
 using namespace diffusioncore;
@@ -13,14 +14,13 @@ double ExplicitSchemeSolver::EvaluateStableTimeStep(int xGridDim) {
    return 0.5 / (xGridDim*xGridDim);
 }
 
-SchemeResult ExplicitSchemeSolver::SolveOverride(SchemeTask task)
-{
+SchemeSolverResult ExplicitSchemeSolver::SolveOverride(SchemeTask task) {
    int n = task.GetIntervalsCount();
    int m = task.GetMaximumIterations();
    double h = 1.0 / n;
    double k = task.GetStepTime();
 
-   double mIterationsCount = task.GetMaximumIterations();
+   int iterationsCount = task.GetMaximumIterations();
    SchemeSolvingMode solvingMode = GetSolvingMode();
 
    double mK = task.GetK();
@@ -39,6 +39,9 @@ SchemeResult ExplicitSchemeSolver::SolveOverride(SchemeTask task)
    double* u1_prev_layer;
    double* u2_curr_layer;
    double* u2_prev_layer;
+
+   double maxDiffU1 = mAccuracyU1;
+   double maxDiffU2 = mAccuracyU2;
 
    try{
       if (solvingMode == AllLayers)
@@ -111,8 +114,9 @@ SchemeResult ExplicitSchemeSolver::SolveOverride(SchemeTask task)
 
       if (solvingMode == StableLayer && (j + 1) % 1000 == 0)
       {
-         if (MaxDifference(u1_curr_layer, u1_prev_layer, n + 1) < mAccuracyU1 &&
-            MaxDifference(u2_curr_layer, u2_prev_layer, n + 1) < mAccuracyU2)
+         maxDiffU1 = MaxDifference(u1_curr_layer, u1_prev_layer, n + 1);
+         maxDiffU2 = MaxDifference(u2_curr_layer, u2_prev_layer, n + 1);
+         if (maxDiffU1 < mAccuracyU1 && maxDiffU2 < mAccuracyU2)
             break;
       }
       if (IsStoped())
@@ -121,7 +125,7 @@ SchemeResult ExplicitSchemeSolver::SolveOverride(SchemeTask task)
 
    if (solvingMode == StableLayer)
    {
-      mIterationsCount = layersCount - 1;
+      iterationsCount = layersCount - 1;
       layersCount = 1;
       if (u1_curr_layer != u1Grid) 
       {
@@ -133,16 +137,11 @@ SchemeResult ExplicitSchemeSolver::SolveOverride(SchemeTask task)
       }
    }
 
-   double timeStep = k;
-   int intervalsCount = n;
-   SchemeResult res(
-      u1GridPtr,
-      u2GridPtr,
-      intervalsCount,
-      layersCount,
-      timeStep);
-
-   return res;
+   SchemeSolution solutionU1(u1GridPtr, n, layersCount, k);
+   SchemeSolution solutionU2(u2GridPtr, n, layersCount, k);
+   SchemeStatistic statistic(iterationsCount, maxDiffU1, maxDiffU2);
+   SchemeSolverResult result(solutionU1, solutionU2, statistic, task);
+   return result;
 }
 
 void ExplicitSchemeSolver::CheckParametersOverride(SchemeTask task) {
@@ -150,9 +149,6 @@ void ExplicitSchemeSolver::CheckParametersOverride(SchemeTask task) {
    int n = task.GetIntervalsCount();
    double h = 1.0 / n;
 
-   if (k > h * h / 2) {
-      throw std::runtime_error(
-         "Incompatible intervlas "
-         "count and time step");
-   }
+   if (k > h * h / 2)
+      throw std::runtime_error("Incompatible intervlas count and time step");
 }

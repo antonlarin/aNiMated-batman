@@ -18,10 +18,13 @@ namespace utils {
       *b = c;
    }
 
+   double Max(const double* source, size_t size);
+   double Min(const double* source, size_t size);
    double MaxDifference(
       const double* lhs, 
       const double* rhs, 
       size_t size);
+
 
 }}
 

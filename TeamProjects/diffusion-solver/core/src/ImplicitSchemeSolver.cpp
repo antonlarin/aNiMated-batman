@@ -1,6 +1,7 @@
 #include <cmath>
 #include <stdexcept>
 #include "CoreUtils.hpp"
+#include "SchemeStatistic.hpp"
 #include "ImplicitSchemeSolver.hpp"
 
 using namespace diffusioncore;
@@ -9,14 +10,13 @@ using namespace diffusioncore::utils;
 ImplicitSchemeSolver::ImplicitSchemeSolver() { }
 ImplicitSchemeSolver::~ImplicitSchemeSolver() { }
 
-SchemeResult ImplicitSchemeSolver::SolveOverride(SchemeTask task)
-{
+SchemeSolverResult ImplicitSchemeSolver::SolveOverride(SchemeTask task) {
    int n = task.GetIntervalsCount();
    int m = task.GetMaximumIterations();
    double h = 1.0 / n;
    double k = task.GetStepTime();
 
-   double mIterationsCount = task.GetMaximumIterations();
+   int iterationsCount = task.GetMaximumIterations();
    SchemeSolvingMode solvingMode = GetSolvingMode();
 
    double mK = task.GetK();
@@ -36,6 +36,9 @@ SchemeResult ImplicitSchemeSolver::SolveOverride(SchemeTask task)
    double* u2_curr_layer;
    double* u2_prev_layer;
    double *alpha, *beta;
+
+   double maxDiffU1 = mAccuracyU1;
+   double maxDiffU2 = mAccuracyU2;
 
    try{
       if (solvingMode == AllLayers)
@@ -129,8 +132,9 @@ SchemeResult ImplicitSchemeSolver::SolveOverride(SchemeTask task)
 
       if (solvingMode == StableLayer && (j + 1) % 1000 == 0)
       {
-         if (MaxDifference(u1_curr_layer, u1_prev_layer, n + 1) < mAccuracyU1 &&
-            MaxDifference(u2_curr_layer, u2_prev_layer, n + 1) < mAccuracyU2)
+         maxDiffU1 = MaxDifference(u1_curr_layer, u1_prev_layer, n + 1);
+         maxDiffU2 = MaxDifference(u2_curr_layer, u2_prev_layer, n + 1);
+         if (maxDiffU1 < mAccuracyU1 && maxDiffU2 < mAccuracyU2)
             break;
       }
       if (IsStoped())
@@ -140,9 +144,9 @@ SchemeResult ImplicitSchemeSolver::SolveOverride(SchemeTask task)
    delete[] alpha;
    delete[] beta;
 
-   if (solvingMode == StableLayer)
-   {
-      mIterationsCount = layersCount - 1;
+   if (solvingMode == StableLayer) 
+   { 
+      iterationsCount = layersCount - 1;
       layersCount = 1;
       if (u1_curr_layer != u1Grid)
          for (int i = 0; i <= n; i++)
@@ -152,16 +156,11 @@ SchemeResult ImplicitSchemeSolver::SolveOverride(SchemeTask task)
          }
    }
 
-   double timeStep = k;
-   int intervalsCount = n;
-   SchemeResult res(
-      u1GridPtr,
-      u2GridPtr,
-      intervalsCount,
-      layersCount,
-      timeStep);
-
-   return res;
+   SchemeSolution solutionU1(u1GridPtr, n, layersCount, k);
+   SchemeSolution solutionU2(u2GridPtr, n, layersCount, k);
+   SchemeStatistic statistic(iterationsCount, maxDiffU1, maxDiffU2);
+   SchemeSolverResult result(solutionU1, solutionU2, statistic, task);
+   return result;
 }
 
 void ImplicitSchemeSolver::CheckParametersOverride(SchemeTask task) {

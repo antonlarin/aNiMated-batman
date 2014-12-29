@@ -82,7 +82,7 @@ void SchemeSolver::SolveNewThread(SolverCallback callback,
                                   ExceptionCallback exCallback,
                                   SchemeTask task) {
    bool isSolved = true;
-   SchemeResult res;
+   SchemeSolverResult res;
    try {
       res = SolveOverride(task);    
    }

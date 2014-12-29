@@ -4,24 +4,24 @@
 #include <memory>
 #include "CoreGlobal.hpp"
 #include "SchemeSolver.hpp"
-#include "SchemeResult.hpp"
 
 namespace diffusioncore {
-	class EXPORT_API ExplicitSchemeSolver : public SchemeSolver {
-	public:
-		ExplicitSchemeSolver();
-		~ExplicitSchemeSolver();
-		double EvaluateStableTimeStep(int xGridDim);
-	private:
-		std::shared_ptr<double> u1GridPtr;
-		std::shared_ptr<double> u2GridPtr;
+   class EXPORT_API ExplicitSchemeSolver : public SchemeSolver {
+   private:
+      std::shared_ptr<double> u1GridPtr;
+      std::shared_ptr<double> u2GridPtr;
+   
+   public:
+      ExplicitSchemeSolver();
+      ~ExplicitSchemeSolver();
+   
+      double EvaluateStableTimeStep(int xGridDim);
 
-	protected:
-		virtual SchemeResult SolveOverride(SchemeTask task);
-		virtual void CheckParametersOverride(SchemeTask task);
-		
-		double GetLayersDifference(double* layer1, double* layer2, int layerSize);
-	};
+   protected:
+      virtual SchemeSolverResult SolveOverride(SchemeTask task);
+      virtual void CheckParametersOverride(SchemeTask task);
+      
+   };
 }
 
 #endif
