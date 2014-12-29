@@ -1,6 +1,4 @@
-#include <limits>
 #include <cassert>
-#include <algorithm>
 #include <stdexcept>
 #include "SchemeSolverResult.hpp"
 using namespace diffusioncore;
@@ -62,33 +60,33 @@ SchemeSolverResult::~SchemeSolverResult() { }
 
 
 int SchemeSolverResult::GetIterationsCount() const {
+   CheckIsInitialized();
    return mIterationsCount;
 }
 
 int SchemeSolverResult::GetLayersCount() const {
+   CheckIsInitialized();
    return mLayersCount;
 }
 
 
 SchemeSolution SchemeSolverResult::GetSolutionU1() const {
+   CheckIsInitialized();
    return mSolutionU1;
 }
 
 SchemeSolution SchemeSolverResult::GetSolutionU2() const {
+   CheckIsInitialized();
    return mSolutionU2;
 }
 
 SchemeTask SchemeSolverResult::GetTask() const {
+   CheckIsInitialized();
    return mTask;
 }
 
 
-// TODO
-// double SchemeSolver::GetMaximumTime() {
-//    CheckSolverThreadStatus();
-//    return (mIterationsCount - 1) * mStepTime;
-// }
-// int SchemeSolver::GetIterationsCount() {
-//    CheckSolverThreadStatus();
-//    return mIterationsCount;
-// }
+void SchemeSolverResult::CheckIsInitialized() const {
+   if (!mIsInitialized)
+      throw std::runtime_error("Result is not initialized");
+}

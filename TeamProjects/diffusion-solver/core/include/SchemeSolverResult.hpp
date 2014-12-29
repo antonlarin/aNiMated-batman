@@ -35,6 +35,10 @@ namespace diffusioncore {
       SchemeSolution GetSolutionU1() const;
       SchemeSolution GetSolutionU2() const;
       SchemeTask GetTask() const;
+
+   private:
+      void CheckIsInitialized() const;
+
    };
 }
 
