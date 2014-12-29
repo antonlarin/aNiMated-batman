@@ -16,7 +16,7 @@ namespace diffusioncore {
       SchemeStatistic mStatistic;
 
       int mLayersCount;
-      int mIterationsCount;
+      int mIntervalsCount;
       bool mIsInitialized;
 
    public:
@@ -26,6 +26,9 @@ namespace diffusioncore {
                          const SchemeStatistic& statistic,
                          const SchemeTask& task);
       ~SchemeSolverResult();
+
+      int GetLayersCount() const;
+      int GetIntervalsCount() const;
 
       SchemeSolution GetSolutionU1() const;
       SchemeSolution GetSolutionU2() const;

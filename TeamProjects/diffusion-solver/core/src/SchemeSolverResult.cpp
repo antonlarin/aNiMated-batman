@@ -19,11 +19,22 @@ SchemeSolverResult::SchemeSolverResult(const SchemeSolution& solutionU1,
    mSolutionU1 = solutionU1;
    mSolutionU2 = solutionU2;
 
+   mLayersCount = solutionU1.GetLayersCount();
+   mIntervalsCount = solutionU1.GetIntervalsCount();
+
    mIsInitialized = true;
 }
 
 SchemeSolverResult::~SchemeSolverResult() { }
 
+
+int SchemeSolverResult::GetLayersCount() const {
+   return mLayersCount;
+}
+
+int SchemeSolverResult::GetIntervalsCount() const {
+   return mIntervalsCount;
+}
 
 SchemeSolution SchemeSolverResult::GetSolutionU1() const {
    CheckIsInitialized();
