@@ -23,7 +23,7 @@ DSModel::DSModel() :
     inhibitorInitConditionsCoeffs(),
     solverType(SolverType::EXPLICIT_SOLVER),
     task(new SchemeTask),
-    solver(new ExplicitSchemeSolver()),
+    solver(new SchemeSolverExplicit()),
     result(nullptr),
     currentLayerIndex(0),
     layerStep(1)
@@ -205,11 +205,11 @@ void DSModel::SetSolverType(SolverType value)
     {
         if (solverType == SolverType::EXPLICIT_SOLVER)
         {
-            solver.reset(new ExplicitSchemeSolver());
+            solver.reset(new SchemeSolverExplicit());
         }
         else
         {
-            solver.reset(new ImplicitSchemeSolver());
+            solver.reset(new SchemeSolverImplicit());
         }
     }
 }
