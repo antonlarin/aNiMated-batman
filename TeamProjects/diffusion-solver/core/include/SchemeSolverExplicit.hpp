@@ -25,8 +25,6 @@ namespace diffusioncore {
       SchemeSolverExplicit();
       ~SchemeSolverExplicit();
    
-      double EvaluateStableTimeStep(int xGridDim);
-
    protected:
       virtual SchemeSolverResult SolveOverride(SchemeTask task);
       virtual void CheckParametersOverride(SchemeTask task);

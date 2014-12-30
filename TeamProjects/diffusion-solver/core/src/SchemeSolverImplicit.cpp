@@ -75,10 +75,9 @@ SchemeSolverResult SchemeSolverImplicit::SolveOverride(SchemeTask task) {
          u2_curr_layer[i - 1] = alpha[i - 1] * u2_curr_layer[i] + beta[i - 1];
       // end danger zone
       
-      layersCount++;
       maxDiffU1 = MaxDifference(u1_curr_layer, u1_prev_layer, n + 1);
       maxDiffU2 = MaxDifference(u2_curr_layer, u2_prev_layer, n + 1);
-      iterInfo = SchemeSolverIterationInfo(layersCount - 1, 
+      iterInfo = SchemeSolverIterationInfo(layersCount, 
                                            iterationsCount, 
                                            maxDiffU1, 
                                            maxDiffU2);   
@@ -89,6 +88,7 @@ SchemeSolverResult SchemeSolverImplicit::SolveOverride(SchemeTask task) {
             break;
       }
 
+      layersCount++;
       if (IsStoped())
          break;
    }

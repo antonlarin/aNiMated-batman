@@ -10,10 +10,6 @@ using namespace diffusioncore::utils;
 SchemeSolverExplicit::SchemeSolverExplicit() { }
 SchemeSolverExplicit::~SchemeSolverExplicit() { }
 
-double SchemeSolverExplicit::EvaluateStableTimeStep(int xGridDim) {
-   return 0.5 / (xGridDim*xGridDim);
-}
-
 SchemeSolverResult SchemeSolverExplicit::SolveOverride(SchemeTask task) {
    InitializeSchemeParameters(task);
    InitializeGrid(task);
@@ -71,21 +67,20 @@ SchemeSolverResult SchemeSolverExplicit::SolveOverride(SchemeTask task) {
       u2_curr_layer[0] = (4 * u2_curr_layer[1] - u2_curr_layer[2]) / 3;
       u2_curr_layer[n] = (4 * u2_curr_layer[n - 1] - u2_curr_layer[n - 2]) / 3;
 
-      layersCount++;
       maxDiffU1 = MaxDifference(u1_curr_layer, u1_prev_layer, n + 1);
       maxDiffU2 = MaxDifference(u2_curr_layer, u2_prev_layer, n + 1);
-      iterInfo = SchemeSolverIterationInfo(layersCount - 1, 
+      iterInfo = SchemeSolverIterationInfo(layersCount, 
                                            iterationsCount, 
                                            maxDiffU1, 
                                            maxDiffU2);      
       UpdateIterationInfo(iterInfo);
 
-      if (solvingMode == StableLayer)
-      {
+      if (solvingMode == StableLayer) {
          if (maxDiffU1 < mAccuracyU1 && maxDiffU2 < mAccuracyU2)
             break;
       }
 
+      layersCount++;
       if (IsStoped())
          break;
    }
