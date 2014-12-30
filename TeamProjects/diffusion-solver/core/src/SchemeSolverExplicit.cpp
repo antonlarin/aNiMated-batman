@@ -43,6 +43,8 @@ SchemeSolverResult SchemeSolverExplicit::SolveOverride(SchemeTask task) {
    double maxDiffU1 = mAccuracyU1;
    double maxDiffU2 = mAccuracyU2;
 
+   SchemeSolverIterationInfo iterInfo;
+
    try{
       if (solvingMode == AllLayers)
       {
@@ -111,11 +113,16 @@ SchemeSolverResult SchemeSolverExplicit::SolveOverride(SchemeTask task) {
       u2_curr_layer[n] = (4 * u2_curr_layer[n - 1] - u2_curr_layer[n - 2]) / 3;
 
       layersCount++;
+      maxDiffU1 = MaxDifference(u1_curr_layer, u1_prev_layer, n + 1);
+      maxDiffU2 = MaxDifference(u2_curr_layer, u2_prev_layer, n + 1);
+      iterInfo = SchemeSolverIterationInfo(layersCount - 1, 
+                                           iterationsCount, 
+                                           maxDiffU1, 
+                                           maxDiffU2);      
+      UpdateIterationInfo(iterInfo);
 
       if (solvingMode == StableLayer && (j + 1) % 1000 == 0)
       {
-         maxDiffU1 = MaxDifference(u1_curr_layer, u1_prev_layer, n + 1);
-         maxDiffU2 = MaxDifference(u2_curr_layer, u2_prev_layer, n + 1);
          if (maxDiffU1 < mAccuracyU1 && maxDiffU2 < mAccuracyU2)
             break;
       }

@@ -66,6 +66,12 @@ void SchemeSolver::SolveWait() {
       mSolverThread.join();
 }
 
+void SchemeSolver::RegisterIterationCallback(
+   SolverIterationCallback callback) {
+   CheckSolverThreadStatus();
+   mIterationCallback = callback;
+}
+
 
 bool SchemeSolver::IsStoped() {
    mSolverMutex.lock();
@@ -75,6 +81,11 @@ bool SchemeSolver::IsStoped() {
 }
 
 void SchemeSolver::CheckParametersOverride(SchemeTask task) { }
+
+void SchemeSolver::UpdateIterationInfo(SchemeSolverIterationInfo& info) {
+   if (mIterationCallback)
+      mIterationCallback(info);
+}
 
 
 void SchemeSolver::SolveNewThread(SolverCallback callback,

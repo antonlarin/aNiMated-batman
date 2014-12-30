@@ -10,16 +10,25 @@
 #include "SchemeTask.hpp"
 #include "SchemeLayer.hpp"
 #include "SchemeSolverResult.hpp"
+#include "SchemeSolverIterationInfo.hpp"
 
 namespace diffusioncore {
 
-   typedef std::function<void(SchemeSolverResult&)> SolverCallback;
-   typedef std::function<void(std::exception&)> ExceptionCallback;
+   typedef std::function<void(SchemeSolverResult&)> 
+      SolverCallback;
+   
+   typedef std::function<void(SchemeSolverIterationInfo&)> 
+      SolverIterationCallback;
+   
+   typedef std::function<void(std::exception&)> 
+      ExceptionCallback;
+
 
    enum SchemeSolvingMode {
       AllLayers,
       StableLayer
    };
+
 
    class EXPORT_API SchemeSolver {
    private:
@@ -30,6 +39,7 @@ namespace diffusioncore {
       bool mIsSolving;
       std::mutex mSolverMutex;
       std::thread mSolverThread;
+      SolverIterationCallback mIterationCallback;
 
    public:
       SchemeSolver();
@@ -46,11 +56,14 @@ namespace diffusioncore {
       void SolveWait();
       bool SolveIsInProgress();
 
-   protected:
+      void RegisterIterationCallback(
+         SolverIterationCallback callback);
 
+   protected:
       bool IsStoped();
       virtual SchemeSolverResult SolveOverride(SchemeTask task) = 0;
-      virtual void CheckParametersOverride(SchemeTask task) = 0;
+      virtual void CheckParametersOverride(SchemeTask task);
+      void UpdateIterationInfo(SchemeSolverIterationInfo& info);
 
    private:
       void CheckSolverThreadStatus();
