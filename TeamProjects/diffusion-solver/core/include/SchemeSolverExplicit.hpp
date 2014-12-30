@@ -1,19 +1,19 @@
-#ifndef ExplicitSchemeSolver_H
-#define ExplicitSchemeSolver_H
+#ifndef SchemeSolverExplicit_H
+#define SchemeSolverExplicit_H
 
 #include <memory>
 #include "CoreGlobal.hpp"
 #include "SchemeSolver.hpp"
 
 namespace diffusioncore {
-   class EXPORT_API ExplicitSchemeSolver : public SchemeSolver {
+   class EXPORT_API SchemeSolverExplicit : public SchemeSolver {
    private:
       std::shared_ptr<double> u1GridPtr;
       std::shared_ptr<double> u2GridPtr;
    
    public:
-      ExplicitSchemeSolver();
-      ~ExplicitSchemeSolver();
+      SchemeSolverExplicit();
+      ~SchemeSolverExplicit();
    
       double EvaluateStableTimeStep(int xGridDim);
 

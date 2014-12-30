@@ -2,15 +2,19 @@
 #include <stdexcept>
 #include "CoreUtils.hpp"
 #include "SchemeStatistic.hpp"
-#include "ImplicitSchemeSolver.hpp"
+#include "SchemeSolverExplicit.hpp"
 
 using namespace diffusioncore;
 using namespace diffusioncore::utils;
 
-ImplicitSchemeSolver::ImplicitSchemeSolver() { }
-ImplicitSchemeSolver::~ImplicitSchemeSolver() { }
+SchemeSolverExplicit::SchemeSolverExplicit() { }
+SchemeSolverExplicit::~SchemeSolverExplicit() { }
 
-SchemeSolverResult ImplicitSchemeSolver::SolveOverride(SchemeTask task) {
+double SchemeSolverExplicit::EvaluateStableTimeStep(int xGridDim) {
+   return 0.5 / (xGridDim*xGridDim);
+}
+
+SchemeSolverResult SchemeSolverExplicit::SolveOverride(SchemeTask task) {
    int n = task.GetIntervalsCount();
    int m = task.GetMaximumIterations();
    double h = 1.0 / n;
@@ -35,7 +39,6 @@ SchemeSolverResult ImplicitSchemeSolver::SolveOverride(SchemeTask task) {
    double* u1_prev_layer;
    double* u2_curr_layer;
    double* u2_prev_layer;
-   double *alpha, *beta;
 
    double maxDiffU1 = mAccuracyU1;
    double maxDiffU2 = mAccuracyU2;
@@ -51,17 +54,14 @@ SchemeSolverResult ImplicitSchemeSolver::SolveOverride(SchemeTask task) {
       }
       else if (solvingMode == StableLayer)
       {
-         u1Grid = new double[(n + 1) * 2];
+         u1Grid = new double[(n + 1) * 3];
          u1GridPtr = std::shared_ptr<double>(u1Grid, array_deleter<double>());
 
-         u2Grid = new double[(n + 1) * 2];
+         u2Grid = new double[(n + 1) * 3];
          u2GridPtr = std::shared_ptr<double>(u2Grid, array_deleter<double>());
       }
       else
          throw std::runtime_error("Invalid solving mode");
-
-      alpha = new double[n + 1];
-      beta = new double[n + 1];
    }
    catch (std::bad_alloc)
    {
@@ -75,13 +75,13 @@ SchemeSolverResult ImplicitSchemeSolver::SolveOverride(SchemeTask task) {
       u1Grid[i] = initialLayerU1[i];
       u2Grid[i] = initialLayerU2[i];
    }
-
    u1_curr_layer = u1Grid;
    u1_prev_layer = u1Grid + n + 1;
    u2_curr_layer = u2Grid;
    u2_prev_layer = u2Grid + n + 1;
 
    int layersCount = 1;
+
    for (int j = 0; j < m; j++)
    {
       if (solvingMode == AllLayers)
@@ -96,38 +96,20 @@ SchemeSolverResult ImplicitSchemeSolver::SolveOverride(SchemeTask task) {
          PointerSwap(&u1_curr_layer, &u1_prev_layer);
          PointerSwap(&u2_curr_layer, &u2_prev_layer);
       }
-      ////////////////solving zone
-      double tmp1, tmp2;
-
-      alpha[0] = 1;
-      beta[0] = 0;
       for (int i = 1; i < n; i++)
       {
-         tmp1 = 2 * mLambda1 + h*h / k - alpha[i - 1] * mLambda1;
-         alpha[i] = mLambda1 / tmp1;
-         tmp2 = h*h*(u1_prev_layer[i] / k + mRho - mMu*u1_prev_layer[i]
-            + mK*std::pow(u1_prev_layer[i], 2) / u2_prev_layer[i]);
-         beta[i] = (tmp2 + beta[i - 1] * mLambda1) / tmp1;
-      }
-      u1_curr_layer[n] = beta[n - 1] / (-alpha[n - 1] + 1);
-      for (int i = n; i > 0; i--)
-         u1_curr_layer[i - 1] = alpha[i - 1] * u1_curr_layer[i] + beta[i - 1];
+         u1_curr_layer[i] = k*(mLambda1*(u1_prev_layer[i - 1] - 2 * u1_prev_layer[i] + u1_prev_layer[i + 1]) / (h * h)
+            + mK*std::pow(u1_prev_layer[i], 2) / u2_prev_layer[i] - mMu*u1_prev_layer[i] + mRho) + u1_prev_layer[i];
 
-      alpha[0] = 1;
-      beta[0] = 0;
-      for (int i = 1; i < n; i++)
-      {
-         tmp1 = 2 * mLambda2 + h*h / k - alpha[i - 1] * mLambda2;
-         alpha[i] = mLambda2 / tmp1;
-         tmp2 = h*h*(u2_prev_layer[i] / k - mNu*u2_prev_layer[i]
-            + mC*std::pow(u1_prev_layer[i], 2));
-         beta[i] = (tmp2 + beta[i - 1] * mLambda2) / tmp1;
+         u2_curr_layer[i] = k*(mLambda2*(u2_prev_layer[i - 1] - 2 * u2_prev_layer[i] + u2_prev_layer[i + 1]) / (h * h)
+            + mC*std::pow(u1_prev_layer[i], 2) - mNu*u2_prev_layer[i]) + u2_prev_layer[i];
       }
-      u2_curr_layer[n] = beta[n - 1] / (-alpha[n - 1] + 1);
-      for (int i = n; i > 0; i--)
-         u2_curr_layer[i - 1] = alpha[i - 1] * u2_curr_layer[i] + beta[i - 1];
+      u1_curr_layer[0] = (4 * u1_curr_layer[1] - u1_curr_layer[2]) / 3;
+      u1_curr_layer[n] = (4 * u1_curr_layer[n - 1] - u1_curr_layer[n - 2]) / 3;
 
-      ////////////////////////////////
+      u2_curr_layer[0] = (4 * u2_curr_layer[1] - u2_curr_layer[2]) / 3;
+      u2_curr_layer[n] = (4 * u2_curr_layer[n - 1] - u2_curr_layer[n - 2]) / 3;
+
       layersCount++;
 
       if (solvingMode == StableLayer && (j + 1) % 1000 == 0)
@@ -141,19 +123,18 @@ SchemeSolverResult ImplicitSchemeSolver::SolveOverride(SchemeTask task) {
          break;
    }
 
-   delete[] alpha;
-   delete[] beta;
-
-   if (solvingMode == StableLayer) 
-   { 
+   if (solvingMode == StableLayer)
+   {
       iterationsCount = layersCount - 1;
       layersCount = 1;
-      if (u1_curr_layer != u1Grid)
+      if (u1_curr_layer != u1Grid) 
+      {
          for (int i = 0; i <= n; i++)
          {
             u1Grid[i] = u1Grid[i + n + 1];
             u2Grid[i] = u2Grid[i + n + 1];
          }
+      }
    }
 
    SchemeSolution solutionU1(u1GridPtr, n, layersCount, k);
@@ -163,5 +144,11 @@ SchemeSolverResult ImplicitSchemeSolver::SolveOverride(SchemeTask task) {
    return result;
 }
 
-void ImplicitSchemeSolver::CheckParametersOverride(SchemeTask task) {
+void SchemeSolverExplicit::CheckParametersOverride(SchemeTask task) {
+   double k = task.GetStepTime();
+   int n = task.GetIntervalsCount();
+   double h = 1.0 / n;
+
+   if (k > h * h / 2)
+      throw std::runtime_error("Incompatible intervlas count and time step");
 }

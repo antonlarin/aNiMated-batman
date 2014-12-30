@@ -1,18 +1,18 @@
-#ifndef ImplicitSchemeSolver_H
-#define ImplicitSchemeSolver_H
+#ifndef SchemeSolverImplicit_H
+#define SchemeSolverImplicit_H
 
 #include "CoreGlobal.hpp"
 #include "SchemeSolver.hpp"
 
 namespace diffusioncore {
-   class EXPORT_API ImplicitSchemeSolver : public SchemeSolver {
+   class EXPORT_API SchemeSolverImplicit : public SchemeSolver {
    private:
       std::shared_ptr<double> u1GridPtr;
       std::shared_ptr<double> u2GridPtr;
    
    public:
-      ImplicitSchemeSolver();
-      ~ImplicitSchemeSolver();
+      SchemeSolverImplicit();
+      ~SchemeSolverImplicit();
    
    protected:
       virtual SchemeSolverResult SolveOverride(SchemeTask task);

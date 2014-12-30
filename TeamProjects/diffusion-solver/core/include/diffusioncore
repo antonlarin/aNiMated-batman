@@ -7,9 +7,9 @@
 #include "SchemeLayer.hpp"
 #include "SchemeSolver.hpp"
 #include "SchemeSolverResult.hpp"
-#include "ExplicitSchemeSolver.hpp"
-#include "ImplicitSchemeSolver.hpp"
-#include "ISchemeInitialConditions.hpp"
-#include "DefaultSchemeInitialConditions.hpp"
+#include "SchemeSolverExplicit.hpp"
+#include "SchemeSolverImplicit.hpp"
+#include "ISchemeLayerGenerator.hpp"
+#include "SchemeLayerGeneratorInitial.hpp"
 
 #endif

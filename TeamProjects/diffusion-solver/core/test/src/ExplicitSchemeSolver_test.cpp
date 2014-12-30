@@ -26,7 +26,7 @@ void SetSolverDefaultParameters(SchemeSolver& solver) {
 }
 
 TEST(ExplicitSchemeSolverClass, Initialization) {
-   ExplicitSchemeSolver solver; 
+   SchemeSolverExplicit solver; 
    SetSolverDefaultParameters(solver);
 
    std::function<void(SchemeSolverResult&)> callback = 
@@ -46,7 +46,7 @@ TEST(ExplicitSchemeSolverClass, Initialization) {
 }
 
 TEST(ExplicitSchemeSolverClass, SolvingAbort) {
-   ExplicitSchemeSolver solver; 
+   SchemeSolverExplicit solver; 
    SetSolverDefaultParameters(solver);
 
    std::function<void(SchemeSolverResult&)> callback = 

@@ -1,7 +1,6 @@
 #include <cassert>
 #include <stdexcept>
 #include "SchemeSolver.hpp"
-#include "DefaultSchemeInitialConditions.hpp"
 using namespace diffusioncore;
 
 SchemeSolver::SchemeSolver() {
