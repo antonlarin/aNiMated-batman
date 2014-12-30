@@ -6,6 +6,7 @@
 #include "dsmodel.hpp"
 #include "iobserver.hpp"
 #include "dsinitconditionsdialog.hpp"
+#include "dssolvingprogressdialog.hpp"
 
 namespace Ui {
 class DSMainWindow;
@@ -57,8 +58,11 @@ private:
     void displayActivatorLayer(const SchemeLayer& layer);
     void displayInhibitorLayer(const SchemeLayer& layer);
 
+    void showSolvingProgressDialog();
+
     Ui::DSMainWindow *ui;
     DSInitConditionsDialog* initConditionsDialog;
+    DSSolvingProgressDialog* solvingProgressDialog;
     DSModel* model;
 };
 

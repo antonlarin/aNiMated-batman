@@ -17,16 +17,19 @@ SOURCES += main.cpp\
         dsmainwindow.cpp \
     dsmodel.cpp \
     ext/qcustomplot.cpp \
-    dsinitconditionsdialog.cpp
+    dsinitconditionsdialog.cpp \
+    dssolvingprogressdialog.cpp
 
 HEADERS  += dsmainwindow.hpp \
     dsmodel.hpp \
     ext/qcustomplot.h \
     iobserver.hpp \
-    dsinitconditionsdialog.hpp
+    dsinitconditionsdialog.hpp \
+    dssolvingprogressdialog.hpp
 
 FORMS    += dsmainwindow.ui \
-    dsinitconditionsdialog.ui
+    dsinitconditionsdialog.ui \
+    dssolvingprogressdialog.ui
 
 win32: LIBS += -L$$PWD/../core/bin/ -ldiffusion-solver
 else:unix:!macx: LIBS += -L$$PWD/../core-build/ \

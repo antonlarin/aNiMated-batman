@@ -207,6 +207,7 @@ void DSMainWindow::startFiniteRun()
     try
     {
         model->StartRun(SchemeSolvingMode::AllLayers);
+        showSolvingProgressDialog();
     }
     catch (std::runtime_error e)
     {
@@ -220,6 +221,7 @@ void DSMainWindow::startStabilityRun()
     try
     {
         model->StartRun(SchemeSolvingMode::StableLayer);
+        showSolvingProgressDialog();
     }
     catch (std::runtime_error e)
     {
@@ -341,4 +343,11 @@ void DSMainWindow::displayInhibitorLayer(const SchemeLayer& layer)
 
     ui->inhibitorPlot->graph(0)->setData(xs, ys);
     ui->inhibitorPlot->replot();
+}
+
+void DSMainWindow::showSolvingProgressDialog()
+{
+    solvingProgressDialog = new DSSolvingProgressDialog(model, this);
+    solvingProgressDialog->setAttribute(Qt::WA_DeleteOnClose);
+    solvingProgressDialog->show();
 }
