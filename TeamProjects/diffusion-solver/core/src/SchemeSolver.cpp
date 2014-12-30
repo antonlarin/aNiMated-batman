@@ -97,11 +97,13 @@ void SchemeSolver::SolveNewThread(SolverCallback callback,
       res = SolveOverride(task);    
    }
    catch (std::exception ex) {
-      exCallback(ex);
+      if (exCallback)
+         exCallback(ex);
+      
       isSolved = false;
    }
 
-   if (isSolved)
+   if (isSolved && callback)
       callback(res);
 
    mSolverMutex.lock();
