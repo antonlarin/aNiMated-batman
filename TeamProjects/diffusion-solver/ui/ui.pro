@@ -23,7 +23,6 @@ SOURCES += main.cpp\
 HEADERS  += dsmainwindow.hpp \
     dsmodel.hpp \
     ext/qcustomplot.h \
-    iobserver.hpp \
     dsinitconditionsdialog.hpp \
     dssolvingprogressdialog.hpp
 

@@ -1,8 +1,6 @@
 #include "dssolvingprogressdialog.hpp"
 #include "ui_dssolvingprogressdialog.h"
 
-#include <cmath>
-
 DSSolvingProgressDialog::DSSolvingProgressDialog(DSModel* model,
                                                  QWidget *parent) :
     QDialog(parent),

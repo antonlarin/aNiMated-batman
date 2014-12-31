@@ -30,11 +30,6 @@ DSModel::DSModel() :
     layerStep(1)
 {}
 
-void DSModel::RegisterView(IObserver *view)
-{
-    views.push_back(view);
-}
-
 
 
 /*

@@ -4,7 +4,6 @@
 #include <QMainWindow>
 
 #include "dsmodel.hpp"
-#include "iobserver.hpp"
 #include "dsinitconditionsdialog.hpp"
 #include "dssolvingprogressdialog.hpp"
 
