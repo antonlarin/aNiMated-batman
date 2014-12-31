@@ -1,3 +1,4 @@
+#include <QThread>
 #include "dssolvingprogressdialog.hpp"
 #include "ui_dssolvingprogressdialog.h"
 
@@ -9,13 +10,8 @@ DSSolvingProgressDialog::DSSolvingProgressDialog(DSModel* model,
 {
     ui->setupUi(this);
 
-    ui->performedIterationsProgressBar->setMinimum(0);
-    ui->performedIterationsProgressBar->setMaximum(model->GetIterationsLimit());
-
-    connect(model, SIGNAL(iterationInfoChanged()),
-            this, SLOT(displayIterationInfo()));
-    connect(model, SIGNAL(resultAcquired()),
-            this, SLOT(close()));
+    connect(model, SIGNAL(iterationDone(DSSolverIterationInfo&)),
+            this, SLOT(updateIterationInfo(DSSolverIterationInfo&)));
 }
 
 DSSolvingProgressDialog::~DSSolvingProgressDialog()
@@ -24,21 +20,12 @@ DSSolvingProgressDialog::~DSSolvingProgressDialog()
 }
 
 
-
-/*
- * Slots implementations
- */
-void DSSolvingProgressDialog::displayIterationInfo()
+void DSSolvingProgressDialog::updateIterationInfo(DSSolverIterationInfo& info)
 {
-    int totalIterations = model->GetIterationsLimit();
-    int performedIterations = model->GetPerformedIterationsCount();
+    int iters = info.GetCurrentIterationNumber();
+    int total = info.GetPlannedIterationsCount();
 
-    ui->totalIterationsValueLabel->setText(tr("%1").arg(totalIterations));
-    ui->performedIterationsValueLabel->
-            setText(tr("%1").arg(performedIterations));
-    ui->activatorAccuracyValueLabel->
-            setText(tr("%1").arg(model->GetAchievedActivatorAccuracy()));
-    ui->inhibitorAccuracyValueLabel->
-            setText(tr("%1").arg(model->GetAchievedInhibitorAccuracy()));
-    ui->performedIterationsProgressBar->setValue(performedIterations);
+    QString labelText;
+    labelText.sprintf("Сделано %d итераций из %d", iters, total);
+    ui->labelIterationNumber->setText(labelText);
 }

@@ -10,6 +10,7 @@
 #include "SchemeSolverExplicit.hpp"
 #include "SchemeSolverImplicit.hpp"
 #include "ISchemeLayerGenerator.hpp"
+#include "SchemeSolverIterationInfo.hpp"
 #include "SchemeLayerGeneratorInitial.hpp"
 
 #endif

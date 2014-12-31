@@ -14,15 +14,8 @@
 
 namespace diffusioncore {
 
-   typedef std::function<void(SchemeSolverResult&)> 
-      SolverCallback;
-   
-   typedef std::function<void(SchemeSolverIterationInfo&)> 
+   typedef std::function<bool(SchemeSolverIterationInfo&)> 
       SolverIterationCallback;
-   
-   typedef std::function<void(std::exception&)> 
-      ExceptionCallback;
-
 
    enum SchemeSolvingMode {
       AllLayers,
@@ -33,13 +26,9 @@ namespace diffusioncore {
    class EXPORT_API SchemeSolver {
    private:
       std::shared_ptr<SchemeTask> mTask;
+      SolverIterationCallback mIterationCallback;
       SchemeSolvingMode mSolvingMode;
 
-      bool mIsStop;
-      bool mIsSolving;
-      std::mutex mSolverMutex;
-      std::thread mSolverThread;
-      SolverIterationCallback mIterationCallback;
 
    public:
       SchemeSolver();
@@ -47,29 +36,17 @@ namespace diffusioncore {
 
       PROPERTY(SchemeSolvingMode, SolvingMode);
 
-      void BindTask(std::shared_ptr<SchemeTask> task);
+      void RegisterTask(std::shared_ptr<SchemeTask> task);
+      void RegisterIterationCallback(SolverIterationCallback callback);
 
-      void SolveCancel();
-      void SolveAsync(
-         SolverCallback callback,
-         ExceptionCallback exCallback);
-      void SolveWait();
-      bool SolveIsInProgress();
-
-      void RegisterIterationCallback(
-         SolverIterationCallback callback);
+      SchemeSolverResult Solve();
 
    protected:
-      bool IsStoped();
       virtual SchemeSolverResult SolveOverride(SchemeTask task) = 0;
       virtual void CheckParametersOverride(SchemeTask task);
-      void UpdateIterationInfo(SchemeSolverIterationInfo& info);
+      bool UpdateIterationInfo(SchemeSolverIterationInfo& info);
 
    private:
-      void CheckSolverThreadStatus();
-      void SolveNewThread(SolverCallback callback, 
-                          ExceptionCallback exCallback,
-                          SchemeTask task);
       void CheckParameters(SchemeTask task);
 
    };

@@ -24,11 +24,20 @@ DSModel::DSModel() :
     solverType(SolverType::EXPLICIT_SOLVER),
     task(new SchemeTask),
     solver(new SchemeSolverExplicit()),
+    solverThread(new DSSolverThread(solver)),
     result(nullptr),
-    iterationInfo(nullptr),
+    iterInfo(nullptr),
     currentLayerIndex(0),
     layerStep(1)
-{}
+{
+    solver->RegisterTask(task);
+
+    connect(solverThread.get(), SIGNAL(solverFinished(SchemeSolverResult&)),
+            this, SLOT(solverThreadFinished(SchemeSolverResult&)));
+
+    connect(solverThread.get(), SIGNAL(iterationDone(DSSolverIterationInfo&)),
+            this, SLOT(solverThreadIterationDone(DSSolverIterationInfo&)));
+}
 
 
 
@@ -169,7 +178,7 @@ void DSModel::SetCurrentLayerIndex(int value)
         currentLayerIndex = GetLayerCount() - 1;
     else
         currentLayerIndex = value;
-    layerIndexChanged();
+    emit layerIndexChanged();
 }
 
 int DSModel::GetLayerStep() const
@@ -254,7 +263,6 @@ void DSModel::StartRun(SchemeSolvingMode mode)
 
     task->SetInitialLayers(activatorInitLayer, inhibitorInitLayer);
 
-    solver->BindTask(task);
     switch (mode)
     {
     case AllLayers:
@@ -265,16 +273,7 @@ void DSModel::StartRun(SchemeSolvingMode mode)
     }
 
     currentLayerIndex = 0;
-
-    std::function<void(SchemeSolverResult&)> acquireResult =
-            std::bind(&DSModel::AcquireResult, this, _1);
-    std::function<void(std::exception&)> exceptionCallback =
-            [&](std::exception&) -> void {};
-    std::function<void(SchemeSolverIterationInfo&)> acquireIterationInfo =
-            std::bind(&DSModel::AcquireIterationInfo, this, _1);
-    solver->RegisterIterationCallback(acquireIterationInfo);
-
-    solver->SolveAsync(acquireResult, exceptionCallback);
+    solverThread->start();
 }
 
 const SchemeLayer DSModel::GetCurrentActivatorLayer()
@@ -320,53 +319,14 @@ int DSModel::GetLayerCount() const
     return result->GetLayersCount();
 }
 
-int DSModel::GetPerformedIterationsCount() const
+void DSModel::solverThreadFinished(SchemeSolverResult& res)
 {
-    if (solver->SolveIsInProgress())
-    {
-        return iterationInfo->GetIterationNumber();
-    }
-    else
-    {
-        auto schemeStat = result->GetStatistic();
-        return schemeStat.GetIterationsCount();
-    }
+    result.reset(new SchemeSolverResult(res));
+    emit resultAcquired();
 }
 
-double DSModel::GetAchievedActivatorAccuracy() const
+void DSModel::solverThreadIterationDone(DSSolverIterationInfo& info)
 {
-    if (solver->SolveIsInProgress())
-    {
-        return iterationInfo->GetAccuracyU1();
-    }
-    else
-    {
-        SchemeStatistic schemeStat = result->GetStatistic();
-        return schemeStat.GetStopAccuracyU1();
-    }
+    emit iterationDone(info);
 }
 
-double DSModel::GetAchievedInhibitorAccuracy() const
-{
-    if (solver->SolveIsInProgress())
-    {
-        return iterationInfo->GetAccuracyU2();
-    }
-    else
-    {
-        SchemeStatistic schemeStat = result->GetStatistic();
-        return schemeStat.GetStopAccuracyU2();
-    }
-}
-
-void DSModel::AcquireResult(SchemeSolverResult &newResult)
-{
-    result.reset(new SchemeSolverResult(newResult));
-    resultAcquired();
-}
-
-void DSModel::AcquireIterationInfo(SchemeSolverIterationInfo &info)
-{
-    iterationInfo.reset(new SchemeSolverIterationInfo(info));
-    iterationInfoChanged();
-}

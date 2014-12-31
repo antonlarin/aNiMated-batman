@@ -7,6 +7,7 @@
 #include <QObject>
 
 #include <diffusioncore>
+#include "dssolverthread.hpp"
 
 using std::shared_ptr;
 using std::unique_ptr;
@@ -57,10 +58,15 @@ public:
     double GetAchievedActivatorAccuracy() const;
     double GetAchievedInhibitorAccuracy() const;
 
+
 signals:
     void layerIndexChanged();
     void resultAcquired();
-    void iterationInfoChanged();
+    void iterationDone(DSSolverIterationInfo&);
+
+private slots:
+    void solverThreadFinished(SchemeSolverResult&);
+    void solverThreadIterationDone(DSSolverIterationInfo&);
 
 private:
     double lambda1;
@@ -80,9 +86,10 @@ private:
     SolverType solverType;
 
     shared_ptr<SchemeTask> task;
-    unique_ptr<SchemeSolver> solver;
+    shared_ptr<SchemeSolver> solver;
     unique_ptr<SchemeSolverResult> result;
-    unique_ptr<SchemeSolverIterationInfo> iterationInfo;
+    unique_ptr<SchemeSolverIterationInfo> iterInfo;
+    unique_ptr<DSSolverThread> solverThread;
 
     int currentLayerIndex;
     int layerStep;

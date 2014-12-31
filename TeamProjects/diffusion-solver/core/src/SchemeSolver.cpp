@@ -4,20 +4,14 @@
 using namespace diffusioncore;
 
 SchemeSolver::SchemeSolver() {
-   mIsSolving = false;
-   mIsStop = true;
-
    mSolvingMode = SchemeSolvingMode::StableLayer;
    mTask = std::make_shared<SchemeTask>();
 }
 
-SchemeSolver::~SchemeSolver() {
-   SolveCancel();
-}
+SchemeSolver::~SchemeSolver() { }
 
 
 void SchemeSolver::SetSolvingMode(SchemeSolvingMode value) {
-   CheckSolverThreadStatus();
    mSolvingMode = value;
 }
 SchemeSolvingMode SchemeSolver::GetSolvingMode() const {
@@ -25,101 +19,34 @@ SchemeSolvingMode SchemeSolver::GetSolvingMode() const {
 }
 
 
-bool SchemeSolver::SolveIsInProgress   () {
-   mSolverMutex.lock();
-   bool isSolving = mIsSolving;
-   mSolverMutex.unlock();
-   return isSolving;
-}
-
-
-void SchemeSolver::BindTask(std::shared_ptr<SchemeTask> task) {
-   CheckSolverThreadStatus();
+void SchemeSolver::RegisterTask(std::shared_ptr<SchemeTask> task) {
    mTask = task;
-}
-
-void SchemeSolver::SolveCancel() {
-   mSolverMutex.lock();
-   mIsStop = true;
-   mSolverMutex.unlock();
-   SolveWait();
-}
-
-void SchemeSolver::SolveAsync(SolverCallback callback, 
-                              ExceptionCallback exCallback) {  
-   CheckSolverThreadStatus();
-   if (mSolverThread.joinable())
-      mSolverThread.detach();
-
-   auto task = mTask->Clone();
-   CheckParameters(task);
-
-   mIsSolving = true;
-   mIsStop = false;
-   mSolverThread = std::thread(
-      &SchemeSolver::SolveNewThread,
-      this, callback, exCallback, task);
-}
-
-void SchemeSolver::SolveWait() {
-   if (mSolverThread.joinable())
-      mSolverThread.join();
 }
 
 void SchemeSolver::RegisterIterationCallback(
    SolverIterationCallback callback) {
-   CheckSolverThreadStatus();
    mIterationCallback = callback;
 }
 
+SchemeSolverResult SchemeSolver::Solve() {  
+   if (!mTask)
+      throw std::runtime_error("Task is not registred");
 
-bool SchemeSolver::IsStoped() {
-   mSolverMutex.lock();
-   bool isStoped = mIsStop;
-   mSolverMutex.unlock(); 
-   return isStoped;
+   auto task = mTask->Clone();
+   CheckParameters(task);
+   return SolveOverride(task);
 }
+
 
 void SchemeSolver::CheckParametersOverride(SchemeTask task) { }
 
-void SchemeSolver::UpdateIterationInfo(SchemeSolverIterationInfo& info) {
+bool SchemeSolver::UpdateIterationInfo(SchemeSolverIterationInfo& info) {
    if (mIterationCallback)
-      mIterationCallback(info);
-}
+      return mIterationCallback(info);
 
-
-void SchemeSolver::SolveNewThread(SolverCallback callback,
-                                  ExceptionCallback exCallback,
-                                  SchemeTask task) {
-   bool isSolved = true;
-   SchemeSolverResult res;
-   try {
-      res = SolveOverride(task);    
-   }
-   catch (std::exception ex) {
-      if (exCallback)
-         exCallback(ex);
-      
-      isSolved = false;
-   }
-
-   if (isSolved && callback)
-      callback(res);
-
-   mSolverMutex.lock();
-   mIsSolving = false;
-   mSolverMutex.unlock();
+   return true;
 }
 
 void SchemeSolver::CheckParameters(SchemeTask task) {
    CheckParametersOverride(task);
-}
-
-void SchemeSolver::CheckSolverThreadStatus() {
-   mSolverMutex.lock();
-   bool isNotFinished = mIsSolving;
-   mSolverMutex.unlock();
-
-   if (isNotFinished)
-      throw std::runtime_error("Solving in progress");
 }

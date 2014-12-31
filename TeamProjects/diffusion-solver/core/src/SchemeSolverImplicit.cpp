@@ -81,16 +81,14 @@ SchemeSolverResult SchemeSolverImplicit::SolveOverride(SchemeTask task) {
                                            iterationsCount, 
                                            maxDiffU1, 
                                            maxDiffU2);   
-      UpdateIterationInfo(iterInfo);
+      layersCount++;
+      if (!UpdateIterationInfo(iterInfo))
+         break;
 
       if (solvingMode == SchemeSolvingMode::StableLayer) {
          if (maxDiffU1 < mAccuracyU1 && maxDiffU2 < mAccuracyU2)
             break;
       }
-
-      layersCount++;
-      if (IsStoped())
-         break;
    }
 
    delete[] alpha;
