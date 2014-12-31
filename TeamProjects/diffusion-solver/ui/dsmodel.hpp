@@ -7,7 +7,6 @@
 #include <QObject>
 
 #include <diffusioncore>
-#include "iobserver.hpp"
 
 using std::shared_ptr;
 using std::unique_ptr;
@@ -22,8 +21,6 @@ class DSModel : public QObject
 
 public:
     explicit DSModel();
-
-    void RegisterView(IObserver* view);
 
     PROPERTY(double, Lambda1)
     PROPERTY(double, Lambda2)
@@ -44,6 +41,7 @@ public:
     PROPERTY(SolverType, SolverType)
 
     void AcquireResult(SchemeSolverResult& newResult);
+    void AcquireIterationInfo(SchemeSolverIterationInfo& info);
 
     void StartRun(SchemeSolvingMode mode);
 
@@ -56,9 +54,13 @@ public:
 
     int GetLayerCount() const;
     int GetPerformedIterationsCount() const;
+    double GetAchievedActivatorAccuracy() const;
+    double GetAchievedInhibitorAccuracy() const;
 
 signals:
-    void modelChanged();
+    void layerIndexChanged();
+    void resultAcquired();
+    void iterationInfoChanged();
 
 private:
     double lambda1;
@@ -80,8 +82,7 @@ private:
     shared_ptr<SchemeTask> task;
     unique_ptr<SchemeSolver> solver;
     unique_ptr<SchemeSolverResult> result;
-
-    vector<IObserver*> views;
+    unique_ptr<SchemeSolverIterationInfo> iterationInfo;
 
     int currentLayerIndex;
     int layerStep;

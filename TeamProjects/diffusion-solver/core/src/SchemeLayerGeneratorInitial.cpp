@@ -26,7 +26,7 @@ void SchemeLayerGeneratorInitial::SetIntervalsCount(int intervalsCount) {
 SchemeLayer SchemeLayerGeneratorInitial::Generate() {
    double dx = 1.0 / mIntervalsCount;
    std::vector<double> res(mIntervalsCount + 1, 0);
-   for (int i = 0; i < mIntervalsCount; ++i)
+   for (int i = 0; i <= mIntervalsCount; ++i)
       res[i] = GetValue(dx * i);
    
    return res;

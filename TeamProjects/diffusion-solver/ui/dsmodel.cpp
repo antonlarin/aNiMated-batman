@@ -25,20 +25,10 @@ DSModel::DSModel() :
     task(new SchemeTask),
     solver(new SchemeSolverExplicit()),
     result(nullptr),
+    iterationInfo(nullptr),
     currentLayerIndex(0),
     layerStep(1)
 {}
-
-void DSModel::RegisterView(IObserver *view)
-{
-    views.push_back(view);
-}
-
-//void DSModel::modelChanged()
-//{
-//    for (IObserver* view : views)
-//        view->update();
-//}
 
 
 
@@ -179,7 +169,7 @@ void DSModel::SetCurrentLayerIndex(int value)
         currentLayerIndex = GetLayerCount() - 1;
     else
         currentLayerIndex = value;
-    emit modelChanged();
+    layerIndexChanged();
 }
 
 int DSModel::GetLayerStep() const
@@ -253,31 +243,16 @@ void DSModel::StartRun(SchemeSolvingMode mode)
     task->SetAccuracyU2(GetInhibitorAccuracy());
     task->SetMaximumIterations(GetIterationsLimit());
 
-    vector<double> activatorInitLayer;
-    vector<double> inhibitorInitLayer;
-    for (int i = 0; i <= gridDimension; ++i)
-    {
-        double activatorValue = 0.0;
-        double inhibitorValue = 0.0;
-        double x = i * 1.0 / double(gridDimension);
+    SchemeLayerGeneratorInitial initialLayerGenerator;
+    initialLayerGenerator.SetIntervalsCount(GetGridDimension());
 
-        // TODO: Use SchemeLayerGenerator to create initial layer.
-        for (size_t j = 0; j < activatorInitConditionsCoeffs.size(); ++j)
-        {
-            activatorValue += activatorInitConditionsCoeffs[j] *
-                    cos(3.14 * j * x);
-            activatorValue += activatorInitConditionsCoeffs[j] *
-                    cos(3.14 * j * x);
-        }
+    initialLayerGenerator.SetCoefficients(GetActivatorInitialConditions());
+    SchemeLayer activatorInitLayer = initialLayerGenerator.Generate();
 
-        activatorInitLayer.push_back(activatorValue);
-        inhibitorInitLayer.push_back(inhibitorValue);
-    }
+    initialLayerGenerator.SetCoefficients(GetInhibitorInitialConditions());
+    SchemeLayer inhibitorInitLayer = initialLayerGenerator.Generate();
 
-    SchemeLayer activatorIC(activatorInitLayer);
-    SchemeLayer inhibitorIC(activatorInitLayer);
-
-    task->SetInitialLayers(activatorIC, inhibitorIC);
+    task->SetInitialLayers(activatorInitLayer, inhibitorInitLayer);
 
     solver->BindTask(task);
     switch (mode)
@@ -295,6 +270,10 @@ void DSModel::StartRun(SchemeSolvingMode mode)
             std::bind(&DSModel::AcquireResult, this, _1);
     std::function<void(std::exception&)> exceptionCallback =
             [&](std::exception&) -> void {};
+    std::function<void(SchemeSolverIterationInfo&)> acquireIterationInfo =
+            std::bind(&DSModel::AcquireIterationInfo, this, _1);
+    solver->RegisterIterationCallback(acquireIterationInfo);
+
     solver->SolveAsync(acquireResult, exceptionCallback);
 }
 
@@ -343,12 +322,51 @@ int DSModel::GetLayerCount() const
 
 int DSModel::GetPerformedIterationsCount() const
 {
-    auto schemeStat = result->GetStatistic();
-    return schemeStat.GetIterationsCount();
+    if (solver->SolveIsInProgress())
+    {
+        return iterationInfo->GetIterationNumber();
+    }
+    else
+    {
+        auto schemeStat = result->GetStatistic();
+        return schemeStat.GetIterationsCount();
+    }
+}
+
+double DSModel::GetAchievedActivatorAccuracy() const
+{
+    if (solver->SolveIsInProgress())
+    {
+        return iterationInfo->GetAccuracyU1();
+    }
+    else
+    {
+        SchemeStatistic schemeStat = result->GetStatistic();
+        return schemeStat.GetStopAccuracyU1();
+    }
+}
+
+double DSModel::GetAchievedInhibitorAccuracy() const
+{
+    if (solver->SolveIsInProgress())
+    {
+        return iterationInfo->GetAccuracyU2();
+    }
+    else
+    {
+        SchemeStatistic schemeStat = result->GetStatistic();
+        return schemeStat.GetStopAccuracyU2();
+    }
 }
 
 void DSModel::AcquireResult(SchemeSolverResult &newResult)
 {
     result.reset(new SchemeSolverResult(newResult));
-    emit modelChanged();
+    resultAcquired();
+}
+
+void DSModel::AcquireIterationInfo(SchemeSolverIterationInfo &info)
+{
+    iterationInfo.reset(new SchemeSolverIterationInfo(info));
+    iterationInfoChanged();
 }

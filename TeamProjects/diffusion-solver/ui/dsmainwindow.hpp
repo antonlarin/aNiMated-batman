@@ -4,7 +4,6 @@
 #include <QMainWindow>
 
 #include "dsmodel.hpp"
-#include "iobserver.hpp"
 #include "dsinitconditionsdialog.hpp"
 #include "dssolvingprogressdialog.hpp"
 
@@ -12,7 +11,7 @@ namespace Ui {
 class DSMainWindow;
 }
 
-class DSMainWindow : public QMainWindow, public IObserver
+class DSMainWindow : public QMainWindow
 {
     Q_OBJECT
 
@@ -47,13 +46,14 @@ public slots:
 
     void openInitConditionsDialog();
 
-    void update();
+    void updateDisplayedLayer();
+    void displayRunResults();
 
 private:
     static int maxPlotPointsNumber() { return 400; }
 
     void initPlots();
-    void resetPlots(double activatorMin, double activatorMax,
+    void resetPlotsScale(double activatorMin, double activatorMax,
                     double inhibitorMin, double inhibitorMax);
     void displayActivatorLayer(const SchemeLayer& layer);
     void displayInhibitorLayer(const SchemeLayer& layer);

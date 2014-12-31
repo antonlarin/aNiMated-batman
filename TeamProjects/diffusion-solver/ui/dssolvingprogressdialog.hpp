@@ -17,6 +17,10 @@ public:
     explicit DSSolvingProgressDialog(DSModel* model, QWidget *parent = 0);
     ~DSSolvingProgressDialog();
 
+public slots:
+    void displayIterationInfo();
+
+
 private:
     Ui::DSSolvingProgressDialog *ui;
 

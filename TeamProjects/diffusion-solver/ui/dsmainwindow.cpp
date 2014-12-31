@@ -63,7 +63,10 @@ DSMainWindow::DSMainWindow(DSModel* newModel, QWidget *parent) :
     connect(ui->initConditionsAction, SIGNAL(triggered()),
             this, SLOT(openInitConditionsDialog()));
 
-    connect(model, SIGNAL(modelChanged()), this, SLOT(update()));
+    connect(model, SIGNAL(layerIndexChanged()),
+            this, SLOT(updateDisplayedLayer()));
+    connect(model, SIGNAL(resultAcquired()),
+            this, SLOT(displayRunResults()));
 
     initPlots();
 
@@ -76,22 +79,6 @@ DSMainWindow::DSMainWindow(DSModel* newModel, QWidget *parent) :
 DSMainWindow::~DSMainWindow()
 {
     delete ui;
-}
-
-void DSMainWindow::update()
-{
-    ui->totalLayerNumLabel->setText(tr("из %1, шаг").
-                                    arg(model->GetLayerCount()));
-    ui->currentLayerEdit->setText(tr("%1").
-                                  arg(model->GetCurrentLayerIndex()));
-    ui->layerStepEdit->setText(tr("%1").
-                               arg(model->GetLayerStep()));
-    resetPlots(model->GetActivatorMinimum(), model->GetActivatorMaximum(),
-               model->GetInhibitorMinimum(), model->GetInhibitorMaximum());
-    displayActivatorLayer(model->GetCurrentActivatorLayer());
-    displayInhibitorLayer(model->GetCurrentInhibitorLayer());
-    ui->statusBar->showMessage(tr("Пройдено итераций: %1").
-                               arg(model->GetPerformedIterationsCount()));
 }
 
 /*
@@ -275,6 +262,28 @@ void DSMainWindow::openInitConditionsDialog()
     initConditionsDialog->show();
 }
 
+void DSMainWindow::updateDisplayedLayer()
+{
+    ui->totalLayerNumLabel->setText(tr("из %1, шаг").
+                                    arg(model->GetLayerCount()));
+    ui->currentLayerEdit->setText(tr("%1").
+                                  arg(model->GetCurrentLayerIndex()));
+    ui->layerStepEdit->setText(tr("%1").
+                               arg(model->GetLayerStep()));
+    resetPlotsScale(model->GetActivatorMinimum(), model->GetActivatorMaximum(),
+               model->GetInhibitorMinimum(), model->GetInhibitorMaximum());
+    displayActivatorLayer(model->GetCurrentActivatorLayer());
+    displayInhibitorLayer(model->GetCurrentInhibitorLayer());
+//    ui->statusBar->showMessage(tr("Пройдено итераций: %1").
+//                               arg(model->GetPerformedIterationsCount()));
+}
+
+void DSMainWindow::displayRunResults()
+{
+    updateDisplayedLayer();
+    // TODO: Show run info
+}
+
 
 
 /*
@@ -293,10 +302,10 @@ void DSMainWindow::initPlots()
     ui->inhibitorPlot->xAxis->setRange(0, 1);
 
     // Scale y axes on plots with some junk values
-    resetPlots(0, 1, 0, 1);
+    resetPlotsScale(0, 1, 0, 1);
 }
 
-void DSMainWindow::resetPlots(double activatorMin, double activatorMax,
+void DSMainWindow::resetPlotsScale(double activatorMin, double activatorMax,
                               double inhibitorMin, double inhibitorMax)
 {
     double yrange = activatorMax - activatorMin;
