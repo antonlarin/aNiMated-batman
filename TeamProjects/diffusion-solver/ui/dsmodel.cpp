@@ -247,31 +247,16 @@ void DSModel::StartRun(SchemeSolvingMode mode)
     task->SetAccuracyU2(GetInhibitorAccuracy());
     task->SetMaximumIterations(GetIterationsLimit());
 
-    vector<double> activatorInitLayer;
-    vector<double> inhibitorInitLayer;
-    for (int i = 0; i <= gridDimension; ++i)
-    {
-        double activatorValue = 0.0;
-        double inhibitorValue = 0.0;
-        double x = i * 1.0 / double(gridDimension);
+    SchemeLayerGeneratorInitial initialLayerGenerator;
+    initialLayerGenerator.SetIntervalsCount(GetGridDimension());
 
-        // TODO: Use SchemeLayerGenerator to create initial layer.
-        for (size_t j = 0; j < activatorInitConditionsCoeffs.size(); ++j)
-        {
-            activatorValue += activatorInitConditionsCoeffs[j] *
-                    cos(3.14 * j * x);
-            activatorValue += activatorInitConditionsCoeffs[j] *
-                    cos(3.14 * j * x);
-        }
+    initialLayerGenerator.SetCoefficients(GetActivatorInitialConditions());
+    SchemeLayer activatorInitLayer = initialLayerGenerator.Generate();
 
-        activatorInitLayer.push_back(activatorValue);
-        inhibitorInitLayer.push_back(inhibitorValue);
-    }
+    initialLayerGenerator.SetCoefficients(GetInhibitorInitialConditions());
+    SchemeLayer inhibitorInitLayer = initialLayerGenerator.Generate();
 
-    SchemeLayer activatorIC(activatorInitLayer);
-    SchemeLayer inhibitorIC(activatorInitLayer);
-
-    task->SetInitialLayers(activatorIC, inhibitorIC);
+    task->SetInitialLayers(activatorInitLayer, inhibitorInitLayer);
 
     solver->BindTask(task);
     switch (mode)
