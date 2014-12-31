@@ -25,6 +25,7 @@ DSModel::DSModel() :
     task(new SchemeTask),
     solver(new SchemeSolverExplicit()),
     result(nullptr),
+    iterationInfo(nullptr),
     currentLayerIndex(0),
     layerStep(1)
 {}
@@ -173,7 +174,7 @@ void DSModel::SetCurrentLayerIndex(int value)
         currentLayerIndex = GetLayerCount() - 1;
     else
         currentLayerIndex = value;
-    emit modelChanged();
+    layerIndexChanged();
 }
 
 int DSModel::GetLayerStep() const
@@ -274,6 +275,10 @@ void DSModel::StartRun(SchemeSolvingMode mode)
             std::bind(&DSModel::AcquireResult, this, _1);
     std::function<void(std::exception&)> exceptionCallback =
             [&](std::exception&) -> void {};
+    std::function<void(SchemeSolverIterationInfo&)> acquireIterationInfo =
+            std::bind(&DSModel::AcquireIterationInfo, this, _1);
+    solver->RegisterIterationCallback(acquireIterationInfo);
+
     solver->SolveAsync(acquireResult, exceptionCallback);
 }
 
@@ -322,12 +327,51 @@ int DSModel::GetLayerCount() const
 
 int DSModel::GetPerformedIterationsCount() const
 {
-    auto schemeStat = result->GetStatistic();
-    return schemeStat.GetIterationsCount();
+    if (solver->SolveIsInProgress())
+    {
+        return iterationInfo->GetIterationNumber();
+    }
+    else
+    {
+        auto schemeStat = result->GetStatistic();
+        return schemeStat.GetIterationsCount();
+    }
+}
+
+double DSModel::GetAchievedActivatorAccuracy() const
+{
+    if (solver->SolveIsInProgress())
+    {
+        return iterationInfo->GetAccuracyU1();
+    }
+    else
+    {
+        SchemeStatistic schemeStat = result->GetStatistic();
+        return schemeStat.GetStopAccuracyU1();
+    }
+}
+
+double DSModel::GetAchievedInhibitorAccuracy() const
+{
+    if (solver->SolveIsInProgress())
+    {
+        return iterationInfo->GetAccuracyU2();
+    }
+    else
+    {
+        SchemeStatistic schemeStat = result->GetStatistic();
+        return schemeStat.GetStopAccuracyU2();
+    }
 }
 
 void DSModel::AcquireResult(SchemeSolverResult &newResult)
 {
     result.reset(new SchemeSolverResult(newResult));
-    modelChanged();
+    resultAcquired();
+}
+
+void DSModel::AcquireIterationInfo(SchemeSolverIterationInfo &info)
+{
+    iterationInfo.reset(new SchemeSolverIterationInfo(info));
+    iterationInfoChanged();
 }
