@@ -201,13 +201,13 @@ void DSInitConditionsDialog::addHarmonic(int index)
     if (harmonicsSelectors[index]->currentText() == "N/A")
     {
         activeHarmonicControls[index] = false;
+        activatorCoeffEdits[index]->setText("0.0");
+        inhibitorCoeffEdits[index]->setText("0.0");
     }
     else
     {
         activeHarmonicControls[index] = true;
     }
-    activatorCoeffEdits[index]->setText("0.0");
-    inhibitorCoeffEdits[index]->setText("0.0");
     updateSelectedHarmonics();
 }
 
