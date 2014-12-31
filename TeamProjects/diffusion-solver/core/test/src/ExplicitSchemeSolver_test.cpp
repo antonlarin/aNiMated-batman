@@ -5,27 +5,27 @@
 using namespace diffusioncore;
 
 void SetSolverDefaultParameters(SchemeSolver& solver) {
-   auto params = std::make_shared<SchemeTask>();
-   params->SetC(0);
-   params->SetK(0);
-   params->SetMu(0);
-   params->SetNu(0);
-   params->SetRho(0);
-   params->SetLambda1(1);
-   params->SetLambda2(1);
-   params->SetStepTime(0.00001);
-   params->SetAccuracyU1(0.00001);
-   params->SetAccuracyU2(0.00001);
-   params->SetMaximumIterations(200000);
+   auto task = std::make_shared<SchemeTask>();
+   task->SetC(0);
+   task->SetK(0);
+   task->SetMu(0);
+   task->SetNu(0);
+   task->SetRho(0);
+   task->SetLambda1(1);
+   task->SetLambda2(1);
+   task->SetStepTime(0.00001);
+   task->SetAccuracyU1(0.00001);
+   task->SetAccuracyU2(0.00001);
+   task->SetMaximumIterations(200000);
 
    SchemeLayer layer(std::vector<double>(200, 0));
-   params->SetInitialLayers(layer, layer);
+   task->SetInitialLayers(layer, layer);
 
-   solver.BindTask(params);
+   solver.BindTask(task);
    solver.SetSolvingMode(SchemeSolvingMode::StableLayer);
 }
 
-TEST(ExplicitSchemeSolverClass, Initialization) {
+TEST(SchemeSolverExplicit, Initialization) {
    SchemeSolverExplicit solver; 
    SetSolverDefaultParameters(solver);
 
@@ -45,7 +45,7 @@ TEST(ExplicitSchemeSolverClass, Initialization) {
    solver.SolveWait();
 }
 
-TEST(ExplicitSchemeSolverClass, SolvingAbort) {
+TEST(SchemeSolverExplicit, SolvingAbort) {
    SchemeSolverExplicit solver; 
    SetSolverDefaultParameters(solver);
 
