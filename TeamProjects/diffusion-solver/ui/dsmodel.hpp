@@ -8,6 +8,7 @@
 
 #include <diffusioncore>
 #include "iobserver.hpp"
+#include "dssolverthread.hpp"
 
 using std::shared_ptr;
 using std::unique_ptr;
@@ -44,6 +45,7 @@ public:
     PROPERTY(SolverType, SolverType)
 
     void AcquireResult(SchemeSolverResult& newResult);
+    void AcquireIterationInfo(SchemeSolverIterationInfo& info);
 
     void StartRun(SchemeSolvingMode mode);
 
@@ -57,8 +59,14 @@ public:
     int GetLayerCount() const;
     int GetPerformedIterationsCount() const;
 
+
 signals:
     void modelChanged();
+    void iterationDone(DSSolverIterationInfo&);
+
+private slots:
+    void solverThreadFinished(SchemeSolverResult&);
+    void solverThreadIterationDone(DSSolverIterationInfo&);
 
 private:
     double lambda1;
@@ -78,8 +86,10 @@ private:
     SolverType solverType;
 
     shared_ptr<SchemeTask> task;
-    unique_ptr<SchemeSolver> solver;
+    shared_ptr<SchemeSolver> solver;
     unique_ptr<SchemeSolverResult> result;
+    unique_ptr<SchemeSolverIterationInfo> iterInfo;
+    unique_ptr<DSSolverThread> solverThread;
 
     vector<IObserver*> views;
 

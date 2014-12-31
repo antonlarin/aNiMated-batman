@@ -1,17 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>DSSolvingProgressDialog</class>
- <widget name="DSSolvingProgressDialog" class="QDialog">
+ <widget class="QDialog" name="DSSolvingProgressDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>330</width>
+    <height>126</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
+  <widget class="QLabel" name="labelIterationNumber">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>30</y>
+     <width>261</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>TextLabelcccccccccccccccccccccccc</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>

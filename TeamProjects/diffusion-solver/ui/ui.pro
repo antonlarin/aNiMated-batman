@@ -18,14 +18,18 @@ SOURCES += main.cpp\
     dsmodel.cpp \
     ext/qcustomplot.cpp \
     dsinitconditionsdialog.cpp \
-    dssolvingprogressdialog.cpp
+    dssolvingprogressdialog.cpp \
+    dssolverthread.cpp \
+    dssolveriterationinfo.cpp
 
 HEADERS  += dsmainwindow.hpp \
     dsmodel.hpp \
     ext/qcustomplot.h \
     iobserver.hpp \
     dsinitconditionsdialog.hpp \
-    dssolvingprogressdialog.hpp
+    dssolvingprogressdialog.hpp \
+    dssolverthread.hpp \
+    dssolveriterationinfo.hpp
 
 FORMS    += dsmainwindow.ui \
     dsinitconditionsdialog.ui \

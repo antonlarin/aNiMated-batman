@@ -73,16 +73,15 @@ SchemeSolverResult SchemeSolverExplicit::SolveOverride(SchemeTask task) {
                                            iterationsCount, 
                                            maxDiffU1, 
                                            maxDiffU2);      
-      UpdateIterationInfo(iterInfo);
+      layersCount++;
+      
+      if (!UpdateIterationInfo(iterInfo))
+         break;
 
       if (solvingMode == StableLayer) {
          if (maxDiffU1 < mAccuracyU1 && maxDiffU2 < mAccuracyU2)
             break;
       }
-
-      layersCount++;
-      if (IsStoped())
-         break;
    }
 
    if (solvingMode == StableLayer) {

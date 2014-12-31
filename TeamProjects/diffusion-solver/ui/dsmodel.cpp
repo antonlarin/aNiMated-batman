@@ -24,10 +24,19 @@ DSModel::DSModel() :
     solverType(SolverType::EXPLICIT_SOLVER),
     task(new SchemeTask),
     solver(new SchemeSolverExplicit()),
+    solverThread(new DSSolverThread(solver)),
     result(nullptr),
     currentLayerIndex(0),
     layerStep(1)
-{}
+{
+    solver->RegisterTask(task);
+
+    connect(solverThread.get(), SIGNAL(solverFinished(SchemeSolverResult&)),
+            this, SLOT(solverThreadFinished(SchemeSolverResult&)));
+
+    connect(solverThread.get(), SIGNAL(iterationDone(DSSolverIterationInfo&)),
+            this, SLOT(solverThreadIterationDone(DSSolverIterationInfo&)));
+}
 
 void DSModel::RegisterView(IObserver *view)
 {
@@ -279,7 +288,6 @@ void DSModel::StartRun(SchemeSolvingMode mode)
 
     task->SetInitialLayers(activatorIC, inhibitorIC);
 
-    solver->BindTask(task);
     switch (mode)
     {
     case AllLayers:
@@ -290,12 +298,7 @@ void DSModel::StartRun(SchemeSolvingMode mode)
     }
 
     currentLayerIndex = 0;
-
-    std::function<void(SchemeSolverResult&)> acquireResult =
-            std::bind(&DSModel::AcquireResult, this, _1);
-    std::function<void(std::exception&)> exceptionCallback =
-            [&](std::exception&) -> void {};
-    solver->SolveAsync(acquireResult, exceptionCallback);
+    solverThread->start();
 }
 
 const SchemeLayer DSModel::GetCurrentActivatorLayer()
@@ -347,8 +350,14 @@ int DSModel::GetPerformedIterationsCount() const
     return schemeStat.GetIterationsCount();
 }
 
-void DSModel::AcquireResult(SchemeSolverResult &newResult)
+void DSModel::solverThreadFinished(SchemeSolverResult& res)
 {
-    result.reset(new SchemeSolverResult(newResult));
+    result.reset(new SchemeSolverResult(res));
     emit modelChanged();
 }
+
+void DSModel::solverThreadIterationDone(DSSolverIterationInfo& info)
+{
+    emit iterationDone(info);
+}
+
