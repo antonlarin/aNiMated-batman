@@ -34,12 +34,6 @@ void DSModel::RegisterView(IObserver *view)
     views.push_back(view);
 }
 
-//void DSModel::modelChanged()
-//{
-//    for (IObserver* view : views)
-//        view->update();
-//}
-
 
 
 /*
@@ -350,5 +344,5 @@ int DSModel::GetPerformedIterationsCount() const
 void DSModel::AcquireResult(SchemeSolverResult &newResult)
 {
     result.reset(new SchemeSolverResult(newResult));
-    emit modelChanged();
+    modelChanged();
 }
