@@ -39,6 +39,10 @@ void DSSolverThread::StopSolver()
 
 void DSSolverThread::run()
 {
+    mtx.lock();
+    solverNeedStop = false;
+    mtx.unlock();
+
     result = solver->Solve();
 }
 
@@ -54,8 +58,6 @@ bool DSSolverThread::AcquireIterationInfo(SchemeSolverIterationInfo& info)
 
     mtx.lock();
     bool stop = solverNeedStop;
-    if (stop)
-        solverNeedStop = false;
     mtx.unlock();
 
     // to exit from solver need return false

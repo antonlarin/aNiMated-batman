@@ -12,6 +12,12 @@ DSSolvingProgressDialog::DSSolvingProgressDialog(DSModel* model,
 
     connect(model, SIGNAL(iterationDone(DSSolverIterationInfo&)),
             this, SLOT(updateIterationInfo(DSSolverIterationInfo&)));
+
+    connect(model, SIGNAL(resultAcquired()),
+            this, SLOT(close()));
+
+    connect(ui->buttonStopSolver, SIGNAL(clicked()),
+            model, SLOT(stopSolver()));
 }
 
 DSSolvingProgressDialog::~DSSolvingProgressDialog()
@@ -26,6 +32,18 @@ void DSSolvingProgressDialog::updateIterationInfo(DSSolverIterationInfo& info)
     int total = info.GetPlannedIterationsCount();
 
     QString labelText;
-    labelText.sprintf("Сделано %d итераций из %d", iters, total);
+    labelText.sprintf("Пройдено %d итераций из %d", iters, total);
     ui->labelIterationNumber->setText(labelText);
+
+    ui->progressIterationsCounter->setMaximum(total);
+    ui->progressIterationsCounter->setValue(iters);
+
+    double activatorAccuracy = info.GetActivatorCurrentAccuracy();
+    double inhibitorAccuracy = info.GetInhibitorCurrentAccuracy();
+
+    labelText.sprintf("%f", activatorAccuracy);
+    ui->labelActivatorAccuracyValue->setText(labelText);
+
+    labelText.sprintf("%f", inhibitorAccuracy);
+    ui->labelInhibitorAccuracyValue->setText(labelText);
 }

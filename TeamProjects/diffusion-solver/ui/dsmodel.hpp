@@ -64,6 +64,9 @@ signals:
     void resultAcquired();
     void iterationDone(DSSolverIterationInfo&);
 
+public slots:
+    void stopSolver();
+
 private slots:
     void solverThreadFinished(SchemeSolverResult&);
     void solverThreadIterationDone(DSSolverIterationInfo&);

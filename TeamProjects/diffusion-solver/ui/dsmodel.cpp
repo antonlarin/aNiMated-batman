@@ -319,6 +319,11 @@ int DSModel::GetLayerCount() const
     return result->GetLayersCount();
 }
 
+void DSModel::stopSolver()
+{
+    solverThread->StopSolver();
+}
+
 void DSModel::solverThreadFinished(SchemeSolverResult& res)
 {
     result.reset(new SchemeSolverResult(res));
