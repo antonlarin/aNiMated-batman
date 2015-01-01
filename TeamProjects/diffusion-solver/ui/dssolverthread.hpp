@@ -1,6 +1,7 @@
 #ifndef DSSOLVERTHREAD_HPP
 #define DSSOLVERTHREAD_HPP
 
+#include <mutex>
 #include <memory>
 #include <functional>
 #include <diffusioncore>
@@ -28,7 +29,7 @@ public:
     void StopSolver();
 
 signals:
-    void iterationDone(DSSolverIterationInfo&);
+    void iterationDone(const DSSolverIterationInfo&);
     void solverFinished(SchemeSolverResult&);
 
 private slots:

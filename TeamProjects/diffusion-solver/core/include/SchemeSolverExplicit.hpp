@@ -3,6 +3,7 @@
 
 #include <memory>
 #include "CoreGlobal.hpp"
+#include "SchemeGrid.hpp"
 #include "SchemeSolver.hpp"
 
 namespace diffusioncore {
@@ -15,11 +16,22 @@ namespace diffusioncore {
       double mRho;
       double mLambda1;
       double mLambda2;
+      double mStepTime;
       double mAccuracyU1;
       double mAccuracyU2;
-      
-      std::shared_ptr<double> u1GridPtr;
-      std::shared_ptr<double> u2GridPtr;
+      int mIntervalsCount;
+      int mIterationsCount;
+
+      std::unique_ptr<SchemeGrid> mGridU1;
+      std::unique_ptr<SchemeGrid> mGridU2;
+
+      double* mPrevLayerU1;
+      double* mCurrLayerU1;
+      double* mPrevLayerU2;
+      double* mCurrLayerU2;
+
+      double mMaxDiffU1;
+      double mMaxDiffU2;
 
    public:
       SchemeSolverExplicit();
@@ -32,6 +44,8 @@ namespace diffusioncore {
    private:
       void InitializeSchemeParameters(SchemeTask& task);
       void InitializeGrid(SchemeTask& task); 
+      bool CheckStopCondition(int iterCount);
+      void DoSolverIteration();      
 
    };
 }

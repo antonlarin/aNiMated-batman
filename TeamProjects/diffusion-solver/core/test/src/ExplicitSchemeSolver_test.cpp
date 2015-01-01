@@ -21,51 +21,12 @@ void SetSolverDefaultParameters(SchemeSolver& solver) {
    SchemeLayer layer(std::vector<double>(200, 0));
    task->SetInitialLayers(layer, layer);
 
-   solver.BindTask(task);
-   solver.SetSolvingMode(SchemeSolvingMode::StableLayer);
+   solver.RegisterTask(task);
+   solver.SetSolverMode(SchemeSolverMode::StableLayer);
 }
 
 TEST(SchemeSolverExplicit, Initialization) {
    SchemeSolverExplicit solver; 
    SetSolverDefaultParameters(solver);
-
-   std::function<void(SchemeSolverResult&)> callback = 
-      [](SchemeSolverResult& res) -> void {
-         SUCCEED();
-      };
-   std::function<void(std::exception&)> exCallback = 
-      [](std::exception& ex) -> void {
-         FAIL();
-      };
-
-   solver.SolveAsync(callback, exCallback);
-   solver.SolveWait();
-
-   solver.SolveAsync(callback, exCallback);
-   solver.SolveWait();
+   solver.Solve();
 }
-
-TEST(SchemeSolverExplicit, SolvingAbort) {
-   SchemeSolverExplicit solver; 
-   SetSolverDefaultParameters(solver);
-
-   std::function<void(SchemeSolverResult&)> callback = 
-      [](SchemeSolverResult& res) -> void {
-         SUCCEED();
-      };
-   std::function<void(std::exception&)> exCallback = 
-      [](std::exception& ex) -> void {
-         FAIL();
-      };
-
-   solver.SolveAsync(callback, exCallback);
-   solver.SolveCancel();
-   solver.SolveCancel();
-
-   solver.SolveAsync(callback, exCallback);
-   solver.SolveWait();
-
-   solver.SolveAsync(callback, exCallback);
-   solver.SolveCancel();
-}
-

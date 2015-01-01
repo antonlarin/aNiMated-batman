@@ -20,7 +20,7 @@ SchemeSolverResult SchemeSolverImplicit::SolveOverride(SchemeTask task) {
    int layersCount = 1;
    double h = 1.0 / n;
    double k = task.GetStepTime();
-   SchemeSolvingMode solvingMode = GetSolvingMode();
+   SchemeSolverMode solvingMode = GetSolverMode();
 
    double maxDiffU1 = mAccuracyU1;
    double maxDiffU2 = mAccuracyU2;
@@ -37,13 +37,13 @@ SchemeSolverResult SchemeSolverImplicit::SolveOverride(SchemeTask task) {
 
    SchemeSolverIterationInfo iterInfo;
    for (int j = 0; j < m; j++) {
-      if (solvingMode == SchemeSolvingMode::AllLayers) {
+      if (solvingMode == SchemeSolverMode::AllLayers) {
          u1_curr_layer = u1Grid + (n + 1)* (j + 1);
          u1_prev_layer = u1Grid + (n + 1)* j;
          u2_curr_layer = u2Grid + (n + 1)* (j + 1);
          u2_prev_layer = u2Grid + (n + 1)* j;
       }
-      else if (solvingMode == SchemeSolvingMode::StableLayer) {
+      else if (solvingMode == SchemeSolverMode::StableLayer) {
          PointerSwap(&u1_curr_layer, &u1_prev_layer);
          PointerSwap(&u2_curr_layer, &u2_prev_layer);
       }
@@ -85,7 +85,7 @@ SchemeSolverResult SchemeSolverImplicit::SolveOverride(SchemeTask task) {
       if (!UpdateIterationInfo(iterInfo))
          break;
 
-      if (solvingMode == SchemeSolvingMode::StableLayer) {
+      if (solvingMode == SchemeSolverMode::StableLayer) {
          if (maxDiffU1 < mAccuracyU1 && maxDiffU2 < mAccuracyU2)
             break;
       }
@@ -94,7 +94,7 @@ SchemeSolverResult SchemeSolverImplicit::SolveOverride(SchemeTask task) {
    delete[] alpha;
    delete[] beta;
 
-   if (solvingMode == SchemeSolvingMode::StableLayer)  { 
+   if (solvingMode == SchemeSolverMode::StableLayer)  { 
       iterationsCount = layersCount - 1;
       layersCount = 1;
       if (u1_curr_layer != u1Grid) {
@@ -128,15 +128,15 @@ void SchemeSolverImplicit::InitializeSchemeParameters(SchemeTask& task) {
 void SchemeSolverImplicit::InitializeGrid(SchemeTask& task) {
    int n = task.GetIntervalsCount();
    int m = task.GetMaximumIterations();
-   SchemeSolvingMode solvingMode = GetSolvingMode();
+   SchemeSolverMode solvingMode = GetSolverMode();
 
    size_t gridSize = 0;
    switch (solvingMode) {
-      case SchemeSolvingMode::AllLayers:
+      case SchemeSolverMode::AllLayers:
          gridSize = (n + 1) * (m + 1);
          break;
 
-      case SchemeSolvingMode::StableLayer:
+      case SchemeSolverMode::StableLayer:
          gridSize = 2 * (n + 1);
          break;
 
