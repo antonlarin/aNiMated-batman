@@ -31,8 +31,8 @@ SchemeSolverResult SchemeSolverImplicit::SolveOverride(SchemeTask task) {
    double* u1Grid = u1GridPtr.get();
    double* u2Grid = u2GridPtr.get();
    double* u1_curr_layer = u1Grid;
-   double* u1_prev_layer = u2Grid;
-   double* u2_curr_layer = u1Grid + n + 1;
+   double* u2_curr_layer = u2Grid;
+   double* u1_prev_layer = u1Grid + n + 1;
    double* u2_prev_layer = u2Grid + n + 1;
 
    SchemeSolverIterationInfo iterInfo;
