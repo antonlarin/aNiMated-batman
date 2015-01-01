@@ -43,6 +43,7 @@ void DSSolverThread::run()
     solverNeedStop = false;
     mtx.unlock();
 
+    updateIterationInfoPoint = high_resolution_clock::now();
     result = solver->Solve();
 }
 
@@ -53,8 +54,14 @@ void DSSolverThread::threadFinished()
 
 bool DSSolverThread::AcquireIterationInfo(SchemeSolverIterationInfo& info)
 {
-    emit iterationDone(DSSolverIterationInfo(info));
-    QThread::msleep(SLEEP_INTERVAL_MS);
+    high_resolution_clock::time_point anotherPoint = high_resolution_clock::now();
+    milliseconds sinceLastIterationInfoUpdate =
+            duration_cast<milliseconds>(anotherPoint - updateIterationInfoPoint);
+    if (sinceLastIterationInfoUpdate > GetMaxUpdateIterationSpan())
+    {
+        updateIterationInfoPoint = anotherPoint;
+        emit iterationDone(DSSolverIterationInfo(info));
+    }
 
     mtx.lock();
     bool stop = solverNeedStop;
