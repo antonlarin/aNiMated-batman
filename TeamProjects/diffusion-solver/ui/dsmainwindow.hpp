@@ -32,7 +32,6 @@ public slots:
     void activatorAccuracyChanged(const QString& newAccuracy);
     void inhibitorAccuracyChanged(const QString& newAccuracy);
     void iterationsLimitChanged(const QString& newIterationsLimit);
-    void changeSolverType();
 
     void goToPrevLayer();
     void goToNextLayer();

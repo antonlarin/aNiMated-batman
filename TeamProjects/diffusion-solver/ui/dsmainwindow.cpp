@@ -36,10 +36,6 @@ DSMainWindow::DSMainWindow(DSModel* newModel, QWidget *parent) :
     connect(ui->iterationsEdit, SIGNAL(textEdited(QString)),
             this, SLOT(iterationsLimitChanged(QString)));
 
-    connect(ui->explicitSolverRadioButton, SIGNAL(toggled(bool)),
-            this, SLOT(changeSolverType()));
-    connect(ui->implicitSolverRadioButton, SIGNAL(toggled(bool)),
-            this, SLOT(changeSolverType()));
     connect(ui->currentLayerEdit, SIGNAL(textEdited(QString)),
             this, SLOT(goToLayer(QString)));
     connect(ui->prevLayerButton, SIGNAL(clicked()),
@@ -67,6 +63,11 @@ DSMainWindow::DSMainWindow(DSModel* newModel, QWidget *parent) :
             this, SLOT(updateDisplayedLayer()));
     connect(model, SIGNAL(resultAcquired()),
             this, SLOT(displayRunResults()));
+
+    connect(ui->explicitSolverRadioButton, SIGNAL(clicked()),
+            model, SLOT(selectExplicitSolver()));
+    connect(ui->implicitSolverRadioButton, SIGNAL(clicked()),
+            model, SLOT(selectImplicitSolver()));
 
     initPlots();
 
@@ -178,15 +179,6 @@ void DSMainWindow::iterationsLimitChanged(const QString& newIterationsLimit)
     int value = newIterationsLimit.toInt(&ok);
     if (ok)
         model->SetIterationsLimit(value);
-}
-
-void DSMainWindow::changeSolverType()
-{
-    SolverType oldType = model->GetSolverType();
-    SolverType newType = (ui->explicitSolverRadioButton->isChecked()) ?
-                SolverType::EXPLICIT_SOLVER : SolverType::IMPLICIT_SOLVER;
-    if (oldType != newType)
-        model->SetSolverType(newType);
 }
 
 void DSMainWindow::startFiniteRun()

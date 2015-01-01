@@ -39,7 +39,6 @@ public:
     PROPERTY(int, LayerStep)
     PROPERTY(vector<double>, ActivatorInitialConditions)
     PROPERTY(vector<double>, InhibitorInitialConditions)
-    PROPERTY(SolverType, SolverType)
 
     void AcquireResult(SchemeSolverResult& newResult);
     void AcquireIterationInfo(SchemeSolverIterationInfo& info);
@@ -66,10 +65,15 @@ signals:
 
 public slots:
     void stopSolver();
+    void selectImplicitSolver();
+    void selectExplicitSolver();
 
 private slots:
     void solverThreadFinished(SchemeSolverResult&);
     void solverThreadIterationDone(DSSolverIterationInfo&);
+
+private:
+    void UpdateSolver(SchemeSolver* solver);
 
 private:
     double lambda1;

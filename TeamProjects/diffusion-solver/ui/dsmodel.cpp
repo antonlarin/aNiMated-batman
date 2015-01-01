@@ -23,20 +23,10 @@ DSModel::DSModel() :
     inhibitorInitConditionsCoeffs(),
     solverType(SolverType::EXPLICIT_SOLVER),
     task(new SchemeTask),
-    solver(new SchemeSolverExplicit()),
-    solverThread(new DSSolverThread(solver)),
-    result(nullptr),
-    iterInfo(nullptr),
     currentLayerIndex(0),
     layerStep(1)
 {
-    solver->RegisterTask(task);
-
-    connect(solverThread.get(), SIGNAL(solverFinished(SchemeSolverResult&)),
-            this, SLOT(solverThreadFinished(SchemeSolverResult&)));
-
-    connect(solverThread.get(), SIGNAL(iterationDone(DSSolverIterationInfo&)),
-            this, SLOT(solverThreadIterationDone(DSSolverIterationInfo&)));
+    selectExplicitSolver();
 }
 
 
@@ -191,29 +181,6 @@ void DSModel::SetLayerStep(int value)
     layerStep = value;
 }
 
-SolverType DSModel::GetSolverType() const
-{
-    return solverType;
-}
-
-void DSModel::SetSolverType(SolverType value)
-{
-    SolverType oldType = solverType;
-    solverType = value;
-    if (oldType != solverType)
-    {
-        if (solverType == SolverType::EXPLICIT_SOLVER)
-        {
-            solver.reset(new SchemeSolverExplicit());
-        }
-        else
-        {
-            solver.reset(new SchemeSolverImplicit());
-        }
-    }
-}
-
-
 
 /*
  * Other methods implementation
@@ -319,10 +286,38 @@ int DSModel::GetLayerCount() const
     return result->GetLayersCount();
 }
 
+
+void DSModel::UpdateSolver(SchemeSolver* slvr)
+{
+    slvr->RegisterTask(task);
+    solver.reset(slvr);
+    solverThread.reset(new DSSolverThread(solver));
+
+    connect(solverThread.get(), SIGNAL(solverFinished(SchemeSolverResult&)),
+            this, SLOT(solverThreadFinished(SchemeSolverResult&)));
+
+    connect(solverThread.get(), SIGNAL(iterationDone(DSSolverIterationInfo&)),
+            this, SLOT(solverThreadIterationDone(DSSolverIterationInfo&)));
+}
+
+/*
+ * Slots implementation
+ */
 void DSModel::stopSolver()
 {
     solverThread->StopSolver();
 }
+
+void DSModel::selectImplicitSolver()
+{
+    UpdateSolver(new SchemeSolverImplicit());
+}
+
+void DSModel::selectExplicitSolver()
+{
+    UpdateSolver(new SchemeSolverExplicit());
+}
+
 
 void DSModel::solverThreadFinished(SchemeSolverResult& res)
 {
