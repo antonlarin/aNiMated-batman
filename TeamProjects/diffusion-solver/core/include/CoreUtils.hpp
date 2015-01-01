@@ -1,6 +1,7 @@
 #ifndef CoreUtils_H
 #define CoreUtils_H
 
+#include <memory>
 #include <cstdlib>
 
 namespace diffusioncore { 
@@ -32,6 +33,10 @@ namespace utils {
    double MaxDifference(
       const double* lhs, 
       const double* rhs, 
+      size_t size);
+
+   std::shared_ptr<double> CopyShared(
+      const double* source, 
       size_t size);
 
 }}

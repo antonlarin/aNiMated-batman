@@ -4,18 +4,18 @@
 using namespace diffusioncore;
 
 SchemeSolver::SchemeSolver() {
-   mSolvingMode = SchemeSolvingMode::StableLayer;
+   mSolverMode = SchemeSolverMode::StableLayer;
    mTask = std::make_shared<SchemeTask>();
 }
 
 SchemeSolver::~SchemeSolver() { }
 
 
-void SchemeSolver::SetSolvingMode(SchemeSolvingMode value) {
-   mSolvingMode = value;
+void SchemeSolver::SetSolverMode(SchemeSolverMode value) {
+   mSolverMode = value;
 }
-SchemeSolvingMode SchemeSolver::GetSolvingMode() const {
-   return mSolvingMode;
+SchemeSolverMode SchemeSolver::GetSolverMode() const {
+   return mSolverMode;
 }
 
 

@@ -35,4 +35,15 @@ namespace utils {
       return maxDiff;
    }
 
+   std::shared_ptr<double> CopyShared(const double* source, 
+                                      size_t size) {
+      double* res = new double[size];
+      double* i = const_cast<double*>(source);
+      double* j = res;
+      double* end = i + size;
+      while (i < end)
+         *j++ = *i++;
+      return std::shared_ptr<double>(res, array_deleter<double>());
+   }
+
 }}

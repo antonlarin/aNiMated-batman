@@ -1,14 +1,11 @@
 #ifndef SchemeSolver_H
 #define SchemeSolver_H
 
-#include <mutex>
 #include <memory>
-#include <thread>
-#include <exception>
 #include <functional>
 #include "CoreGlobal.hpp"
 #include "SchemeTask.hpp"
-#include "SchemeLayer.hpp"
+#include "SchemeSolverMode.hpp"
 #include "SchemeSolverResult.hpp"
 #include "SchemeSolverIterationInfo.hpp"
 
@@ -17,24 +14,17 @@ namespace diffusioncore {
    typedef std::function<bool(SchemeSolverIterationInfo&)> 
       SolverIterationCallback;
 
-   enum SchemeSolvingMode {
-      AllLayers,
-      StableLayer
-   };
-
-
    class EXPORT_API SchemeSolver {
    private:
+      SchemeSolverMode mSolverMode;
       std::shared_ptr<SchemeTask> mTask;
       SolverIterationCallback mIterationCallback;
-      SchemeSolvingMode mSolvingMode;
-
 
    public:
       SchemeSolver();
       virtual ~SchemeSolver();
 
-      PROPERTY(SchemeSolvingMode, SolvingMode);
+      PROPERTY(SchemeSolverMode, SolverMode);
 
       void RegisterTask(std::shared_ptr<SchemeTask> task);
       void RegisterIterationCallback(SolverIterationCallback callback);
