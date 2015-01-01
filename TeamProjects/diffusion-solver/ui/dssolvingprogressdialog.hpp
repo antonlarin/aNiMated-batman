@@ -19,7 +19,7 @@ public:
     ~DSSolvingProgressDialog();
 
 public slots:
-    void updateIterationInfo(DSSolverIterationInfo&);
+    void updateIterationInfo(const DSSolverIterationInfo&);
 
 private:
     Ui::DSSolvingProgressDialog *ui;

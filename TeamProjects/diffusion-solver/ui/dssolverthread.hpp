@@ -28,7 +28,7 @@ public:
     void StopSolver();
 
 signals:
-    void iterationDone(DSSolverIterationInfo&);
+    void iterationDone(const DSSolverIterationInfo&);
     void solverFinished(SchemeSolverResult&);
 
 private slots:

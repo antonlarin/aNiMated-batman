@@ -7,8 +7,8 @@
 using namespace std::placeholders;
 
 DSSolverThread::DSSolverThread(std::shared_ptr<SchemeSolver> solver):
-    solver(solver),
-    solverNeedStop(false)
+    solverNeedStop(false),
+    solver(solver)
 {
     std::call_once(registerMetaTypeFlag, []() -> void {
         qRegisterMetaType<SchemeSolverResult>();

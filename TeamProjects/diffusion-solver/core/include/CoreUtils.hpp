@@ -1,6 +1,8 @@
 #ifndef CoreUtils_H
 #define CoreUtils_H
 
+#include <cstdlib>
+
 namespace diffusioncore { 
 namespace utils {
 

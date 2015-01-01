@@ -26,7 +26,7 @@ DSSolvingProgressDialog::~DSSolvingProgressDialog()
 }
 
 
-void DSSolvingProgressDialog::updateIterationInfo(DSSolverIterationInfo& info)
+void DSSolvingProgressDialog::updateIterationInfo(const DSSolverIterationInfo& info)
 {
     int iters = info.GetCurrentIterationNumber();
     int total = info.GetPlannedIterationsCount();
