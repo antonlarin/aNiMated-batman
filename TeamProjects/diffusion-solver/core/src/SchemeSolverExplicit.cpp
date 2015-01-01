@@ -92,13 +92,20 @@ void SchemeSolverExplicit::DoSolverIteration() {
                         2 * mPrevLayerU2[i] + mPrevLayerU2[i + 1]) / 
                         (h * h) + mC * std::pow(mPrevLayerU1[i], 2) - 
                         mNu * mPrevLayerU2[i]) + mPrevLayerU2[i];
+
+      mGridU1->UpdateMinMaxValues(mCurrLayerU1[i]);
+      mGridU2->UpdateMinMaxValues(mCurrLayerU2[i]);
    }
 
    mCurrLayerU1[0] = (4 * mCurrLayerU1[1] - mCurrLayerU1[2]) / 3;
    mCurrLayerU1[n] = (4 * mCurrLayerU1[n - 1] - mCurrLayerU1[n - 2]) / 3;
+   mGridU1->UpdateMinMaxValues(mCurrLayerU1[0]);
+   mGridU1->UpdateMinMaxValues(mCurrLayerU1[n]);
 
    mCurrLayerU2[0] = (4 * mCurrLayerU2[1] - mCurrLayerU2[2]) / 3;
    mCurrLayerU2[n] = (4 * mCurrLayerU2[n - 1] - mCurrLayerU2[n - 2]) / 3;
+   mGridU2->UpdateMinMaxValues(mCurrLayerU2[0]);
+   mGridU2->UpdateMinMaxValues(mCurrLayerU2[n]);
 }
 
 bool SchemeSolverExplicit::CheckStopCondition(int itersCount) {

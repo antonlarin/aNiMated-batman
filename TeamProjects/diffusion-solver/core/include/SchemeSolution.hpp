@@ -15,12 +15,17 @@ namespace diffusioncore {
       int mLayersCount;
       int mIntervalsCount;
 
+      double mMinValue;
+      double mMaxValue;
+
    public:
       SchemeSolution();
       SchemeSolution(std::shared_ptr<double> solution, 
                      int intervalsCount, 
                      int layersCount,
-                     double timeStep);
+                     double timeStep,
+                     double minValue,
+                     double maxValue);
       ~SchemeSolution();
       
       SchemeLayer GetLayer(int index) const;

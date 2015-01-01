@@ -18,6 +18,9 @@ namespace diffusioncore {
       double* mPrevLayer;
       double* mCurrLayer;
 
+      double mMinValue;
+      double mMaxValue;
+
    public:
       SchemeGrid(int layersCount,
                  SchemeLayer& initialLayer,
@@ -31,6 +34,7 @@ namespace diffusioncore {
       double* GetCurrentLayer();
 
       void NextLayer();
+      void UpdateMinMaxValues(double value);
 
    private:
       void InitializeGrid(SchemeLayer& initialLayer);
