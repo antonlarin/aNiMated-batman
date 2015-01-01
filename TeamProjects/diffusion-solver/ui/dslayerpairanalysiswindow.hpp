@@ -17,9 +17,17 @@ public:
     explicit DSLayerPairAnalysisWindow(DSModel* model, QWidget *parent = 0);
     ~DSLayerPairAnalysisWindow();
 
-private:
-    Ui::DSLayerPairAnalysisWindow *ui;
+public slots:
+    void firstLayerIndexChanged(const QString& newIndex);
+    void secondLayerIndexChanged(const QString& newIndex);
+    void updateComparisonInfo();
 
+private:
+    static double GetMaxPlotPointsCount() { return 100; }
+
+    void initPlots();
+
+    Ui::DSLayerPairAnalysisWindow *ui;
     DSModel* model;
 };
 

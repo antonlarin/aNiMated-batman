@@ -24,7 +24,9 @@ DSModel::DSModel() :
     solverType(SolverType::EXPLICIT_SOLVER),
     task(new SchemeTask),
     currentLayerIndex(0),
-    layerStep(1)
+    layerStep(1),
+    firstComparedLayerIndex(0),
+    secondComparedLayerIndex(0)
 {
     selectExplicitSolver();
 }
@@ -181,6 +183,38 @@ void DSModel::SetLayerStep(int value)
     layerStep = value;
 }
 
+int DSModel::GetFirstComparedLayerIndex() const
+{
+    return firstComparedLayerIndex;
+}
+
+void DSModel::SetFirstComparedLayerIndex(int value)
+{
+    if (value < 0)
+        firstComparedLayerIndex = 0;
+    else if (value >= GetLayerCount())
+        firstComparedLayerIndex = GetLayerCount() - 1;
+    else
+        firstComparedLayerIndex = value;
+    emit comparedLayersChanged();
+}
+
+int DSModel::GetSecondComparedLayerIndex() const
+{
+    return secondComparedLayerIndex;
+}
+
+void DSModel::SetSecondComparedLayerIndex(int value)
+{
+    if (value < 0)
+        secondComparedLayerIndex = 0;
+    else if (value >= GetLayerCount())
+        secondComparedLayerIndex = GetLayerCount() - 1;
+    else
+        secondComparedLayerIndex = value;
+    emit comparedLayersChanged();
+}
+
 
 /*
  * Other methods implementation
@@ -243,18 +277,26 @@ void DSModel::StartRun(SchemeSolverMode mode)
     solverThread->start();
 }
 
+const SchemeLayer DSModel::GetActivatorLayer(int index)
+{
+    SchemeSolution solutionActivator = result->GetSolutionU1();
+    return solutionActivator.GetLayer(index);
+}
+
+const SchemeLayer DSModel::GetInhibitorLayer(int index)
+{
+    SchemeSolution solutionInhibitor = result->GetSolutionU2();
+    return solutionInhibitor.GetLayer(index);
+}
+
 const SchemeLayer DSModel::GetCurrentActivatorLayer()
 {
-    int layerIndex = GetCurrentLayerIndex();
-    auto solutionActivator = result->GetSolutionU1();
-    return solutionActivator.GetLayer(layerIndex);
+    return GetActivatorLayer(GetCurrentLayerIndex());
 }
 
 const SchemeLayer DSModel::GetCurrentInhibitorLayer()
 {
-    int layerIndex = GetCurrentLayerIndex();
-    auto solutionInhibitor = result->GetSolutionU2();
-    return solutionInhibitor.GetLayer(layerIndex);
+    return GetInhibitorLayer(GetCurrentLayerIndex());
 }
 
 double DSModel::GetActivatorMaximum() const
