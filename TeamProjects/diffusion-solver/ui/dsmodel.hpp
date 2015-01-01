@@ -43,7 +43,7 @@ public:
     void AcquireResult(SchemeSolverResult& newResult);
     void AcquireIterationInfo(SchemeSolverIterationInfo& info);
 
-    void StartRun(SchemeSolvingMode mode);
+    void StartRun(SchemeSolverMode mode);
 
     const SchemeLayer GetCurrentActivatorLayer();
     const SchemeLayer GetCurrentInhibitorLayer();

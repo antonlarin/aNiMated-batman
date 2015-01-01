@@ -1,6 +1,7 @@
 #ifndef DSSOLVERTHREAD_HPP
 #define DSSOLVERTHREAD_HPP
 
+#include <mutex>
 #include <memory>
 #include <functional>
 #include <diffusioncore>

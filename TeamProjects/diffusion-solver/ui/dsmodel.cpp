@@ -205,7 +205,7 @@ void DSModel::SetInhibitorInitialConditions(vector<double> value)
     inhibitorInitConditionsCoeffs = value;
 }
 
-void DSModel::StartRun(SchemeSolvingMode mode)
+void DSModel::StartRun(SchemeSolverMode mode)
 {
     task->SetLambda1(GetLambda1());
     task->SetLambda2(GetLambda2());
@@ -233,10 +233,10 @@ void DSModel::StartRun(SchemeSolvingMode mode)
     switch (mode)
     {
     case AllLayers:
-        solver->SetSolvingMode(AllLayers);
+        solver->SetSolverMode(AllLayers);
         break;
     case StableLayer:
-        solver->SetSolvingMode(StableLayer);
+        solver->SetSolverMode(StableLayer);
     }
 
     currentLayerIndex = 0;

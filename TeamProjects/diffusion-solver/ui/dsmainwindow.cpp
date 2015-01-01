@@ -185,7 +185,7 @@ void DSMainWindow::startFiniteRun()
 {
     try
     {
-        model->StartRun(SchemeSolvingMode::AllLayers);
+        model->StartRun(SchemeSolverMode::AllLayers);
         showSolvingProgressDialog();
     }
     catch (std::runtime_error e)
@@ -199,7 +199,7 @@ void DSMainWindow::startStabilityRun()
 {
     try
     {
-        model->StartRun(SchemeSolvingMode::StableLayer);
+        model->StartRun(SchemeSolverMode::StableLayer);
         showSolvingProgressDialog();
     }
     catch (std::runtime_error e)
