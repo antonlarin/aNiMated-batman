@@ -21,8 +21,8 @@ void SetSolverDefaultParameters(SchemeSolver& solver, int maxIter) {
    SchemeLayer layer(std::vector<double>(200, 0));
    task->SetInitialLayers(layer, layer);
 
-   solver.BindTask(task);
-   solver.SetSolvingMode(SchemeSolvingMode::AllLayers);
+   solver.RegisterTask(task);
+   solver.SetSolverMode(SchemeSolverMode::AllLayers);
 }
 
 TEST(SchemeSolverExplicit_IterationInfo, IterationsCounting) {
@@ -32,19 +32,14 @@ TEST(SchemeSolverExplicit_IterationInfo, IterationsCounting) {
    SetSolverDefaultParameters(solver, targetItersCount);
 
    int iterCounter = 0;
-   std::function<void(SchemeSolverResult&)> callback = 
-      [](SchemeSolverResult& res) -> void { };
-   std::function<void(std::exception&)> exCallback = 
-      [](std::exception& ex) -> void { };
-      
-   std::function<void(SchemeSolverIterationInfo&)> iterCallback =
-      [&](SchemeSolverIterationInfo& info) -> void {
+   std::function<bool(SchemeSolverIterationInfo&)> iterCallback =
+      [&](SchemeSolverIterationInfo& info) -> bool {
          iterCounter++;
+         return true;
       };
 
    solver.RegisterIterationCallback(iterCallback);
-   solver.SolveAsync(callback, exCallback);
-   solver.SolveWait();
+   solver.Solve();
 
    ASSERT_EQ(targetItersCount, iterCounter);
 }
