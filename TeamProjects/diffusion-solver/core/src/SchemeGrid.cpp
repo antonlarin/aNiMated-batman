@@ -101,8 +101,10 @@ void SchemeGrid::InitializeGrid(SchemeLayer& initialLayer) {
    double* grid = new double[gridSize];
    mGrid = std::shared_ptr<double>(grid, array_deleter<double>());
 
-   for (int i = 0; i < n; i++)
+   for (int i = 0; i < n; i++) {
       grid[i] = initialLayer[i];
+      UpdateMinMaxValues(grid[i]);
+   }
 }
 
 void SchemeGrid::InitializeLayers() {
