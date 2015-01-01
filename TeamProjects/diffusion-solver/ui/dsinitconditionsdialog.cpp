@@ -224,10 +224,12 @@ void DSInitConditionsDialog::initInitalConditionsPlots()
     ui->activatorPreviewPlot->addGraph();
     ui->activatorPreviewPlot->graph(0)->setPen(QPen(Qt::darkGreen));
     ui->activatorPreviewPlot->xAxis->setRange(0.0, 1.0);
+    ui->activatorPreviewPlot->yAxis->setAutoTickCount(4);
 
     ui->inhibitorPreviewPlot->addGraph();
     ui->inhibitorPreviewPlot->graph(0)->setPen(QPen(Qt::red));
     ui->inhibitorPreviewPlot->xAxis->setRange(0.0, 1.0);
+    ui->inhibitorPreviewPlot->yAxis->setAutoTickCount(4);
 }
 
 void DSInitConditionsDialog::setSelectorItemLists()
