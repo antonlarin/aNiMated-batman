@@ -7,6 +7,8 @@ DSMainWindow::DSMainWindow(DSModel* newModel, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::DSMainWindow),
     initConditionsDialog(nullptr),
+    solvingProgressDialog(nullptr),
+    layerPairAnalysisWindow(nullptr),
     model(newModel)
 {
     ui->setupUi(this);
@@ -57,7 +59,9 @@ DSMainWindow::DSMainWindow(DSModel* newModel, QWidget *parent) :
     connect(ui->quitAction, SIGNAL(triggered()),
             this, SLOT(close()));
     connect(ui->initConditionsAction, SIGNAL(triggered()),
-            this, SLOT(openInitConditionsDialog()));
+            this, SLOT(showInitConditionsDialog()));
+    connect(ui->layerPairAnalysisAction, SIGNAL(triggered()),
+            this, SLOT(showLayerPairAnalysisWindow()));
 
     connect(model, SIGNAL(layerIndexChanged()),
             this, SLOT(updateDisplayedLayer()));
@@ -247,11 +251,18 @@ void DSMainWindow::changeLayerStep(const QString& newLayerStep)
         model->SetLayerStep(value);
 }
 
-void DSMainWindow::openInitConditionsDialog()
+void DSMainWindow::showInitConditionsDialog()
 {
     initConditionsDialog = new DSInitConditionsDialog(model, this);
     initConditionsDialog->setAttribute(Qt::WA_DeleteOnClose);
     initConditionsDialog->show();
+}
+
+void DSMainWindow::showLayerPairAnalysisWindow()
+{
+    layerPairAnalysisWindow = new DSLayerPairAnalysisWindow(model);
+    layerPairAnalysisWindow->setAttribute(Qt::WA_DeleteOnClose);
+    layerPairAnalysisWindow->show();
 }
 
 void DSMainWindow::updateDisplayedLayer()
@@ -266,8 +277,6 @@ void DSMainWindow::updateDisplayedLayer()
                model->GetInhibitorMinimum(), model->GetInhibitorMaximum());
     displayActivatorLayer(model->GetCurrentActivatorLayer());
     displayInhibitorLayer(model->GetCurrentInhibitorLayer());
-//    ui->statusBar->showMessage(tr("Пройдено итераций: %1").
-//                               arg(model->GetPerformedIterationsCount()));
 }
 
 void DSMainWindow::displayRunResults()

@@ -675,7 +675,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>25</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="parametersMenu">
@@ -688,6 +688,7 @@
     <property name="title">
      <string>Анализ</string>
     </property>
+    <addaction name="layerPairAnalysisAction"/>
    </widget>
    <widget class="QMenu" name="fileMenu">
     <property name="title">
@@ -714,6 +715,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="layerPairAnalysisAction">
+   <property name="text">
+    <string>Сравнение пары слоёв</string>
    </property>
   </action>
  </widget>

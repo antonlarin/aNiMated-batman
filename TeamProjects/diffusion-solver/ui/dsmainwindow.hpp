@@ -6,6 +6,7 @@
 #include "dsmodel.hpp"
 #include "dsinitconditionsdialog.hpp"
 #include "dssolvingprogressdialog.hpp"
+#include "dslayerpairanalysiswindow.hpp"
 
 namespace Ui {
 class DSMainWindow;
@@ -43,7 +44,8 @@ public slots:
     void startFiniteRun();
     void startStabilityRun();
 
-    void openInitConditionsDialog();
+    void showInitConditionsDialog();
+    void showLayerPairAnalysisWindow();
 
     void updateDisplayedLayer();
     void displayRunResults();
@@ -62,6 +64,7 @@ private:
     Ui::DSMainWindow *ui;
     DSInitConditionsDialog* initConditionsDialog;
     DSSolvingProgressDialog* solvingProgressDialog;
+    DSLayerPairAnalysisWindow* layerPairAnalysisWindow;
     DSModel* model;
 };
 
