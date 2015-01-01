@@ -3,7 +3,6 @@
 #include "CoreUtils.hpp"
 #include "SchemeStatistic.hpp"
 #include "SchemeSolverImplicit.hpp"
-#include <omp.h>
 
 using namespace diffusioncore;
 using namespace diffusioncore::utils;
@@ -26,10 +25,8 @@ SchemeSolverResult SchemeSolverImplicit::SolveOverride(SchemeTask task) {
    double maxDiffU1 = mAccuracyU1;
    double maxDiffU2 = mAccuracyU2;
 
-   double* alpha1 = new double[n + 1];
-   double* beta1 = new double[n + 1];
-   double* alpha2 = new double[n + 1];
-   double* beta2 = new double[n + 1];
+   double* alpha = new double[n + 1];
+   double* beta = new double[n + 1];
 
    double* u1Grid = u1GridPtr.get();
    double* u2Grid = u2GridPtr.get();
@@ -50,47 +47,37 @@ SchemeSolverResult SchemeSolverImplicit::SolveOverride(SchemeTask task) {
          PointerSwap(&u1_curr_layer, &u1_prev_layer);
          PointerSwap(&u2_curr_layer, &u2_prev_layer);
       }
-	  // danger zone
-	  omp_set_num_threads(2);
-#pragma omp parallel sections if (task.GetIntervalsCount() >= 100)
-	  {
-#pragma omp section
-		  {
-			  double tmp1, tmp2;
-			  alpha1[0] = 1;
-			  beta1[0] = 0;
-			  for (int i = 1; i < n; i++) {
-				  tmp1 = 2 * mLambda1 + h * h / k - alpha1[i - 1] * mLambda1;
-				  alpha1[i] = mLambda1 / tmp1;
-				  tmp2 = h * h * (u1_prev_layer[i] / k + mRho - mMu * u1_prev_layer[i] +
-					  mK * std::pow(u1_prev_layer[i], 2) / u2_prev_layer[i]);
-				  beta1[i] = (tmp2 + beta1[i - 1] * mLambda1) / tmp1;
-			  }
-			  u1_curr_layer[n] = beta1[n - 1] / (-alpha1[n - 1] + 1);
-			  for (int i = n; i > 0; i--)
-				  u1_curr_layer[i - 1] = alpha1[i - 1] * u1_curr_layer[i] + beta1[i - 1];
-			  maxDiffU1 = MaxDifference(u1_curr_layer, u1_prev_layer, n + 1);
-		  }
-#pragma omp section
-		  {
-			  double tmp1, tmp2;
-			  alpha2[0] = 1;
-			  beta2[0] = 0;
-			  for (int i = 1; i < n; i++) {
-				  tmp1 = 2 * mLambda2 + h * h / k - alpha2[i - 1] * mLambda2;
-				  alpha2[i] = mLambda2 / tmp1;
-				  tmp2 = h * h *(u2_prev_layer[i] / k - mNu * u2_prev_layer[i] +
-					  mC * std::pow(u1_prev_layer[i], 2));
-				  beta2[i] = (tmp2 + beta2[i - 1] * mLambda2) / tmp1;
-			  }
-			  u2_curr_layer[n] = beta2[n - 1] / (-alpha2[n - 1] + 1);
-			  for (int i = n; i > 0; i--)
-				  u2_curr_layer[i - 1] = alpha2[i - 1] * u2_curr_layer[i] + beta2[i - 1];
-			  maxDiffU2 = MaxDifference(u2_curr_layer, u2_prev_layer, n + 1);
-		  }
-	  }
-	  // end danger zone
-	  iterInfo = SchemeSolverIterationInfo(layersCount,
+
+      // danger zone
+      double tmp1, tmp2;
+      alpha[0] = 1;
+      beta[0] = 0;
+      for (int i = 1; i < n; i++) {
+         tmp1 = 2 * mLambda1 + h * h / k - alpha[i - 1] * mLambda1;
+         alpha[i] = mLambda1 / tmp1;
+         tmp2 = h * h * (u1_prev_layer[i] / k + mRho - mMu * u1_prev_layer[i] + 
+                mK * std::pow(u1_prev_layer[i], 2) / u2_prev_layer[i]);
+         beta[i] = (tmp2 + beta[i - 1] * mLambda1) / tmp1;
+      }
+      u1_curr_layer[n] = beta[n - 1] / (-alpha[n - 1] + 1);
+      for (int i = n; i > 0; i--)
+         u1_curr_layer[i - 1] = alpha[i - 1] * u1_curr_layer[i] + beta[i - 1];
+
+      for (int i = 1; i < n; i++) {
+         tmp1 = 2 * mLambda2 + h * h / k - alpha[i - 1] * mLambda2;
+         alpha[i] = mLambda2 / tmp1;
+         tmp2 = h * h *(u2_prev_layer[i] / k - mNu * u2_prev_layer[i] + 
+                mC * std::pow(u1_prev_layer[i], 2));
+         beta[i] = (tmp2 + beta[i - 1] * mLambda2) / tmp1;
+      }
+      u2_curr_layer[n] = beta[n - 1] / (-alpha[n - 1] + 1);
+      for (int i = n; i > 0; i--)
+         u2_curr_layer[i - 1] = alpha[i - 1] * u2_curr_layer[i] + beta[i - 1];
+      // end danger zone
+      
+      maxDiffU1 = MaxDifference(u1_curr_layer, u1_prev_layer, n + 1);
+      maxDiffU2 = MaxDifference(u2_curr_layer, u2_prev_layer, n + 1);
+      iterInfo = SchemeSolverIterationInfo(layersCount, 
                                            iterationsCount, 
                                            maxDiffU1, 
                                            maxDiffU2);   
@@ -104,10 +91,8 @@ SchemeSolverResult SchemeSolverImplicit::SolveOverride(SchemeTask task) {
       }
    }
 
-   delete[] alpha1;
-   delete[] beta1;
-   delete[] alpha2;
-   delete[] beta2;
+   delete[] alpha;
+   delete[] beta;
 
    if (solvingMode == SchemeSolvingMode::StableLayer)  { 
       iterationsCount = layersCount - 1;
