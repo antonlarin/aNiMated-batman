@@ -22,7 +22,6 @@ class DSInitConditionsDialog : public QDialog
 public:
     explicit DSInitConditionsDialog(DSModel* model, QWidget *parent = 0);
     ~DSInitConditionsDialog();
-
 public slots:
     void acceptInitialConditions();
     void addHarmonic1();
@@ -35,10 +34,16 @@ public slots:
     void removeHarmonic3();
     void removeHarmonic4();
     void removeHarmonic5();
+    void activatorHarmonicCoeffChanged(const QString& value);
+    void inhibitorHarmonicCoeffChanged(const QString& value);
 
 private:
+    vector<double> getCurrentActivatorCoeffs();
+    vector<double> getCurrentInhibitorCoeffs();
+    void initInitalConditionsPlots();
     void setSelectorItemLists();
     void displayCurrentInitialConditions();
+    void displayPlotsOfCurrentInitialConditions();
     void addHarmonic(int index);
     void removeHarmonic(int index);
     void updateSelectedHarmonics();

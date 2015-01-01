@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>446</width>
-    <height>294</height>
+    <height>371</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -22,6 +22,12 @@
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
     <widget class="QLabel" name="harmonicLabel">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="text">
       <string>Гармоника</string>
      </property>
@@ -29,8 +35,27 @@
    </item>
    <item row="0" column="1">
     <widget class="QLabel" name="activatorCoeffLabel">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="text">
       <string>Коэфф. активатора</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <widget class="QLabel" name="inhibitorCoeffLabel">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Коэфф. ингибитора</string>
      </property>
     </widget>
    </item>
@@ -46,14 +71,14 @@
      </item>
     </widget>
    </item>
-   <item row="1" column="1" colspan="2">
+   <item row="1" column="1">
     <widget class="QLineEdit" name="activatorEdit0">
      <property name="text">
       <string>1.0</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="3" colspan="2">
+   <item row="1" column="2">
     <widget class="QLineEdit" name="inhibitorEdit0">
      <property name="text">
       <string>1.0</string>
@@ -63,89 +88,156 @@
    <item row="2" column="0">
     <widget class="QComboBox" name="harmonicCombo1"/>
    </item>
-   <item row="2" column="1" colspan="2">
+   <item row="2" column="1">
     <widget class="QLineEdit" name="activatorEdit1">
      <property name="text">
       <string/>
      </property>
     </widget>
    </item>
-   <item row="2" column="3" colspan="2">
+   <item row="2" column="2">
     <widget class="QLineEdit" name="inhibitorEdit1">
      <property name="text">
       <string/>
      </property>
     </widget>
    </item>
+   <item row="2" column="3">
+    <widget class="QPushButton" name="removeHarmonicButton1">
+     <property name="text">
+      <string>Удалить</string>
+     </property>
+    </widget>
+   </item>
    <item row="3" column="0">
     <widget class="QComboBox" name="harmonicCombo2"/>
    </item>
-   <item row="3" column="1" colspan="2">
+   <item row="3" column="1">
     <widget class="QLineEdit" name="activatorEdit2">
      <property name="text">
       <string/>
      </property>
     </widget>
    </item>
-   <item row="3" column="3" colspan="2">
+   <item row="3" column="2">
     <widget class="QLineEdit" name="inhibitorEdit2">
      <property name="text">
       <string/>
      </property>
     </widget>
    </item>
+   <item row="3" column="3">
+    <widget class="QPushButton" name="removeHarmonicButton2">
+     <property name="text">
+      <string>Удалить</string>
+     </property>
+    </widget>
+   </item>
    <item row="4" column="0">
     <widget class="QComboBox" name="harmonicCombo3"/>
    </item>
-   <item row="4" column="1" colspan="2">
+   <item row="4" column="1">
     <widget class="QLineEdit" name="activatorEdit3">
      <property name="text">
       <string/>
      </property>
     </widget>
    </item>
-   <item row="4" column="3" colspan="2">
+   <item row="4" column="2">
     <widget class="QLineEdit" name="inhibitorEdit3">
      <property name="text">
       <string/>
      </property>
     </widget>
    </item>
+   <item row="4" column="3">
+    <widget class="QPushButton" name="removeHarmonicButton3">
+     <property name="text">
+      <string>Удалить</string>
+     </property>
+    </widget>
+   </item>
    <item row="5" column="0">
     <widget class="QComboBox" name="harmonicCombo4"/>
    </item>
-   <item row="5" column="1" colspan="2">
+   <item row="5" column="1">
     <widget class="QLineEdit" name="activatorEdit4">
      <property name="text">
       <string/>
      </property>
     </widget>
    </item>
-   <item row="5" column="3" colspan="2">
+   <item row="5" column="2">
     <widget class="QLineEdit" name="inhibitorEdit4">
      <property name="text">
       <string/>
      </property>
     </widget>
    </item>
+   <item row="5" column="3">
+    <widget class="QPushButton" name="removeHarmonicButton4">
+     <property name="text">
+      <string>Удалить</string>
+     </property>
+    </widget>
+   </item>
    <item row="6" column="0">
     <widget class="QComboBox" name="harmonicCombo5"/>
    </item>
-   <item row="6" column="1" colspan="2">
+   <item row="6" column="1">
     <widget class="QLineEdit" name="activatorEdit5">
      <property name="text">
       <string/>
      </property>
     </widget>
    </item>
-   <item row="6" column="3" colspan="2">
+   <item row="6" column="2">
     <widget class="QLineEdit" name="inhibitorEdit5">
      <property name="text">
       <string/>
      </property>
     </widget>
    </item>
-   <item row="8" column="2" colspan="4">
+   <item row="6" column="3">
+    <widget class="QPushButton" name="removeHarmonicButton5">
+     <property name="text">
+      <string>Удалить</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0" colspan="2">
+    <widget class="QLabel" name="activatorPreviewLabel">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Начальная концентрация активатора:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="2" colspan="2">
+    <widget class="QLabel" name="inhibitorPreviewLabel">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Начальная концентрация ингибитора:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="0" colspan="2">
+    <widget class="QCustomPlot" name="activatorPreviewPlot" native="true"/>
+   </item>
+   <item row="8" column="2" colspan="2">
+    <widget class="QCustomPlot" name="inhibitorPreviewPlot" native="true"/>
+   </item>
+   <item row="9" column="2" colspan="2">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -155,63 +247,16 @@
      </property>
     </widget>
    </item>
-   <item row="7" column="0" colspan="6">
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>372</width>
-       <height>26</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="0" column="3">
-    <widget class="QLabel" name="inhibitorCoeffLabel">
-     <property name="text">
-      <string>Коэфф. ингибитора</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="5">
-    <widget class="QPushButton" name="removeHarmonicButton1">
-     <property name="text">
-      <string>Удалить</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="5">
-    <widget class="QPushButton" name="removeHarmonicButton2">
-     <property name="text">
-      <string>Удалить</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="5">
-    <widget class="QPushButton" name="removeHarmonicButton3">
-     <property name="text">
-      <string>Удалить</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="5">
-    <widget class="QPushButton" name="removeHarmonicButton4">
-     <property name="text">
-      <string>Удалить</string>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="5">
-    <widget class="QPushButton" name="removeHarmonicButton5">
-     <property name="text">
-      <string>Удалить</string>
-     </property>
-    </widget>
-   </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QCustomPlot</class>
+   <extends>QWidget</extends>
+   <header>ext/qcustomplot.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>

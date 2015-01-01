@@ -1,6 +1,7 @@
 #include "dsinitconditionsdialog.hpp"
 #include "ui_dsinitconditionsdialog.h"
 
+
 DSInitConditionsDialog::DSInitConditionsDialog(DSModel* model,
                                                QWidget *parent) :
     QDialog(parent),
@@ -60,6 +61,17 @@ DSInitConditionsDialog::DSInitConditionsDialog(DSModel* model,
     connect(ui->removeHarmonicButton5, SIGNAL(clicked()),
             this, SLOT(removeHarmonic5()));
 
+    for (int i = 0; i < 6; ++i)
+    {
+        connect(activatorCoeffEdits[i], SIGNAL(textEdited(QString)),
+                this, SLOT(activatorHarmonicCoeffChanged(QString)));
+        connect(inhibitorCoeffEdits[i], SIGNAL(textEdited(QString)),
+                this, SLOT(inhibitorHarmonicCoeffChanged(QString)));
+
+    }
+
+    initInitalConditionsPlots();
+
     setSelectorItemLists();
     displayCurrentInitialConditions();
 }
@@ -74,28 +86,13 @@ DSInitConditionsDialog::~DSInitConditionsDialog()
 /*
  * Slots implementation
  */
+
+
 void DSInitConditionsDialog::acceptInitialConditions()
 {
-    std::vector<double> activatorCoeffs(21, 0.0);
-    std::vector<double> inhibitorCoeffs(21, 0.0);
+    std::vector<double> activatorCoeffs = getCurrentActivatorCoeffs();
+    std::vector<double> inhibitorCoeffs = getCurrentInhibitorCoeffs();
 
-    for (auto i = selectedHarmonics.begin(); i != selectedHarmonics.end(); ++i)
-    {
-        int index = (int)(i - selectedHarmonics.begin());
-        if (*i)
-        {
-            for (int j = 0; j < 6; ++j)
-            {
-                if (harmonicsSelectors[j]->currentText() == tr("%1").arg(index))
-                {
-                    activatorCoeffs[index] =
-                        activatorCoeffEdits[j]->text().toDouble();
-                    inhibitorCoeffs[index] =
-                        inhibitorCoeffEdits[j]->text().toDouble();
-                }
-            }
-        }
-    }
     model->SetActivatorInitialConditions(activatorCoeffs);
     model->SetInhibitorInitialConditions(inhibitorCoeffs);
 }
@@ -150,11 +147,89 @@ void DSInitConditionsDialog::removeHarmonic5()
     removeHarmonic(5);
 }
 
+void DSInitConditionsDialog::activatorHarmonicCoeffChanged(const QString& value)
+{
+    bool valueIsValid;
+    value.toDouble(&valueIsValid);
+    if (valueIsValid)
+    {
+        updateSelectedHarmonics();
+    }
+}
+
+void DSInitConditionsDialog::inhibitorHarmonicCoeffChanged(const QString& value)
+{
+    bool valueIsValid;
+    value.toDouble(&valueIsValid);
+    if (valueIsValid)
+    {
+        updateSelectedHarmonics();
+    }
+}
+
 
 
 /*
  * Private worker methods implementation
  */
+vector<double> DSInitConditionsDialog::getCurrentActivatorCoeffs()
+{
+    vector<double> activatorCoeffs(21, 0.0);
+
+    for (auto i = selectedHarmonics.begin(); i != selectedHarmonics.end(); ++i)
+    {
+        int index = (int)(i - selectedHarmonics.begin());
+        if (*i)
+        {
+            for (int j = 0; j < 6; ++j)
+            {
+                if (harmonicsSelectors[j]->currentText() == tr("%1").arg(index))
+                {
+                    activatorCoeffs[index] =
+                        activatorCoeffEdits[j]->text().toDouble();
+                    break;
+                }
+            }
+        }
+    }
+
+    return activatorCoeffs;
+}
+
+vector<double> DSInitConditionsDialog::getCurrentInhibitorCoeffs()
+{
+    vector<double> inhibitorCoeffs(21, 0.0);
+
+    for (auto i = selectedHarmonics.begin(); i != selectedHarmonics.end(); ++i)
+    {
+        int index = (int)(i - selectedHarmonics.begin());
+        if (*i)
+        {
+            for (int j = 0; j < 6; ++j)
+            {
+                if (harmonicsSelectors[j]->currentText() == tr("%1").arg(index))
+                {
+                    inhibitorCoeffs[index] =
+                        inhibitorCoeffEdits[j]->text().toDouble();
+                    break;
+                }
+            }
+        }
+    }
+
+    return inhibitorCoeffs;
+}
+void DSInitConditionsDialog::initInitalConditionsPlots()
+{
+    ui->activatorPreviewPlot->addGraph();
+    ui->activatorPreviewPlot->graph(0)->setPen(QPen(Qt::darkGreen));
+    ui->activatorPreviewPlot->xAxis->setRange(0.0, 1.0);
+
+    ui->inhibitorPreviewPlot->addGraph();
+    ui->inhibitorPreviewPlot->graph(0)->setPen(QPen(Qt::red));
+    ui->inhibitorPreviewPlot->xAxis->setRange(0.0, 1.0);
+}
+
 void DSInitConditionsDialog::setSelectorItemLists()
 {
     for (int i = 1; i < 6; ++i)
@@ -194,6 +269,41 @@ void DSInitConditionsDialog::displayCurrentInitialConditions()
             }
         }
     }
+    displayPlotsOfCurrentInitialConditions();
+}
+
+void DSInitConditionsDialog::displayPlotsOfCurrentInitialConditions()
+{
+    const int PLOT_SEGMENTS_NUM = 100;
+    double plotGridStep = 1.0 / ((double) PLOT_SEGMENTS_NUM);
+
+    QVector<double> xs;
+    QVector<double> activatorValues;
+    QVector<double> inhibitorValues;
+
+    SchemeLayerGeneratorInitial generator;
+    generator.SetIntervalsCount(PLOT_SEGMENTS_NUM);
+
+    generator.SetCoefficients(getCurrentActivatorCoeffs());
+    SchemeLayer activatorLayer = generator.Generate();
+
+    generator.SetCoefficients(getCurrentInhibitorCoeffs());
+    SchemeLayer inhibitorLayer = generator.Generate();
+
+    for (int i = 0; i <= PLOT_SEGMENTS_NUM; ++i)
+    {
+        xs.push_back(i * plotGridStep);
+        activatorValues.push_back(activatorLayer.Get(i));
+        inhibitorValues.push_back(inhibitorLayer.Get(i));
+    }
+
+    ui->activatorPreviewPlot->graph(0)->setData(xs, activatorValues);
+    ui->activatorPreviewPlot->rescaleAxes();
+    ui->activatorPreviewPlot->replot();
+
+    ui->inhibitorPreviewPlot->graph(0)->setData(xs, inhibitorValues);
+    ui->inhibitorPreviewPlot->rescaleAxes();
+    ui->inhibitorPreviewPlot->replot();
 }
 
 void DSInitConditionsDialog::addHarmonic(int index)
@@ -232,4 +342,5 @@ void DSInitConditionsDialog::updateSelectedHarmonics()
             selectedHarmonics[harmonicsSelectors[i]->currentText().toInt()] =
                     true;
     }
+    displayPlotsOfCurrentInitialConditions();
 }
