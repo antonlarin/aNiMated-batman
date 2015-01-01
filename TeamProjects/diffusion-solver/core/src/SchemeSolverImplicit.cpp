@@ -103,8 +103,9 @@ SchemeSolverResult SchemeSolverImplicit::SolveOverride(SchemeTask task) {
       }
    }
 
-   SchemeSolution solutionU1(u1GridPtr, n, layersCount, k);
-   SchemeSolution solutionU2(u2GridPtr, n, layersCount, k);
+   // Finding Min/Max values not implemeneted
+   SchemeSolution solutionU1(u1GridPtr, n, layersCount, k, 0, 0);
+   SchemeSolution solutionU2(u2GridPtr, n, layersCount, k, 0, 0);
    SchemeStatistic statistic(iterationsCount, maxDiffU1, maxDiffU2);
    SchemeSolverResult result(solutionU1, solutionU2, statistic, task);
    return result;

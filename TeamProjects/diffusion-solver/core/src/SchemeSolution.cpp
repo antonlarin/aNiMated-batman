@@ -15,10 +15,14 @@ SchemeSolution::SchemeSolution() {
 SchemeSolution::SchemeSolution(std::shared_ptr<double> solution, 
                                int intervalsCount, 
                                int layersCount,
-                               double timeStep) {
+                               double timeStep,
+                               double minValue,
+                               double maxValue) {
    assert(layersCount > 0);
    assert(intervalsCount > 0);
 
+   mMinValue = minValue;
+   mMaxValue = maxValue;
    mSolution = solution;
    mTimeStep = timeStep;
    mLayersCount = layersCount;
@@ -56,12 +60,12 @@ SchemeLayer SchemeSolution::operator[] (int index) const {
 
 double SchemeSolution::GetMaximum() const {
    CheckIsInitialized();
-   return Max(mSolution.get(), mSolutionSize);
+   return mMaxValue;
 }
 
 double SchemeSolution::GetMinimum() const {
    CheckIsInitialized();
-   return Min(mSolution.get(), mSolutionSize);  
+   return mMinValue;
 }
 
 int SchemeSolution::GetLayersCount() const {
