@@ -4,17 +4,20 @@
 #include <diffusioncore>
 #include "TestsCommon.hpp"
 using namespace diffusioncore;
+using namespace diffusioncore::utils;
 
 SchemeSolution RandSchemeSolution(int testSize, int seed) {
    auto solution = MakeSharedArray(testSize);
    FillArrayRand(solution.get(), testSize, seed);
-   return SchemeSolution(solution, testSize - 1, 1, 0.001);
+   double min = Min(solution.get(), testSize);
+   double max = Max(solution.get(), testSize);
+   return SchemeSolution(solution, testSize - 1, 1, 0.001, min, max);
 }
 
 SchemeSolution FillSchemeSolution(int testSize, double val) {
    auto solution = MakeSharedArray(testSize);
    FillArray(solution.get(), testSize, val);
-   return SchemeSolution(solution, testSize - 1, 1, 0.001);
+   return SchemeSolution(solution, testSize - 1, 1, 0.001, val, val);
 }
 
 void CompareSchemeSolution(SchemeSolution& res, double val) {

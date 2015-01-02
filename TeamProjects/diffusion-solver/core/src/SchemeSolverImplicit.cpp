@@ -1,168 +1,60 @@
 #include <cmath>
 #include <stdexcept>
-#include "CoreUtils.hpp"
 #include "SchemeStatistic.hpp"
 #include "SchemeSolverImplicit.hpp"
-
 using namespace diffusioncore;
-using namespace diffusioncore::utils;
 
 SchemeSolverImplicit::SchemeSolverImplicit() { }
 SchemeSolverImplicit::~SchemeSolverImplicit() { }
 
-SchemeSolverResult SchemeSolverImplicit::SolveOverride(SchemeTask task) {
-   InitializeSchemeParameters(task);
-   InitializeGrid(task);
 
-   int n = task.GetIntervalsCount();
-   int m = task.GetMaximumIterations();
-   int iterationsCount = task.GetMaximumIterations();
-   int layersCount = 1;
+void SchemeSolverImplicit::DoSolverIteration() {
+   int n = mIntervalsCount;
+   double k = mStepTime;
    double h = 1.0 / n;
-   double k = task.GetStepTime();
-   SchemeSolverMode solvingMode = GetSolverMode();
+   double tmp1, tmp2;
 
-   double maxDiffU1 = mAccuracyU1;
-   double maxDiffU2 = mAccuracyU2;
-
-   double* alpha = new double[n + 1];
-   double* beta = new double[n + 1];
-
-   double* u1Grid = u1GridPtr.get();
-   double* u2Grid = u2GridPtr.get();
-   double* u1_curr_layer = u1Grid;
-   double* u2_curr_layer = u2Grid;
-   double* u1_prev_layer = u1Grid + n + 1;
-   double* u2_prev_layer = u2Grid + n + 1;
-
-   SchemeSolverIterationInfo iterInfo;
-   for (int j = 0; j < m; j++) {
-      if (solvingMode == SchemeSolverMode::AllLayers) {
-         u1_curr_layer = u1Grid + (n + 1)* (j + 1);
-         u1_prev_layer = u1Grid + (n + 1)* j;
-         u2_curr_layer = u2Grid + (n + 1)* (j + 1);
-         u2_prev_layer = u2Grid + (n + 1)* j;
-      }
-      else if (solvingMode == SchemeSolverMode::StableLayer) {
-         PointerSwap(&u1_curr_layer, &u1_prev_layer);
-         PointerSwap(&u2_curr_layer, &u2_prev_layer);
-      }
-
-      // danger zone
-      double tmp1, tmp2;
-      alpha[0] = 1;
-      beta[0] = 0;
-      for (int i = 1; i < n; i++) {
-         tmp1 = 2 * mLambda1 + h * h / k - alpha[i - 1] * mLambda1;
-         alpha[i] = mLambda1 / tmp1;
-         tmp2 = h * h * (u1_prev_layer[i] / k + mRho - mMu * u1_prev_layer[i] + 
-                mK * std::pow(u1_prev_layer[i], 2) / u2_prev_layer[i]);
-         beta[i] = (tmp2 + beta[i - 1] * mLambda1) / tmp1;
-      }
-      u1_curr_layer[n] = beta[n - 1] / (-alpha[n - 1] + 1);
-      for (int i = n; i > 0; i--)
-         u1_curr_layer[i - 1] = alpha[i - 1] * u1_curr_layer[i] + beta[i - 1];
-
-      for (int i = 1; i < n; i++) {
-         tmp1 = 2 * mLambda2 + h * h / k - alpha[i - 1] * mLambda2;
-         alpha[i] = mLambda2 / tmp1;
-         tmp2 = h * h *(u2_prev_layer[i] / k - mNu * u2_prev_layer[i] + 
-                mC * std::pow(u1_prev_layer[i], 2));
-         beta[i] = (tmp2 + beta[i - 1] * mLambda2) / tmp1;
-      }
-      u2_curr_layer[n] = beta[n - 1] / (-alpha[n - 1] + 1);
-      for (int i = n; i > 0; i--)
-         u2_curr_layer[i - 1] = alpha[i - 1] * u2_curr_layer[i] + beta[i - 1];
-      // end danger zone
-      
-      maxDiffU1 = MaxDifference(u1_curr_layer, u1_prev_layer, n + 1);
-      maxDiffU2 = MaxDifference(u2_curr_layer, u2_prev_layer, n + 1);
-      iterInfo = SchemeSolverIterationInfo(layersCount, 
-                                           iterationsCount, 
-                                           maxDiffU1, 
-                                           maxDiffU2);   
-      layersCount++;
-      if (!UpdateIterationInfo(iterInfo))
-         break;
-
-      if (solvingMode == SchemeSolverMode::StableLayer) {
-         if (maxDiffU1 < mAccuracyU1 && maxDiffU2 < mAccuracyU2)
-            break;
-      }
+   for (int i = 1; i < n; i++) {
+      tmp1 = 2 * mLambda1 + h * h / k - mAlpha[i - 1] * mLambda1;
+      mAlpha[i] = mLambda1 / tmp1;
+      tmp2 = h * h * (mPrevLayerU1[i] / k + mRho - mMu * mPrevLayerU1[i] + 
+             mK * std::pow(mPrevLayerU1[i], 2) / mPrevLayerU2[i]);
+      mBeta[i] = (tmp2 + mBeta[i - 1] * mLambda1) / tmp1;
+   }
+   
+   mCurrLayerU1[n] = mBeta[n - 1] / (-mAlpha[n - 1] + 1);
+   mGridU1->UpdateMinMaxValues(mCurrLayerU1[n]);
+   for (int i = n; i > 0; i--) {
+      mCurrLayerU1[i - 1] = mAlpha[i - 1] * mCurrLayerU1[i] + mBeta[i - 1];
+      mGridU1->UpdateMinMaxValues(mCurrLayerU1[i - 1]);
    }
 
-   delete[] alpha;
-   delete[] beta;
-
-   if (solvingMode == SchemeSolverMode::StableLayer)  { 
-      iterationsCount = layersCount - 1;
-      layersCount = 1;
-      if (u1_curr_layer != u1Grid) {
-         MoveMemory(u1Grid, 0, n, n + 1);
-         MoveMemory(u2Grid, 0, n, n + 1);
-      }
+   for (int i = 1; i < n; i++) {
+      tmp1 = 2 * mLambda2 + h * h / k - mAlpha[i - 1] * mLambda2;
+      mAlpha[i] = mLambda2 / tmp1;
+      tmp2 = h * h *(mPrevLayerU2[i] / k - mNu * mPrevLayerU2[i] + 
+             mC * std::pow(mPrevLayerU1[i], 2));
+      mBeta[i] = (tmp2 + mBeta[i - 1] * mLambda2) / tmp1;
    }
 
-   // Finding Min/Max values not implemeneted
-   SchemeSolution solutionU1(u1GridPtr, n, layersCount, k, 0, 0);
-   SchemeSolution solutionU2(u2GridPtr, n, layersCount, k, 0, 0);
-   SchemeStatistic statistic(iterationsCount, maxDiffU1, maxDiffU2);
-   SchemeSolverResult result(solutionU1, solutionU2, statistic, task);
-   return result;
-}
-
-void SchemeSolverImplicit::CheckParametersOverride(SchemeTask task) { }
-
-
-void SchemeSolverImplicit::InitializeSchemeParameters(SchemeTask& task) {
-   mK = task.GetK();
-   mC = task.GetC();
-   mMu = task.GetMu();
-   mNu = task.GetNu();
-   mRho = task.GetRho();
-   mLambda1 = task.GetLambda1();
-   mLambda2 = task.GetLambda2();
-   mAccuracyU1 = task.GetAccuracyU1();
-   mAccuracyU2 = task.GetAccuracyU2();
-}
-
-void SchemeSolverImplicit::InitializeGrid(SchemeTask& task) {
-   int n = task.GetIntervalsCount();
-   int m = task.GetMaximumIterations();
-   SchemeSolverMode solvingMode = GetSolverMode();
-
-   size_t gridSize = 0;
-   switch (solvingMode) {
-      case SchemeSolverMode::AllLayers:
-         gridSize = (n + 1) * (m + 1);
-         break;
-
-      case SchemeSolverMode::StableLayer:
-         gridSize = 2 * (n + 1);
-         break;
-
-      default:
-         throw std::runtime_error("Invalid solving mode");
-   }
-
-   double* u1Grid;
-   double* u2Grid;
-   try {
-      u1Grid = new double[gridSize];
-      u1GridPtr = std::shared_ptr<double>(u1Grid, array_deleter<double>());
-      
-      u2Grid = new double[gridSize];
-      u2GridPtr = std::shared_ptr<double>(u2Grid, array_deleter<double>());
-   }
-   catch (std::bad_alloc) {
-      throw std::runtime_error("Not enought memory");
-   }
-
-   auto initialLayerU1 = task.GetInitialLayerU1();
-   auto initialLayerU2 = task.GetInitialLayerU2();
-   for (int i = 0; i <= n; i++) {
-      u1Grid[i] = initialLayerU1[i];
-      u2Grid[i] = initialLayerU2[i];
+   mCurrLayerU2[n] = mBeta[n - 1] / (-mAlpha[n - 1] + 1);
+   mGridU2->UpdateMinMaxValues(mCurrLayerU2[n]);
+   for (int i = n; i > 0; i--) {
+      mCurrLayerU2[i - 1] = mAlpha[i - 1] * mCurrLayerU2[i] + mBeta[i - 1];
+      mGridU2->UpdateMinMaxValues(mCurrLayerU2[i - 1]);
    }
 }
 
+void SchemeSolverImplicit::PrepareSolver() {
+   int n = mIntervalsCount;
+   mAlpha = new double[n + 1];
+   mBeta = new double[n + 1];
+   
+   mAlpha[0] = 1;
+   mBeta[0] = 0;
+}
+
+void SchemeSolverImplicit::CleanupSolver() { 
+   delete[] mAlpha;
+   delete[] mBeta;
+}
