@@ -21,6 +21,7 @@ public slots:
     void firstLayerIndexChanged(const QString& newIndex);
     void secondLayerIndexChanged(const QString& newIndex);
     void updateComparisonInfo();
+    void updateComparedLayerEditsText();
 
 private:
     static double GetMaxPlotPointsCount() { return 100; }
