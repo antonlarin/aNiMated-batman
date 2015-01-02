@@ -93,8 +93,8 @@ void DSInitConditionsDialog::acceptInitialConditions()
     std::vector<double> activatorCoeffs = getCurrentActivatorCoeffs();
     std::vector<double> inhibitorCoeffs = getCurrentInhibitorCoeffs();
 
-    model->SetActivatorInitialConditions(activatorCoeffs);
-    model->SetInhibitorInitialConditions(inhibitorCoeffs);
+    model->AccessParameters()->SetActivatorInitialConditions(activatorCoeffs);
+    model->AccessParameters()->SetInhibitorInitialConditions(inhibitorCoeffs);
 }
 
 void DSInitConditionsDialog::addHarmonic1()
@@ -246,8 +246,10 @@ void DSInitConditionsDialog::setSelectorItemLists()
 
 void DSInitConditionsDialog::displayCurrentInitialConditions()
 {
-    vector<double> activatorCoeffs = model->GetActivatorInitialConditions();
-    vector<double> inhibitorCoeffs = model->GetInhibitorInitialConditions();
+    vector<double> activatorCoeffs =
+            model->AccessParameters()->GetActivatorInitialConditions();
+    vector<double> inhibitorCoeffs =
+            model->AccessParameters()->GetInhibitorInitialConditions();
 
     for (int i = 0; i < (int)activatorCoeffs.size(); ++i)
     {

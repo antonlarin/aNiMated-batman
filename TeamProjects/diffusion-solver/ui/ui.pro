@@ -21,7 +21,8 @@ SOURCES += main.cpp\
     dssolvingprogressdialog.cpp \
     dssolverthread.cpp \
     dssolveriterationinfo.cpp \
-    dslayerpairanalysiswindow.cpp
+    dslayerpairanalysiswindow.cpp \
+    dsparameterset.cpp
 
 HEADERS  += dsmainwindow.hpp \
     dsmodel.hpp \
@@ -30,7 +31,8 @@ HEADERS  += dsmainwindow.hpp \
     dssolvingprogressdialog.hpp \
     dssolverthread.hpp \
     dssolveriterationinfo.hpp \
-    dslayerpairanalysiswindow.hpp
+    dslayerpairanalysiswindow.hpp \
+    dsparameterset.hpp
 
 FORMS    += dsmainwindow.ui \
     dsinitconditionsdialog.ui \

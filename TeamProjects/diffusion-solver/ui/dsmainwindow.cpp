@@ -74,11 +74,6 @@ DSMainWindow::DSMainWindow(DSModel* newModel, QWidget *parent) :
             model, SLOT(selectImplicitSolver()));
 
     initPlots();
-
-    std::vector<double> u1 = { 1.0, 0.5 };
-    std::vector<double> u2 = { 1.0, -0.5 };
-    model->SetActivatorInitialConditions(u1);
-    model->SetInhibitorInitialConditions(u2);
 }
 
 DSMainWindow::~DSMainWindow()
@@ -94,7 +89,7 @@ void DSMainWindow::lambda1CoeffChanged(const QString& newLambda1)
     bool ok;
     double value = newLambda1.toDouble(&ok);
     if (ok)
-        model->SetLambda1(value);
+        model->AccessParameters()->SetLambda1(value);
 }
 
 void DSMainWindow::lambda2CoeffChanged(const QString& newLambda2)
@@ -102,7 +97,7 @@ void DSMainWindow::lambda2CoeffChanged(const QString& newLambda2)
     bool ok;
     double value = newLambda2.toDouble(&ok);
     if (ok)
-        model->SetLambda2(value);
+        model->AccessParameters()->SetLambda2(value);
 }
 
 void DSMainWindow::kCoeffChanged(const QString& newK)
@@ -110,7 +105,7 @@ void DSMainWindow::kCoeffChanged(const QString& newK)
     bool ok;
     double value = newK.toDouble(&ok);
     if (ok)
-        model->SetK(value);
+        model->AccessParameters()->SetK(value);
 }
 
 void DSMainWindow::cCoeffChanged(const QString& newC)
@@ -118,7 +113,7 @@ void DSMainWindow::cCoeffChanged(const QString& newC)
     bool ok;
     double value = newC.toDouble(&ok);
     if (ok)
-        model->SetC(value);
+        model->AccessParameters()->SetC(value);
 }
 
 void DSMainWindow::rhoCoeffChanged(const QString& newRho)
@@ -126,7 +121,7 @@ void DSMainWindow::rhoCoeffChanged(const QString& newRho)
     bool ok;
     double value = newRho.toDouble(&ok);
     if (ok)
-        model->SetRho(value);
+        model->AccessParameters()->SetRho(value);
 }
 
 void DSMainWindow::nuCoeffChanged(const QString& newNu)
@@ -134,7 +129,7 @@ void DSMainWindow::nuCoeffChanged(const QString& newNu)
     bool ok;
     double value = newNu.toDouble(&ok);
     if (ok)
-        model->SetNu(value);
+        model->AccessParameters()->SetNu(value);
 }
 
 void DSMainWindow::gammaCoeffChanged(const QString& newGamma)
@@ -142,7 +137,7 @@ void DSMainWindow::gammaCoeffChanged(const QString& newGamma)
     bool ok;
     double value = newGamma.toDouble(&ok);
     if (ok)
-        model->SetGamma(value);
+        model->AccessParameters()->SetGamma(value);
 }
 
 void DSMainWindow::gridDimensionChanged(const QString& newGridDimension)
@@ -150,7 +145,7 @@ void DSMainWindow::gridDimensionChanged(const QString& newGridDimension)
     bool ok;
     int value = newGridDimension.toInt(&ok);
     if (ok)
-        model->SetGridDimension(value);
+        model->AccessParameters()->SetGridDimension(value);
 }
 
 void DSMainWindow::timeStepChanged(const QString& newTimeStep)
@@ -158,7 +153,7 @@ void DSMainWindow::timeStepChanged(const QString& newTimeStep)
     bool ok;
     double value = newTimeStep.toDouble(&ok);
     if (ok)
-        model->SetTimeStep(value);
+        model->AccessParameters()->SetTimeStep(value);
 }
 
 void DSMainWindow::activatorAccuracyChanged(const QString& newAccuracy)
@@ -166,7 +161,7 @@ void DSMainWindow::activatorAccuracyChanged(const QString& newAccuracy)
     bool ok;
     double value = newAccuracy.toDouble(&ok);
     if (ok)
-        model->SetActivatorAccuracy(value);
+        model->AccessParameters()->SetActivatorAccuracy(value);
 }
 
 void DSMainWindow::inhibitorAccuracyChanged(const QString& newAccuracy)
@@ -174,7 +169,7 @@ void DSMainWindow::inhibitorAccuracyChanged(const QString& newAccuracy)
     bool ok;
     double value = newAccuracy.toDouble(&ok);
     if (ok)
-        model->SetActivatorAccuracy(value);
+        model->AccessParameters()->SetActivatorAccuracy(value);
 }
 
 void DSMainWindow::iterationsLimitChanged(const QString& newIterationsLimit)
@@ -182,7 +177,7 @@ void DSMainWindow::iterationsLimitChanged(const QString& newIterationsLimit)
     bool ok;
     int value = newIterationsLimit.toInt(&ok);
     if (ok)
-        model->SetIterationsLimit(value);
+        model->AccessParameters()->SetIterationsLimit(value);
 }
 
 void DSMainWindow::startFiniteRun()
@@ -325,7 +320,7 @@ void DSMainWindow::displayActivatorLayer(const SchemeLayer& layer)
     QVector<double> xs, ys;
     int layerLength = layer.GetLength();
     int arrayStep = layerLength / maxPlotPointsNumber() + 1;
-    double xStep = 1.0 / model->GetGridDimension();
+    double xStep = 1.0 / model->AccessParameters()->GetGridDimension();
     for (int i = 0; i < layerLength - 1; i += arrayStep)
     {
         xs.push_back(xStep * i);
@@ -343,7 +338,7 @@ void DSMainWindow::displayInhibitorLayer(const SchemeLayer& layer)
     QVector<double> xs, ys;
     int layerLength = layer.GetLength();
     int arrayStep = layerLength / maxPlotPointsNumber() + 1;
-    double xStep = 1.0 / model->GetGridDimension();
+    double xStep = 1.0 / model->AccessParameters()->GetGridDimension();
     for (int i = 0; i < layerLength - 1; i += arrayStep)
     {
         xs.push_back(xStep * i);

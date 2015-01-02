@@ -8,13 +8,12 @@
 
 #include <diffusioncore>
 #include "dssolverthread.hpp"
+#include "dsparameterset.hpp"
 
 using std::shared_ptr;
 using std::unique_ptr;
 using std::vector;
 using namespace diffusioncore;
-
-enum class SolverType { EXPLICIT_SOLVER, IMPLICIT_SOLVER };
 
 class DSModel : public QObject
 {
@@ -23,22 +22,10 @@ class DSModel : public QObject
 public:
     explicit DSModel();
 
-    PROPERTY(double, Lambda1)
-    PROPERTY(double, Lambda2)
-    PROPERTY(double, K)
-    PROPERTY(double, C)
-    PROPERTY(double, Rho)
-    PROPERTY(double, Gamma)
-    PROPERTY(double, Nu)
-    PROPERTY(double, TimeStep)
-    PROPERTY(double, ActivatorAccuracy)
-    PROPERTY(double, InhibitorAccuracy)
-    PROPERTY(int, GridDimension)
-    PROPERTY(int, IterationsLimit)
+    DSParameterSet* AccessParameters();
+
     PROPERTY(int, CurrentLayerIndex)
     PROPERTY(int, LayerStep)
-    PROPERTY(vector<double>, ActivatorInitialConditions)
-    PROPERTY(vector<double>, InhibitorInitialConditions)
     PROPERTY(int, FirstComparedLayerIndex)
     PROPERTY(int, SecondComparedLayerIndex)
 
@@ -82,21 +69,7 @@ private:
     void UpdateSolver(SchemeSolver* solver);
 
 private:
-    double lambda1;
-    double lambda2;
-    double k;
-    double c;
-    double rho;
-    double gamma;
-    double nu;
-    double timeStep;
-    double activatorAccuracy;
-    double inhibitorAccuracy;
-    int gridDimension;
-    int iterationsLimit;
-    vector<double> activatorInitConditionsCoeffs;
-    vector<double> inhibitorInitConditionsCoeffs;
-    SolverType solverType;
+    DSParameterSet parameters;
 
     shared_ptr<SchemeTask> task;
     shared_ptr<SchemeSolver> solver;

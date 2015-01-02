@@ -7,21 +7,7 @@ using namespace std::placeholders;
 
 DSModel::DSModel() :
     QObject(),
-    lambda1(1.0),
-    lambda2(1.0),
-    k(1.0),
-    c(1.0),
-    rho(1.0),
-    gamma(1.0),
-    nu(1.0),
-    timeStep(0.00001),
-    activatorAccuracy(0.001),
-    inhibitorAccuracy(0.001),
-    gridDimension(100),
-    iterationsLimit(1000),
-    activatorInitConditionsCoeffs(),
-    inhibitorInitConditionsCoeffs(),
-    solverType(SolverType::EXPLICIT_SOLVER),
+    parameters(),
     task(new SchemeTask),
     currentLayerIndex(0),
     layerStep(1),
@@ -31,132 +17,9 @@ DSModel::DSModel() :
     selectExplicitSolver();
 }
 
-
-
 /*
  * Properties implementation
  */
-
-double DSModel::GetLambda1() const
-{
-    return lambda1;
-}
-
-void DSModel::SetLambda1(double value)
-{
-    lambda1 = value;
-}
-
-double DSModel::GetLambda2() const
-{
-    return lambda2;
-}
-
-void DSModel::SetLambda2(double value)
-{
-    lambda2 = value;
-}
-
-double DSModel::GetK() const
-{
-    return k;
-}
-
-void DSModel::SetK(double value)
-{
-    k = value;
-}
-
-double DSModel::GetC() const
-{
-    return c;
-}
-
-void DSModel::SetC(double value)
-{
-    c = value;
-}
-
-double DSModel::GetRho() const
-{
-    return rho;
-}
-
-void DSModel::SetRho(double value)
-{
-    rho = value;
-}
-
-double DSModel::GetGamma() const
-{
-    return gamma;
-}
-
-void DSModel::SetGamma(double value)
-{
-    gamma = value;
-}
-
-double DSModel::GetNu() const
-{
-    return nu;
-}
-
-void DSModel::SetNu(double value)
-{
-    nu = value;
-}
-
-double DSModel::GetTimeStep() const
-{
-    return timeStep;
-}
-
-void DSModel::SetTimeStep(double value)
-{
-    timeStep = value;
-}
-
-double DSModel::GetActivatorAccuracy() const
-{
-    return activatorAccuracy;
-}
-
-void DSModel::SetActivatorAccuracy(double value)
-{
-    activatorAccuracy = value;
-}
-
-double DSModel::GetInhibitorAccuracy() const
-{
-    return inhibitorAccuracy;
-}
-
-void DSModel::SetInhibitorAccuracy(double value)
-{
-    inhibitorAccuracy = value;
-}
-
-int DSModel::GetGridDimension() const
-{
-    return gridDimension;
-}
-
-void DSModel::SetGridDimension(int value)
-{
-    gridDimension = value;
-}
-
-int DSModel::GetIterationsLimit() const
-{
-    return iterationsLimit;
-}
-
-void DSModel::SetIterationsLimit(int value)
-{
-    iterationsLimit = value;
-}
-
 int DSModel::GetCurrentLayerIndex() const
 {
     return currentLayerIndex;
@@ -216,50 +79,39 @@ void DSModel::SetSecondComparedLayerIndex(int value)
 }
 
 
+
 /*
  * Other methods implementation
  */
-vector<double> DSModel::GetActivatorInitialConditions() const
+DSParameterSet* DSModel::AccessParameters()
 {
-    return activatorInitConditionsCoeffs;
-}
-
-void DSModel::SetActivatorInitialConditions(vector<double> value)
-{
-    activatorInitConditionsCoeffs = value;
-}
-
-vector<double> DSModel::GetInhibitorInitialConditions() const
-{
-    return inhibitorInitConditionsCoeffs;
-}
-
-void DSModel::SetInhibitorInitialConditions(vector<double> value)
-{
-    inhibitorInitConditionsCoeffs = value;
+    return &parameters;
 }
 
 void DSModel::StartRun(SchemeSolverMode mode)
 {
-    task->SetLambda1(GetLambda1());
-    task->SetLambda2(GetLambda2());
-    task->SetK(GetK());
-    task->SetC(GetC());
-    task->SetRho(GetRho());
-    task->SetMu(GetGamma());
-    task->SetNu(GetNu());
-    task->SetStepTime(GetTimeStep());
-    task->SetAccuracyU1(GetActivatorAccuracy());
-    task->SetAccuracyU2(GetInhibitorAccuracy());
-    task->SetMaximumIterations(GetIterationsLimit());
+    task->SetLambda1(AccessParameters()->GetLambda1());
+    task->SetLambda2(AccessParameters()->GetLambda2());
+    task->SetK(AccessParameters()->GetK());
+    task->SetC(AccessParameters()->GetC());
+    task->SetRho(AccessParameters()->GetRho());
+    task->SetMu(AccessParameters()->GetGamma());
+    task->SetNu(AccessParameters()->GetNu());
+    task->SetStepTime(AccessParameters()->GetTimeStep());
+    task->SetAccuracyU1(AccessParameters()->GetActivatorAccuracy());
+    task->SetAccuracyU2(AccessParameters()->GetInhibitorAccuracy());
+    task->SetMaximumIterations(AccessParameters()->GetIterationsLimit());
 
     SchemeLayerGeneratorInitial initialLayerGenerator;
-    initialLayerGenerator.SetIntervalsCount(GetGridDimension());
+    initialLayerGenerator.SetIntervalsCount(
+                AccessParameters()->GetGridDimension());
 
-    initialLayerGenerator.SetCoefficients(GetActivatorInitialConditions());
+    initialLayerGenerator.SetCoefficients(
+                AccessParameters()->GetActivatorInitialConditions());
     SchemeLayer activatorInitLayer = initialLayerGenerator.Generate();
 
-    initialLayerGenerator.SetCoefficients(GetInhibitorInitialConditions());
+    initialLayerGenerator.SetCoefficients(
+                AccessParameters()->GetInhibitorInitialConditions());
     SchemeLayer inhibitorInitLayer = initialLayerGenerator.Generate();
 
     task->SetInitialLayers(activatorInitLayer, inhibitorInitLayer);
