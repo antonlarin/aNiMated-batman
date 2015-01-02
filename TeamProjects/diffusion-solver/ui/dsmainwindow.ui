@@ -718,6 +718,9 @@
    </property>
   </action>
   <action name="layerPairAnalysisAction">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Сравнение пары слоёв</string>
    </property>

@@ -282,6 +282,7 @@ void DSMainWindow::updateDisplayedLayer()
 void DSMainWindow::displayRunResults()
 {
     updateDisplayedLayer();
+    ui->layerPairAnalysisAction->setEnabled(true);
     // TODO: Show run info
 }
 
