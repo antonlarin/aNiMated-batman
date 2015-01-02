@@ -39,11 +39,16 @@ public:
     PROPERTY(int, LayerStep)
     PROPERTY(vector<double>, ActivatorInitialConditions)
     PROPERTY(vector<double>, InhibitorInitialConditions)
+    PROPERTY(int, FirstComparedLayerIndex)
+    PROPERTY(int, SecondComparedLayerIndex)
 
     void AcquireResult(SchemeSolverResult& newResult);
     void AcquireIterationInfo(SchemeSolverIterationInfo& info);
 
     void StartRun(SchemeSolverMode mode);
+
+    const SchemeLayer GetActivatorLayer(int index);
+    const SchemeLayer GetInhibitorLayer(int index);
 
     const SchemeLayer GetCurrentActivatorLayer();
     const SchemeLayer GetCurrentInhibitorLayer();
@@ -62,6 +67,7 @@ signals:
     void layerIndexChanged();
     void resultAcquired();
     void iterationDone(DSSolverIterationInfo&);
+    void comparedLayersChanged();
 
 public slots:
     void stopSolver();
@@ -100,6 +106,9 @@ private:
 
     int currentLayerIndex;
     int layerStep;
+
+    int firstComparedLayerIndex;
+    int secondComparedLayerIndex;
 };
 
 #endif // DSVIEWMODEL_HPP

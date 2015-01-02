@@ -20,7 +20,8 @@ SOURCES += main.cpp\
     dsinitconditionsdialog.cpp \
     dssolvingprogressdialog.cpp \
     dssolverthread.cpp \
-    dssolveriterationinfo.cpp
+    dssolveriterationinfo.cpp \
+    dslayerpairanalysiswindow.cpp
 
 HEADERS  += dsmainwindow.hpp \
     dsmodel.hpp \
@@ -28,11 +29,13 @@ HEADERS  += dsmainwindow.hpp \
     dsinitconditionsdialog.hpp \
     dssolvingprogressdialog.hpp \
     dssolverthread.hpp \
-    dssolveriterationinfo.hpp
+    dssolveriterationinfo.hpp \
+    dslayerpairanalysiswindow.hpp
 
 FORMS    += dsmainwindow.ui \
     dsinitconditionsdialog.ui \
-    dssolvingprogressdialog.ui
+    dssolvingprogressdialog.ui \
+    dslayerpairanalysiswindow.ui
 
 win32: LIBS += -L$$PWD/../core/bin/ -ldiffusion-solver
 else:unix:!macx: LIBS += -L$$PWD/../core-build/ \
