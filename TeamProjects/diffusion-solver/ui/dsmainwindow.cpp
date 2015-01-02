@@ -86,97 +86,97 @@ DSMainWindow::~DSMainWindow()
  */
 void DSMainWindow::lambda1CoeffChanged(const QString& newLambda1)
 {
-    bool ok;
-    double value = newLambda1.toDouble(&ok);
-    if (ok)
+    bool isValidDouble;
+    double value = newLambda1.toDouble(&isValidDouble);
+    if (isValidDouble)
         model->AccessParameters()->SetLambda1(value);
 }
 
 void DSMainWindow::lambda2CoeffChanged(const QString& newLambda2)
 {
-    bool ok;
-    double value = newLambda2.toDouble(&ok);
-    if (ok)
+    bool isValidDouble;
+    double value = newLambda2.toDouble(&isValidDouble);
+    if (isValidDouble)
         model->AccessParameters()->SetLambda2(value);
 }
 
 void DSMainWindow::kCoeffChanged(const QString& newK)
 {
-    bool ok;
-    double value = newK.toDouble(&ok);
-    if (ok)
+    bool isValidDouble;
+    double value = newK.toDouble(&isValidDouble);
+    if (isValidDouble)
         model->AccessParameters()->SetK(value);
 }
 
 void DSMainWindow::cCoeffChanged(const QString& newC)
 {
-    bool ok;
-    double value = newC.toDouble(&ok);
-    if (ok)
+    bool isValidDouble;
+    double value = newC.toDouble(&isValidDouble);
+    if (isValidDouble)
         model->AccessParameters()->SetC(value);
 }
 
 void DSMainWindow::rhoCoeffChanged(const QString& newRho)
 {
-    bool ok;
-    double value = newRho.toDouble(&ok);
-    if (ok)
+    bool isValidDouble;
+    double value = newRho.toDouble(&isValidDouble);
+    if (isValidDouble)
         model->AccessParameters()->SetRho(value);
 }
 
 void DSMainWindow::nuCoeffChanged(const QString& newNu)
 {
-    bool ok;
-    double value = newNu.toDouble(&ok);
-    if (ok)
+    bool isValidDouble;
+    double value = newNu.toDouble(&isValidDouble);
+    if (isValidDouble)
         model->AccessParameters()->SetNu(value);
 }
 
 void DSMainWindow::gammaCoeffChanged(const QString& newGamma)
 {
-    bool ok;
-    double value = newGamma.toDouble(&ok);
-    if (ok)
+    bool isValidDouble;
+    double value = newGamma.toDouble(&isValidDouble);
+    if (isValidDouble)
         model->AccessParameters()->SetGamma(value);
 }
 
 void DSMainWindow::gridDimensionChanged(const QString& newGridDimension)
 {
-    bool ok;
-    int value = newGridDimension.toInt(&ok);
-    if (ok)
+    bool isValidInteger;
+    int value = newGridDimension.toInt(&isValidInteger);
+    if (isValidInteger)
         model->AccessParameters()->SetGridDimension(value);
 }
 
 void DSMainWindow::timeStepChanged(const QString& newTimeStep)
 {
-    bool ok;
-    double value = newTimeStep.toDouble(&ok);
-    if (ok)
+    bool isValidDouble;
+    double value = newTimeStep.toDouble(&isValidDouble);
+    if (isValidDouble)
         model->AccessParameters()->SetTimeStep(value);
 }
 
 void DSMainWindow::activatorAccuracyChanged(const QString& newAccuracy)
 {
-    bool ok;
-    double value = newAccuracy.toDouble(&ok);
-    if (ok)
+    bool isValidDouble;
+    double value = newAccuracy.toDouble(&isValidDouble);
+    if (isValidDouble)
         model->AccessParameters()->SetActivatorAccuracy(value);
 }
 
 void DSMainWindow::inhibitorAccuracyChanged(const QString& newAccuracy)
 {
-    bool ok;
-    double value = newAccuracy.toDouble(&ok);
-    if (ok)
+    bool isValidDouble;
+    double value = newAccuracy.toDouble(&isValidDouble);
+    if (isValidDouble)
         model->AccessParameters()->SetActivatorAccuracy(value);
 }
 
 void DSMainWindow::iterationsLimitChanged(const QString& newIterationsLimit)
 {
-    bool ok;
-    int value = newIterationsLimit.toInt(&ok);
-    if (ok)
+    bool isValidInteger;
+    int value = newIterationsLimit.toInt(&isValidInteger);
+    if (isValidInteger)
         model->AccessParameters()->SetIterationsLimit(value);
 }
 
@@ -232,17 +232,17 @@ void DSMainWindow::goToLastLayer()
 
 void DSMainWindow::goToLayer(const QString& newLayer)
 {
-    bool ok;
-    int value = newLayer.toInt(&ok);
-    if (ok)
+    bool isValidInteger;
+    int value = newLayer.toInt(&isValidInteger);
+    if (isValidInteger)
         model->SetCurrentLayerIndex(value);
 }
 
 void DSMainWindow::changeLayerStep(const QString& newLayerStep)
 {
-    bool ok;
-    int value = newLayerStep.toInt(&ok);
-    if (ok && value > 0)
+    bool isValidInteger;
+    int value = newLayerStep.toInt(&isValidInteger);
+    if (isValidInteger)
         model->SetLayerStep(value);
 }
 

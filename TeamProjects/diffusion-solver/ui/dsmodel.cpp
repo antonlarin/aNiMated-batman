@@ -43,7 +43,8 @@ int DSModel::GetLayerStep() const
 
 void DSModel::SetLayerStep(int value)
 {
-    layerStep = value;
+    if (value > 0)
+        layerStep = value;
 }
 
 int DSModel::GetFirstComparedLayerIndex() const
