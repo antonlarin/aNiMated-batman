@@ -42,15 +42,21 @@ public slots:
     void inhibitorHarmonicCoeffChanged(const QString& value);
 
 private:
+    static int maxHarmonicOrder() { return 20; }
+    static int maxHarmonicsCount() { return 6; }
+
     vector<double> getCurrentActivatorCoeffs();
     vector<double> getCurrentInhibitorCoeffs();
-    void initInitalConditionsPlots();
-    void setSelectorItemLists();
-    void displayCurrentInitialConditions();
-    void displayPlotsOfCurrentInitialConditions();
+
+    void initPlots();
+    void populateSelectorItemLists();
+
     void addHarmonic(int index);
     void removeHarmonic(int index);
+
     void updateSelectedHarmonics();
+    void displayCurrentInitialConditions();
+    void displayPlotsOfCurrentInitialConditions();
 
     Ui::DSInitConditionsDialog *ui;
 

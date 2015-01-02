@@ -56,6 +56,7 @@ void DSLayerPairAnalysisWindow::secondLayerIndexChanged(const QString& newIndex)
         getManager()->getModel()->SetSecondComparedLayerIndex(indexValue);
 }
 
+
 void DSLayerPairAnalysisWindow::updateComparisonInfo()
 {
     DSModel* model = getManager()->getModel();
@@ -81,6 +82,61 @@ void DSLayerPairAnalysisWindow::updateComparisonInfo()
                 arg(SchemeLayer::MaxDifference(inhibitorLayer1,
                                                inhibitorLayer2)));
 
+    updatePlots(activatorLayer1, activatorLayer2,
+                inhibitorLayer1, inhibitorLayer2);
+}
+
+void DSLayerPairAnalysisWindow::updateComparedLayerEditsText()
+{
+    DSModel* model = getManager()->getModel();
+    ui->layer1Edit->setText(tr("%1").
+                            arg(model->GetFirstComparedLayerIndex()));
+    ui->layer2Edit->setText(tr("%1").
+                            arg(model->GetSecondComparedLayerIndex()));
+}
+
+
+
+/*
+ * Other methods implementations
+ */
+void DSLayerPairAnalysisWindow::initPlots()
+{
+    ui->activatorsPlot->addGraph();
+    ui->activatorsPlot->addGraph();
+    ui->activatorsPlot->graph(0)->setName("Слой 1");
+    ui->activatorsPlot->graph(0)->setPen(QPen(Qt::green));
+    ui->activatorsPlot->graph(1)->setName("Слой 2");
+    ui->activatorsPlot->graph(1)->setPen(QPen(Qt::darkGreen));
+    ui->activatorsPlot->xAxis->setRange(0.0, 1.0);
+    ui->activatorsPlot->yAxis->setLabel("Концентрации");
+    ui->activatorsPlot->legend->setVisible(true);
+
+    ui->inhibitorsPlot->addGraph();
+    ui->inhibitorsPlot->addGraph();
+    ui->inhibitorsPlot->graph(0)->setName("Слой 1");
+    ui->inhibitorsPlot->graph(0)->setPen(QPen(Qt::red));
+    ui->inhibitorsPlot->graph(1)->setName("Слой 2");
+    ui->inhibitorsPlot->graph(1)->setPen(QPen(Qt::magenta));
+    ui->inhibitorsPlot->xAxis->setRange(0.0, 1.0);
+    ui->inhibitorsPlot->yAxis->setLabel("Концентрации");
+    ui->inhibitorsPlot->legend->setVisible(true);
+
+    ui->activatorsDifferencePlot->addGraph();
+    ui->activatorsDifferencePlot->xAxis->setRange(0.0, 1.0);
+    ui->activatorsDifferencePlot->yAxis->setLabel("Разность слоёв");
+
+    ui->inhibitorsDifferencePlot->addGraph();
+    ui->inhibitorsDifferencePlot->xAxis->setRange(0.0, 1.0);
+    ui->inhibitorsDifferencePlot->yAxis->setLabel("Разность слоёв");
+}
+
+void DSLayerPairAnalysisWindow::updatePlots(const SchemeLayer& activatorLayer1,
+                                            const SchemeLayer& activatorLayer2,
+                                            const SchemeLayer& inhibitorLayer1,
+                                            const SchemeLayer& inhibitorLayer2)
+{
+    DSModel* model = getManager()->getModel();
     QVector<double> xs;
     QVector<double> activator1Values;
     QVector<double> activator2Values;
@@ -132,49 +188,4 @@ void DSLayerPairAnalysisWindow::updateComparisonInfo()
             setData(xs, inhibitorDifferenceValues);
     ui->inhibitorsDifferencePlot->rescaleAxes();
     ui->inhibitorsDifferencePlot->replot();
-}
-
-void DSLayerPairAnalysisWindow::updateComparedLayerEditsText()
-{
-    DSModel* model = getManager()->getModel();
-    ui->layer1Edit->setText(tr("%1").
-                            arg(model->GetFirstComparedLayerIndex()));
-    ui->layer2Edit->setText(tr("%1").
-                            arg(model->GetSecondComparedLayerIndex()));
-}
-
-
-
-/*
- * Other methods implementations
- */
-void DSLayerPairAnalysisWindow::initPlots()
-{
-    ui->activatorsPlot->addGraph();
-    ui->activatorsPlot->addGraph();
-    ui->activatorsPlot->graph(0)->setName("Слой 1");
-    ui->activatorsPlot->graph(0)->setPen(QPen(Qt::green));
-    ui->activatorsPlot->graph(1)->setName("Слой 2");
-    ui->activatorsPlot->graph(1)->setPen(QPen(Qt::darkGreen));
-    ui->activatorsPlot->xAxis->setRange(0.0, 1.0);
-    ui->activatorsPlot->yAxis->setLabel("Концентрации");
-    ui->activatorsPlot->legend->setVisible(true);
-
-    ui->inhibitorsPlot->addGraph();
-    ui->inhibitorsPlot->addGraph();
-    ui->inhibitorsPlot->graph(0)->setName("Слой 1");
-    ui->inhibitorsPlot->graph(0)->setPen(QPen(Qt::red));
-    ui->inhibitorsPlot->graph(1)->setName("Слой 2");
-    ui->inhibitorsPlot->graph(1)->setPen(QPen(Qt::magenta));
-    ui->inhibitorsPlot->xAxis->setRange(0.0, 1.0);
-    ui->inhibitorsPlot->yAxis->setLabel("Концентрации");
-    ui->inhibitorsPlot->legend->setVisible(true);
-
-    ui->activatorsDifferencePlot->addGraph();
-    ui->activatorsDifferencePlot->xAxis->setRange(0.0, 1.0);
-    ui->activatorsDifferencePlot->yAxis->setLabel("Разность слоёв");
-
-    ui->inhibitorsDifferencePlot->addGraph();
-    ui->inhibitorsDifferencePlot->xAxis->setRange(0.0, 1.0);
-    ui->inhibitorsDifferencePlot->yAxis->setLabel("Разность слоёв");
 }

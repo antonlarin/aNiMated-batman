@@ -30,6 +30,10 @@ private:
     static double GetMaxPlotPointsCount() { return 100; }
 
     void initPlots();
+    void updatePlots(const SchemeLayer& activatorLayer1,
+                     const SchemeLayer& activatorLayer2,
+                     const SchemeLayer& inhibitorLayer1,
+                     const SchemeLayer& inhibitorLayer2);
 
     Ui::DSLayerPairAnalysisWindow *ui;
 };
