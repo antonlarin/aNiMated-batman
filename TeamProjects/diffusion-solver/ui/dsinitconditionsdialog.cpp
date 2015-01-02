@@ -39,27 +39,45 @@ DSInitConditionsDialog::DSInitConditionsDialog(DSWindowManager* manager,
     connect(ui->buttonBox, SIGNAL(accepted()),
             this, SLOT(acceptInitialConditions()));
 
+    QSignalMapper* harmonicsAdditionMapper = new QSignalMapper(this);
+    for (int i = 0; i < maxHarmonicsCount(); ++i)
+    {
+        harmonicsAdditionMapper->setMapping(harmonicsSelectors[i], i);
+    }
     connect(ui->harmonicCombo1, SIGNAL(currentIndexChanged(int)),
-            this, SLOT(addHarmonic1()));
+            harmonicsAdditionMapper, SLOT(map()));
     connect(ui->harmonicCombo2, SIGNAL(currentIndexChanged(int)),
-            this, SLOT(addHarmonic2()));
+            harmonicsAdditionMapper, SLOT(map()));
     connect(ui->harmonicCombo3, SIGNAL(currentIndexChanged(int)),
-            this, SLOT(addHarmonic3()));
+            harmonicsAdditionMapper, SLOT(map()));
     connect(ui->harmonicCombo4, SIGNAL(currentIndexChanged(int)),
-            this, SLOT(addHarmonic4()));
+            harmonicsAdditionMapper, SLOT(map()));
     connect(ui->harmonicCombo5, SIGNAL(currentIndexChanged(int)),
-            this, SLOT(addHarmonic5()));
+            harmonicsAdditionMapper, SLOT(map()));
 
+    connect(harmonicsAdditionMapper, SIGNAL(mapped(int)),
+            this, SLOT(addHarmonic(int)));
+
+
+    QSignalMapper* harmonicsRemovalMapper = new QSignalMapper(this);
+    harmonicsRemovalMapper->setMapping(ui->removeHarmonicButton1, 1);
+    harmonicsRemovalMapper->setMapping(ui->removeHarmonicButton2, 2);
+    harmonicsRemovalMapper->setMapping(ui->removeHarmonicButton3, 3);
+    harmonicsRemovalMapper->setMapping(ui->removeHarmonicButton4, 4);
+    harmonicsRemovalMapper->setMapping(ui->removeHarmonicButton5, 5);
     connect(ui->removeHarmonicButton1, SIGNAL(clicked()),
-            this, SLOT(removeHarmonic1()));
+            harmonicsRemovalMapper, SLOT(map()));
     connect(ui->removeHarmonicButton2, SIGNAL(clicked()),
-            this, SLOT(removeHarmonic2()));
+            harmonicsRemovalMapper, SLOT(map()));
     connect(ui->removeHarmonicButton3, SIGNAL(clicked()),
-            this, SLOT(removeHarmonic3()));
+            harmonicsRemovalMapper, SLOT(map()));
     connect(ui->removeHarmonicButton4, SIGNAL(clicked()),
-            this, SLOT(removeHarmonic4()));
+            harmonicsRemovalMapper, SLOT(map()));
     connect(ui->removeHarmonicButton5, SIGNAL(clicked()),
-            this, SLOT(removeHarmonic5()));
+            harmonicsRemovalMapper, SLOT(map()));
+
+    connect(harmonicsRemovalMapper, SIGNAL(mapped(int)),
+            this, SLOT(removeHarmonic(int)));
 
     for (int i = 0; i < maxHarmonicsCount(); ++i)
     {
@@ -102,54 +120,28 @@ void DSInitConditionsDialog::acceptInitialConditions()
     model->AccessParameters()->SetInhibitorInitialConditions(inhibitorCoeffs);
 }
 
-void DSInitConditionsDialog::addHarmonic1()
+void DSInitConditionsDialog::addHarmonic(int index)
 {
-    addHarmonic(1);
+    if (harmonicsSelectors[index]->currentText() == "N/A")
+    {
+        activeHarmonicControls[index] = false;
+        activatorCoeffEdits[index]->setText("0.0");
+        inhibitorCoeffEdits[index]->setText("0.0");
+    }
+    else
+    {
+        activeHarmonicControls[index] = true;
+    }
+    updateSelectedHarmonics();
+    displayPlotsOfCurrentInitialConditions();
 }
 
-void DSInitConditionsDialog::addHarmonic2()
+void DSInitConditionsDialog::removeHarmonic(int index)
 {
-    addHarmonic(2);
-}
-
-void DSInitConditionsDialog::addHarmonic3()
-{
-    addHarmonic(3);
-}
-
-void DSInitConditionsDialog::addHarmonic4()
-{
-    addHarmonic(4);
-}
-
-void DSInitConditionsDialog::addHarmonic5()
-{
-    addHarmonic(5);
-}
-
-void DSInitConditionsDialog::removeHarmonic1()
-{
-    removeHarmonic(1);
-}
-
-void DSInitConditionsDialog::removeHarmonic2()
-{
-    removeHarmonic(2);
-}
-
-void DSInitConditionsDialog::removeHarmonic3()
-{
-    removeHarmonic(3);
-}
-
-void DSInitConditionsDialog::removeHarmonic4()
-{
-    removeHarmonic(4);
-}
-
-void DSInitConditionsDialog::removeHarmonic5()
-{
-    removeHarmonic(5);
+    harmonicsSelectors[index]->setCurrentIndex(0);
+    activeHarmonicControls[index] = false;
+    updateSelectedHarmonics();
+    displayPlotsOfCurrentInitialConditions();
 }
 
 void DSInitConditionsDialog::activatorHarmonicCoeffChanged(const QString& value)
@@ -315,30 +307,6 @@ void DSInitConditionsDialog::displayPlotsOfCurrentInitialConditions()
     ui->inhibitorPreviewPlot->graph(0)->setData(xs, inhibitorValues);
     ui->inhibitorPreviewPlot->rescaleAxes();
     ui->inhibitorPreviewPlot->replot();
-}
-
-void DSInitConditionsDialog::addHarmonic(int index)
-{
-    if (harmonicsSelectors[index]->currentText() == "N/A")
-    {
-        activeHarmonicControls[index] = false;
-        activatorCoeffEdits[index]->setText("0.0");
-        inhibitorCoeffEdits[index]->setText("0.0");
-    }
-    else
-    {
-        activeHarmonicControls[index] = true;
-    }
-    updateSelectedHarmonics();
-    displayPlotsOfCurrentInitialConditions();
-}
-
-void DSInitConditionsDialog::removeHarmonic(int index)
-{
-    harmonicsSelectors[index]->setCurrentIndex(0);
-    activeHarmonicControls[index] = false;
-    updateSelectedHarmonics();
-    displayPlotsOfCurrentInitialConditions();
 }
 
 void DSInitConditionsDialog::updateSelectedHarmonics()
