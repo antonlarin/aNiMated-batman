@@ -7,7 +7,7 @@
 
 #include <vector>
 
-#include "dsmodel.hpp"
+#include "dswindowmanager.hpp"
 
 using std::vector;
 
@@ -15,13 +15,17 @@ namespace Ui {
 class DSInitConditionsDialog;
 }
 
-class DSInitConditionsDialog : public QDialog
+class DSInitConditionsDialog : public QDialog, public IDSWindow
 {
     Q_OBJECT
 
 public:
-    explicit DSInitConditionsDialog(DSModel* model, QWidget *parent = 0);
-    ~DSInitConditionsDialog();
+    explicit DSInitConditionsDialog(DSWindowManager* manager,
+                                    QWidget *parent = 0);
+    virtual ~DSInitConditionsDialog();
+
+    virtual void showWindow();
+
 public slots:
     void acceptInitialConditions();
     void addHarmonic1();
@@ -49,8 +53,6 @@ private:
     void updateSelectedHarmonics();
 
     Ui::DSInitConditionsDialog *ui;
-
-    DSModel* model;
 
     vector<bool> selectedHarmonics;
     vector<bool> activeHarmonicControls;

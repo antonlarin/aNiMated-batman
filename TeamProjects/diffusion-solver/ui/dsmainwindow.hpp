@@ -3,22 +3,21 @@
 
 #include <QMainWindow>
 
-#include "dsmodel.hpp"
-#include "dsinitconditionsdialog.hpp"
-#include "dssolvingprogressdialog.hpp"
-#include "dslayerpairanalysiswindow.hpp"
+#include "dswindowmanager.hpp"
 
 namespace Ui {
 class DSMainWindow;
 }
 
-class DSMainWindow : public QMainWindow
+class DSMainWindow : public QMainWindow, public IDSWindow
 {
     Q_OBJECT
 
 public:
-    explicit DSMainWindow(DSModel* newModel, QWidget *parent = 0);
+    explicit DSMainWindow(DSWindowManager* manager, QWidget *parent = 0);
     virtual ~DSMainWindow();
+
+    virtual void showWindow();
 
 public slots:
     void lambda1CoeffChanged(const QString& newLambda1);
@@ -44,9 +43,6 @@ public slots:
     void startFiniteRun();
     void startStabilityRun();
 
-    void showInitConditionsDialog();
-    void showLayerPairAnalysisWindow();
-
     void updateDisplayedLayer();
     void displayRunResults();
 
@@ -59,13 +55,7 @@ private:
     void displayActivatorLayer(const SchemeLayer& layer);
     void displayInhibitorLayer(const SchemeLayer& layer);
 
-    void showSolvingProgressDialog();
-
     Ui::DSMainWindow *ui;
-    DSInitConditionsDialog* initConditionsDialog;
-    DSSolvingProgressDialog* solvingProgressDialog;
-    DSLayerPairAnalysisWindow* layerPairAnalysisWindow;
-    DSModel* model;
 };
 
 #endif // DSMAINWINDOW_HPP

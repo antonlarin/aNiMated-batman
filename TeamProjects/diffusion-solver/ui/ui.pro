@@ -22,7 +22,9 @@ SOURCES += main.cpp\
     dssolverthread.cpp \
     dssolveriterationinfo.cpp \
     dslayerpairanalysiswindow.cpp \
-    dsparameterset.cpp
+    dsparameterset.cpp \
+    dswindowmanager.cpp \
+    idswindow.cpp
 
 HEADERS  += dsmainwindow.hpp \
     dsmodel.hpp \
@@ -32,7 +34,9 @@ HEADERS  += dsmainwindow.hpp \
     dssolverthread.hpp \
     dssolveriterationinfo.hpp \
     dslayerpairanalysiswindow.hpp \
-    dsparameterset.hpp
+    dsparameterset.hpp \
+    dswindowmanager.hpp \
+    idswindow.hpp
 
 FORMS    += dsmainwindow.ui \
     dsinitconditionsdialog.ui \

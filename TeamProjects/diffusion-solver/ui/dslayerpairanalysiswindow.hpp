@@ -3,19 +3,22 @@
 
 #include <QDialog>
 
-#include "dsmodel.hpp"
+#include "dswindowmanager.hpp"
 
 namespace Ui {
 class DSLayerPairAnalysisWindow;
 }
 
-class DSLayerPairAnalysisWindow : public QDialog
+class DSLayerPairAnalysisWindow : public QDialog, public IDSWindow
 {
     Q_OBJECT
 
 public:
-    explicit DSLayerPairAnalysisWindow(DSModel* model, QWidget *parent = 0);
-    ~DSLayerPairAnalysisWindow();
+    explicit DSLayerPairAnalysisWindow(DSWindowManager* manager,
+                                       QWidget *parent = 0);
+    virtual ~DSLayerPairAnalysisWindow();
+
+    virtual void showWindow();
 
 public slots:
     void firstLayerIndexChanged(const QString& newIndex);
@@ -29,7 +32,6 @@ private:
     void initPlots();
 
     Ui::DSLayerPairAnalysisWindow *ui;
-    DSModel* model;
 };
 
 #endif // DSLAYERPAIRANALYSISWINDOW_HPP

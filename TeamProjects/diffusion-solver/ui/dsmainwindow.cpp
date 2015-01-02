@@ -2,14 +2,12 @@
 #include "ui_dsmainwindow.h"
 
 #include <vector>
+#include "dsmodel.hpp"
 
-DSMainWindow::DSMainWindow(DSModel* newModel, QWidget *parent) :
+DSMainWindow::DSMainWindow(DSWindowManager* manager, QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::DSMainWindow),
-    initConditionsDialog(nullptr),
-    solvingProgressDialog(nullptr),
-    layerPairAnalysisWindow(nullptr),
-    model(newModel)
+    IDSWindow(manager),
+    ui(new Ui::DSMainWindow)
 {
     ui->setupUi(this);
 
@@ -59,10 +57,11 @@ DSMainWindow::DSMainWindow(DSModel* newModel, QWidget *parent) :
     connect(ui->quitAction, SIGNAL(triggered()),
             this, SLOT(close()));
     connect(ui->initConditionsAction, SIGNAL(triggered()),
-            this, SLOT(showInitConditionsDialog()));
+            getManager(), SLOT(showInitialConditionsDialog()));
     connect(ui->layerPairAnalysisAction, SIGNAL(triggered()),
-            this, SLOT(showLayerPairAnalysisWindow()));
+            getManager(), SLOT(showLayerPairAnalysisWindow()));
 
+    DSModel* model = getManager()->getModel();
     connect(model, SIGNAL(layerIndexChanged()),
             this, SLOT(updateDisplayedLayer()));
     connect(model, SIGNAL(resultAcquired()),
@@ -81,6 +80,11 @@ DSMainWindow::~DSMainWindow()
     delete ui;
 }
 
+void DSMainWindow::showWindow()
+{
+    show();
+}
+
 /*
  * Slots implementations
  */
@@ -89,7 +93,7 @@ void DSMainWindow::lambda1CoeffChanged(const QString& newLambda1)
     bool isValidDouble;
     double value = newLambda1.toDouble(&isValidDouble);
     if (isValidDouble)
-        model->AccessParameters()->SetLambda1(value);
+        getManager()->getModel()->AccessParameters()->SetLambda1(value);
 }
 
 void DSMainWindow::lambda2CoeffChanged(const QString& newLambda2)
@@ -97,7 +101,7 @@ void DSMainWindow::lambda2CoeffChanged(const QString& newLambda2)
     bool isValidDouble;
     double value = newLambda2.toDouble(&isValidDouble);
     if (isValidDouble)
-        model->AccessParameters()->SetLambda2(value);
+        getManager()->getModel()->AccessParameters()->SetLambda2(value);
 }
 
 void DSMainWindow::kCoeffChanged(const QString& newK)
@@ -105,7 +109,7 @@ void DSMainWindow::kCoeffChanged(const QString& newK)
     bool isValidDouble;
     double value = newK.toDouble(&isValidDouble);
     if (isValidDouble)
-        model->AccessParameters()->SetK(value);
+        getManager()->getModel()->AccessParameters()->SetK(value);
 }
 
 void DSMainWindow::cCoeffChanged(const QString& newC)
@@ -113,7 +117,7 @@ void DSMainWindow::cCoeffChanged(const QString& newC)
     bool isValidDouble;
     double value = newC.toDouble(&isValidDouble);
     if (isValidDouble)
-        model->AccessParameters()->SetC(value);
+        getManager()->getModel()->AccessParameters()->SetC(value);
 }
 
 void DSMainWindow::rhoCoeffChanged(const QString& newRho)
@@ -121,7 +125,7 @@ void DSMainWindow::rhoCoeffChanged(const QString& newRho)
     bool isValidDouble;
     double value = newRho.toDouble(&isValidDouble);
     if (isValidDouble)
-        model->AccessParameters()->SetRho(value);
+        getManager()->getModel()->AccessParameters()->SetRho(value);
 }
 
 void DSMainWindow::nuCoeffChanged(const QString& newNu)
@@ -129,7 +133,7 @@ void DSMainWindow::nuCoeffChanged(const QString& newNu)
     bool isValidDouble;
     double value = newNu.toDouble(&isValidDouble);
     if (isValidDouble)
-        model->AccessParameters()->SetNu(value);
+        getManager()->getModel()->AccessParameters()->SetNu(value);
 }
 
 void DSMainWindow::gammaCoeffChanged(const QString& newGamma)
@@ -137,7 +141,7 @@ void DSMainWindow::gammaCoeffChanged(const QString& newGamma)
     bool isValidDouble;
     double value = newGamma.toDouble(&isValidDouble);
     if (isValidDouble)
-        model->AccessParameters()->SetGamma(value);
+        getManager()->getModel()->AccessParameters()->SetGamma(value);
 }
 
 void DSMainWindow::gridDimensionChanged(const QString& newGridDimension)
@@ -145,7 +149,7 @@ void DSMainWindow::gridDimensionChanged(const QString& newGridDimension)
     bool isValidInteger;
     int value = newGridDimension.toInt(&isValidInteger);
     if (isValidInteger)
-        model->AccessParameters()->SetGridDimension(value);
+        getManager()->getModel()->AccessParameters()->SetGridDimension(value);
 }
 
 void DSMainWindow::timeStepChanged(const QString& newTimeStep)
@@ -153,7 +157,7 @@ void DSMainWindow::timeStepChanged(const QString& newTimeStep)
     bool isValidDouble;
     double value = newTimeStep.toDouble(&isValidDouble);
     if (isValidDouble)
-        model->AccessParameters()->SetTimeStep(value);
+        getManager()->getModel()->AccessParameters()->SetTimeStep(value);
 }
 
 void DSMainWindow::activatorAccuracyChanged(const QString& newAccuracy)
@@ -161,7 +165,8 @@ void DSMainWindow::activatorAccuracyChanged(const QString& newAccuracy)
     bool isValidDouble;
     double value = newAccuracy.toDouble(&isValidDouble);
     if (isValidDouble)
-        model->AccessParameters()->SetActivatorAccuracy(value);
+        getManager()->getModel()->AccessParameters()->
+                SetActivatorAccuracy(value);
 }
 
 void DSMainWindow::inhibitorAccuracyChanged(const QString& newAccuracy)
@@ -169,7 +174,8 @@ void DSMainWindow::inhibitorAccuracyChanged(const QString& newAccuracy)
     bool isValidDouble;
     double value = newAccuracy.toDouble(&isValidDouble);
     if (isValidDouble)
-        model->AccessParameters()->SetActivatorAccuracy(value);
+        getManager()->getModel()->AccessParameters()->
+                SetActivatorAccuracy(value);
 }
 
 void DSMainWindow::iterationsLimitChanged(const QString& newIterationsLimit)
@@ -177,15 +183,15 @@ void DSMainWindow::iterationsLimitChanged(const QString& newIterationsLimit)
     bool isValidInteger;
     int value = newIterationsLimit.toInt(&isValidInteger);
     if (isValidInteger)
-        model->AccessParameters()->SetIterationsLimit(value);
+        getManager()->getModel()->AccessParameters()->SetIterationsLimit(value);
 }
 
 void DSMainWindow::startFiniteRun()
 {
     try
     {
-        model->StartRun(SchemeSolverMode::AllLayers);
-        showSolvingProgressDialog();
+        getManager()->getModel()->StartRun(SchemeSolverMode::AllLayers);
+        getManager()->showSolvingProgressDialog();
     }
     catch (std::runtime_error e)
     {
@@ -198,8 +204,8 @@ void DSMainWindow::startStabilityRun()
 {
     try
     {
-        model->StartRun(SchemeSolverMode::StableLayer);
-        showSolvingProgressDialog();
+        getManager()->getModel()->StartRun(SchemeSolverMode::StableLayer);
+        getManager()->showSolvingProgressDialog();
     }
     catch (std::runtime_error e)
     {
@@ -210,23 +216,26 @@ void DSMainWindow::startStabilityRun()
 
 void DSMainWindow::goToPrevLayer()
 {
+    DSModel* model = getManager()->getModel();
     model->SetCurrentLayerIndex(model->GetCurrentLayerIndex() -
-                                model->GetLayerStep());
+                                  model->GetLayerStep());
 }
 
 void DSMainWindow::goToNextLayer()
 {
+    DSModel* model = getManager()->getModel();
     model->SetCurrentLayerIndex(model->GetCurrentLayerIndex() +
                                 model->GetLayerStep());
 }
 
 void DSMainWindow::goToFirstLayer()
 {
-    model->SetCurrentLayerIndex(0);
+    getManager()->getModel()->SetCurrentLayerIndex(0);
 }
 
 void DSMainWindow::goToLastLayer()
 {
+    DSModel* model = getManager()->getModel();
     model->SetCurrentLayerIndex(model->GetLayerCount() - 1);
 }
 
@@ -235,7 +244,7 @@ void DSMainWindow::goToLayer(const QString& newLayer)
     bool isValidInteger;
     int value = newLayer.toInt(&isValidInteger);
     if (isValidInteger)
-        model->SetCurrentLayerIndex(value);
+        getManager()->getModel()->SetCurrentLayerIndex(value);
 }
 
 void DSMainWindow::changeLayerStep(const QString& newLayerStep)
@@ -243,25 +252,12 @@ void DSMainWindow::changeLayerStep(const QString& newLayerStep)
     bool isValidInteger;
     int value = newLayerStep.toInt(&isValidInteger);
     if (isValidInteger)
-        model->SetLayerStep(value);
-}
-
-void DSMainWindow::showInitConditionsDialog()
-{
-    initConditionsDialog = new DSInitConditionsDialog(model, this);
-    initConditionsDialog->setAttribute(Qt::WA_DeleteOnClose);
-    initConditionsDialog->show();
-}
-
-void DSMainWindow::showLayerPairAnalysisWindow()
-{
-    layerPairAnalysisWindow = new DSLayerPairAnalysisWindow(model);
-    layerPairAnalysisWindow->setAttribute(Qt::WA_DeleteOnClose);
-    layerPairAnalysisWindow->show();
+        getManager()->getModel()->SetLayerStep(value);
 }
 
 void DSMainWindow::updateDisplayedLayer()
 {
+    DSModel* model = getManager()->getModel();
     ui->totalLayerNumLabel->setText(tr("из %1, шаг").
                                     arg(model->GetLayerCount()));
     ui->currentLayerEdit->setText(tr("%1").
@@ -269,7 +265,7 @@ void DSMainWindow::updateDisplayedLayer()
     ui->layerStepEdit->setText(tr("%1").
                                arg(model->GetLayerStep()));
     resetPlotsScale(model->GetActivatorMinimum(), model->GetActivatorMaximum(),
-               model->GetInhibitorMinimum(), model->GetInhibitorMaximum());
+                    model->GetInhibitorMinimum(), model->GetInhibitorMaximum());
     displayActivatorLayer(model->GetCurrentActivatorLayer());
     displayInhibitorLayer(model->GetCurrentInhibitorLayer());
 }
@@ -320,7 +316,8 @@ void DSMainWindow::displayActivatorLayer(const SchemeLayer& layer)
     QVector<double> xs, ys;
     int layerLength = layer.GetLength();
     int arrayStep = layerLength / maxPlotPointsNumber() + 1;
-    double xStep = 1.0 / model->AccessParameters()->GetGridDimension();
+    double xStep = 1.0 / getManager()->getModel()->AccessParameters()->
+            GetGridDimension();
     for (int i = 0; i < layerLength - 1; i += arrayStep)
     {
         xs.push_back(xStep * i);
@@ -338,7 +335,8 @@ void DSMainWindow::displayInhibitorLayer(const SchemeLayer& layer)
     QVector<double> xs, ys;
     int layerLength = layer.GetLength();
     int arrayStep = layerLength / maxPlotPointsNumber() + 1;
-    double xStep = 1.0 / model->AccessParameters()->GetGridDimension();
+    double xStep = 1.0 / getManager()->getModel()->AccessParameters()->
+            GetGridDimension();
     for (int i = 0; i < layerLength - 1; i += arrayStep)
     {
         xs.push_back(xStep * i);
@@ -349,11 +347,4 @@ void DSMainWindow::displayInhibitorLayer(const SchemeLayer& layer)
 
     ui->inhibitorPlot->graph(0)->setData(xs, ys);
     ui->inhibitorPlot->replot();
-}
-
-void DSMainWindow::showSolvingProgressDialog()
-{
-    solvingProgressDialog = new DSSolvingProgressDialog(model, this);
-    solvingProgressDialog->setAttribute(Qt::WA_DeleteOnClose);
-    solvingProgressDialog->show();
 }

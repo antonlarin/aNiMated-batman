@@ -2,11 +2,11 @@
 #include "ui_dsinitconditionsdialog.h"
 
 
-DSInitConditionsDialog::DSInitConditionsDialog(DSModel* model,
+DSInitConditionsDialog::DSInitConditionsDialog(DSWindowManager* manager,
                                                QWidget *parent) :
     QDialog(parent),
+    IDSWindow(manager),
     ui(new Ui::DSInitConditionsDialog),
-    model(model),
     selectedHarmonics(21, false),
     activeHarmonicControls(6, false),
     harmonicsSelectors(),
@@ -81,6 +81,11 @@ DSInitConditionsDialog::~DSInitConditionsDialog()
     delete ui;
 }
 
+void DSInitConditionsDialog::showWindow()
+{
+    show();
+}
+
 
 
 /*
@@ -93,6 +98,7 @@ void DSInitConditionsDialog::acceptInitialConditions()
     std::vector<double> activatorCoeffs = getCurrentActivatorCoeffs();
     std::vector<double> inhibitorCoeffs = getCurrentInhibitorCoeffs();
 
+    DSModel* model = getManager()->getModel();
     model->AccessParameters()->SetActivatorInitialConditions(activatorCoeffs);
     model->AccessParameters()->SetInhibitorInitialConditions(inhibitorCoeffs);
 }
@@ -246,6 +252,7 @@ void DSInitConditionsDialog::setSelectorItemLists()
 
 void DSInitConditionsDialog::displayCurrentInitialConditions()
 {
+    DSModel* model = getManager()->getModel();
     vector<double> activatorCoeffs =
             model->AccessParameters()->GetActivatorInitialConditions();
     vector<double> inhibitorCoeffs =

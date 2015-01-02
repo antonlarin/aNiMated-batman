@@ -1,11 +1,11 @@
 #include "dslayerpairanalysiswindow.hpp"
 #include "ui_dslayerpairanalysiswindow.h"
 
-DSLayerPairAnalysisWindow::DSLayerPairAnalysisWindow(DSModel* model,
+DSLayerPairAnalysisWindow::DSLayerPairAnalysisWindow(DSWindowManager* manager,
                                                      QWidget* parent) :
     QDialog(parent),
-    ui(new Ui::DSLayerPairAnalysisWindow),
-    model(model)
+    IDSWindow(manager),
+    ui(new Ui::DSLayerPairAnalysisWindow)
 {
     ui->setupUi(this);
 
@@ -18,7 +18,7 @@ DSLayerPairAnalysisWindow::DSLayerPairAnalysisWindow(DSModel* model,
     connect(ui->layer2Edit, SIGNAL(editingFinished()),
             this, SLOT(updateComparedLayerEditsText()));
 
-    connect(model, SIGNAL(comparedLayersChanged()),
+    connect(getManager()->getModel(), SIGNAL(comparedLayersChanged()),
             this, SLOT(updateComparisonInfo()));
 
     initPlots();
@@ -28,6 +28,11 @@ DSLayerPairAnalysisWindow::DSLayerPairAnalysisWindow(DSModel* model,
 DSLayerPairAnalysisWindow::~DSLayerPairAnalysisWindow()
 {
     delete ui;
+}
+
+void DSLayerPairAnalysisWindow::showWindow()
+{
+    show();
 }
 
 
@@ -40,7 +45,7 @@ void DSLayerPairAnalysisWindow::firstLayerIndexChanged(const QString& newIndex)
     bool isValidInteger;
     int indexValue = newIndex.toInt(&isValidInteger);
     if (isValidInteger)
-        model->SetFirstComparedLayerIndex(indexValue);
+        getManager()->getModel()->SetFirstComparedLayerIndex(indexValue);
 }
 
 void DSLayerPairAnalysisWindow::secondLayerIndexChanged(const QString& newIndex)
@@ -48,11 +53,12 @@ void DSLayerPairAnalysisWindow::secondLayerIndexChanged(const QString& newIndex)
     bool isValidInteger;
     int indexValue = newIndex.toInt(&isValidInteger);
     if (isValidInteger)
-        model->SetSecondComparedLayerIndex(indexValue);
+        getManager()->getModel()->SetSecondComparedLayerIndex(indexValue);
 }
 
 void DSLayerPairAnalysisWindow::updateComparisonInfo()
 {
+    DSModel* model = getManager()->getModel();
     ui->totalLayerCountLabel->setText(
                 tr("Слоёв доступно для сравнения: %1").
                 arg(model->GetLayerCount()));
@@ -130,6 +136,7 @@ void DSLayerPairAnalysisWindow::updateComparisonInfo()
 
 void DSLayerPairAnalysisWindow::updateComparedLayerEditsText()
 {
+    DSModel* model = getManager()->getModel();
     ui->layer1Edit->setText(tr("%1").
                             arg(model->GetFirstComparedLayerIndex()));
     ui->layer2Edit->setText(tr("%1").
@@ -139,7 +146,7 @@ void DSLayerPairAnalysisWindow::updateComparedLayerEditsText()
 
 
 /*
- * Private worker methods implementations
+ * Other methods implementations
  */
 void DSLayerPairAnalysisWindow::initPlots()
 {
