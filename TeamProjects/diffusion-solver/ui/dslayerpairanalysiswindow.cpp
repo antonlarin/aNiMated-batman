@@ -56,26 +56,30 @@ void DSLayerPairAnalysisWindow::initPlots()
     ui->activatorsPlot->addGraph();
     ui->activatorsPlot->addGraph();
     ui->activatorsPlot->graph(0)->setName("Слой 1");
-    ui->activatorsPlot->graph(0)->setPen(QPen(Qt::magenta));
+    ui->activatorsPlot->graph(0)->setPen(QPen(Qt::green));
     ui->activatorsPlot->graph(1)->setName("Слой 2");
-    ui->activatorsPlot->graph(1)->setPen(QPen(Qt::cyan));
+    ui->activatorsPlot->graph(1)->setPen(QPen(Qt::darkGreen));
     ui->activatorsPlot->xAxis->setRange(0.0, 1.0);
+    ui->activatorsPlot->yAxis->setLabel("Концентрации");
     ui->activatorsPlot->legend->setVisible(true);
 
     ui->inhibitorsPlot->addGraph();
     ui->inhibitorsPlot->addGraph();
     ui->inhibitorsPlot->graph(0)->setName("Слой 1");
-    ui->inhibitorsPlot->graph(0)->setPen(QPen(Qt::darkMagenta));
+    ui->inhibitorsPlot->graph(0)->setPen(QPen(Qt::red));
     ui->inhibitorsPlot->graph(1)->setName("Слой 2");
-    ui->inhibitorsPlot->graph(1)->setPen(QPen(Qt::darkCyan));
+    ui->inhibitorsPlot->graph(1)->setPen(QPen(Qt::magenta));
     ui->inhibitorsPlot->xAxis->setRange(0.0, 1.0);
+    ui->inhibitorsPlot->yAxis->setLabel("Концентрации");
     ui->inhibitorsPlot->legend->setVisible(true);
 
     ui->activatorsDifferencePlot->addGraph();
     ui->activatorsDifferencePlot->xAxis->setRange(0.0, 1.0);
+    ui->activatorsDifferencePlot->yAxis->setLabel("Разность слоёв");
 
     ui->inhibitorsDifferencePlot->addGraph();
     ui->inhibitorsDifferencePlot->xAxis->setRange(0.0, 1.0);
+    ui->inhibitorsDifferencePlot->yAxis->setLabel("Разность слоёв");
 }
 
 void DSLayerPairAnalysisWindow::updateComparisonInfo()
@@ -83,6 +87,8 @@ void DSLayerPairAnalysisWindow::updateComparisonInfo()
     ui->totalLayerCountLabel->setText(
                 tr("Слоёв доступно для сравнения: %1").
                 arg(model->GetLayerCount()));
+    ui->layer1Edit->setText(tr("%1").arg(model->GetFirstComparedLayerIndex()));
+    ui->layer2Edit->setText(tr("%1").arg(model->GetSecondComparedLayerIndex()));
 
     SchemeLayer activatorLayer1 =
             model->GetActivatorLayer(model->GetFirstComparedLayerIndex());
@@ -128,6 +134,10 @@ void DSLayerPairAnalysisWindow::updateComparisonInfo()
 
     ui->activatorsPlot->graph(0)->setData(xs, activator1Values);
     ui->activatorsPlot->graph(1)->setData(xs, activator2Values);
+    ui->activatorsPlot->graph(0)->setName(
+                tr("Слой %1").arg(model->GetFirstComparedLayerIndex()));
+    ui->activatorsPlot->graph(1)->setName(
+                tr("Слой %1").arg(model->GetSecondComparedLayerIndex()));
     ui->activatorsPlot->rescaleAxes();
     ui->activatorsPlot->replot();
 
@@ -137,6 +147,10 @@ void DSLayerPairAnalysisWindow::updateComparisonInfo()
 
     ui->inhibitorsPlot->graph(0)->setData(xs, inhibitor1Values);
     ui->inhibitorsPlot->graph(1)->setData(xs, inhibitor2Values);
+    ui->inhibitorsPlot->graph(0)->setName(
+                tr("Слой %1").arg(model->GetFirstComparedLayerIndex()));
+    ui->inhibitorsPlot->graph(1)->setName(
+                tr("Слой %1").arg(model->GetSecondComparedLayerIndex()));
     ui->inhibitorsPlot->rescaleAxes();
     ui->inhibitorsPlot->replot();
 
