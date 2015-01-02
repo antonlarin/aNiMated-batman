@@ -2,35 +2,22 @@
 #define SchemeSolverImplicit_H
 
 #include "CoreGlobal.hpp"
-#include "SchemeSolver.hpp"
+#include "SchemeSolverCommon.hpp"
 
 namespace diffusioncore {
-   class EXPORT_API SchemeSolverImplicit : public SchemeSolver {
+   class EXPORT_API SchemeSolverImplicit : public SchemeSolverCommon {
    private:
-      double mK;
-      double mC;
-      double mMu;
-      double mNu;
-      double mRho;
-      double mLambda1;
-      double mLambda2;
-      double mAccuracyU1;
-      double mAccuracyU2;
-      
-      std::shared_ptr<double> u1GridPtr;
-      std::shared_ptr<double> u2GridPtr;
-   
+      double* mAlpha;
+      double* mBeta;
+
    public:
       SchemeSolverImplicit();
-      ~SchemeSolverImplicit();
+      virtual ~SchemeSolverImplicit();
    
    protected:
-      virtual SchemeSolverResult SolveOverride(SchemeTask task);
-      virtual void CheckParametersOverride(SchemeTask task);
-
-   private:
-      void InitializeSchemeParameters(SchemeTask& task);
-      void InitializeGrid(SchemeTask& task); 
+      virtual void PrepareSolver();
+      virtual void CleanupSolver(); 
+      virtual void DoSolverIteration();
 
    };
 }
