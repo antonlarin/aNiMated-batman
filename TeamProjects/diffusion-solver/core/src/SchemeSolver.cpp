@@ -28,6 +28,12 @@ void SchemeSolver::RegisterIterationCallback(
    mIterationCallback = callback;
 }
 
+void SchemeSolver::RegisterLayerChangedCallback(
+   SolverLayersChangedCallback callback) {
+   mLayersChangedCallback = callback;
+}
+
+
 SchemeSolverResult SchemeSolver::Solve() {  
    if (!mTask)
       throw std::runtime_error("Task is not registred");
@@ -46,6 +52,13 @@ bool SchemeSolver::UpdateIterationInfo(SchemeSolverIterationInfo& info) {
 
    return true;
 }
+
+void SchemeSolver::UpdateCurrentLayersInfo(SchemeLayer& u1, 
+                                           SchemeLayer& u2) {
+   if (mLayersChangedCallback)
+      mLayersChangedCallback(u1, u2);
+}
+
 
 void SchemeSolver::CheckParameters(SchemeTask task) {
    CheckParametersOverride(task);

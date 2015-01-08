@@ -14,11 +14,15 @@ namespace diffusioncore {
    typedef std::function<bool(SchemeSolverIterationInfo&)> 
       SolverIterationCallback;
 
+   typedef std::function<void(SchemeLayer&, SchemeLayer&)>
+      SolverLayersChangedCallback;
+
    class EXPORT_API SchemeSolver {
    private:
       SchemeSolverMode mSolverMode;
       std::shared_ptr<SchemeTask> mTask;
       SolverIterationCallback mIterationCallback;
+      SolverLayersChangedCallback mLayersChangedCallback;
 
    public:
       SchemeSolver();
@@ -28,6 +32,7 @@ namespace diffusioncore {
 
       void RegisterTask(std::shared_ptr<SchemeTask> task);
       void RegisterIterationCallback(SolverIterationCallback callback);
+      void RegisterLayerChangedCallback(SolverLayersChangedCallback callback);
 
       SchemeSolverResult Solve();
 
@@ -35,6 +40,7 @@ namespace diffusioncore {
       virtual SchemeSolverResult SolveOverride(SchemeTask task) = 0;
       virtual void CheckParametersOverride(SchemeTask task);
       bool UpdateIterationInfo(SchemeSolverIterationInfo& info);
+      void UpdateCurrentLayersInfo(SchemeLayer& u1, SchemeLayer& u2);
 
    private:
       void CheckParameters(SchemeTask task);

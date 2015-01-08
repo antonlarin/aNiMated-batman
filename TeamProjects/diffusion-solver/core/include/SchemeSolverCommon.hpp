@@ -47,6 +47,9 @@ namespace diffusioncore {
       virtual SchemeSolverResult SolveOverride(SchemeTask task);
       virtual void InitializeSchemeParameters(SchemeTask& task);
 
+   private:
+      void UpdateCurrentLayersInfoInternal();
+
    };
 }
 
