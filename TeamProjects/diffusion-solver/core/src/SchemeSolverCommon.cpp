@@ -29,6 +29,7 @@ bool SchemeSolverCommon::CheckStopCondition(int itersCount) {
                                       mIterationsCount,
                                       mMaxDiffU1,
                                       mMaxDiffU2);
+   UpdateCurrentLayersInfoInternal();
    if (!UpdateIterationInfo(iterInfo))
       return true;
 
@@ -88,3 +89,10 @@ void SchemeSolverCommon::InitializeSchemeParameters(SchemeTask& task) {
 void SchemeSolverCommon::CheckParametersOverride(SchemeTask task) { }
 void SchemeSolverCommon::PrepareSolver() { }
 void SchemeSolverCommon::CleanupSolver() { }
+
+
+void SchemeSolverCommon::UpdateCurrentLayersInfoInternal() {
+   SchemeLayer layerU1(mCurrLayerU1, mIntervalsCount + 1);
+   SchemeLayer layerU2(mCurrLayerU2, mIntervalsCount + 1);
+   UpdateCurrentLayersInfo(layerU1, layerU2);   
+}

@@ -15,11 +15,17 @@ DSSolverThread::DSSolverThread(std::shared_ptr<SchemeSolver> solver):
         qRegisterMetaType<SchemeSolverResult>("SchemeSolverResult&");
         qRegisterMetaType<DSSolverIterationInfo>();
         qRegisterMetaType<DSSolverIterationInfo>("DSSolverIterationInfo&");
+        qRegisterMetaType<SchemeLayer>();
+        qRegisterMetaType<SchemeLayer>("SchemeLayer&");
     });
 
-    std::function<bool(SchemeSolverIterationInfo&)> iterCallback =
-            std::bind(&DSSolverThread::AcquireIterationInfo, this, _1);
+    auto iterMethod = &DSSolverThread::AcquireIterationInfo;
+    auto iterCallback = std::bind(iterMethod, this, _1);
     solver->RegisterIterationCallback(iterCallback);
+
+    auto layersMethod = &DSSolverThread::AcquireCurrentLayers;
+    auto layersCallback = std::bind(layersMethod, this, _1, _2);
+    solver->RegisterLayerChangedCallback(layersCallback);
 
     connect(this, SIGNAL(finished()),
             this, SLOT(threadFinished()));
@@ -69,4 +75,9 @@ bool DSSolverThread::AcquireIterationInfo(SchemeSolverIterationInfo& info)
 
     // to exit from solver need return false
     return !stop;
+}
+
+void DSSolverThread::AcquireCurrentLayers(SchemeLayer& u1, SchemeLayer& u2)
+{
+
 }
