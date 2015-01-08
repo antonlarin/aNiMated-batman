@@ -79,5 +79,12 @@ bool DSSolverThread::AcquireIterationInfo(SchemeSolverIterationInfo& info)
 
 void DSSolverThread::AcquireCurrentLayers(SchemeLayer& u1, SchemeLayer& u2)
 {
-
+    high_resolution_clock::time_point anotherPoint = high_resolution_clock::now();
+    milliseconds sinceLastIterationInfoUpdate =
+            duration_cast<milliseconds>(anotherPoint - updateIterationInfoPoint);
+    if (sinceLastIterationInfoUpdate > GetMaxUpdateIterationSpan())
+    {
+        updateIterationInfoPoint = anotherPoint;
+        emit layersChanged(u1, u2);
+    }
 }
