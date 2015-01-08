@@ -15,6 +15,7 @@ using diffusioncore::SchemeSolver;
 using diffusioncore::SchemeSolverResult;
 using diffusioncore::SchemeSolverIterationInfo;
 
+Q_DECLARE_METATYPE(SchemeLayer)
 Q_DECLARE_METATYPE(SchemeSolverResult)
 Q_DECLARE_METATYPE(DSSolverIterationInfo)
 
@@ -31,6 +32,8 @@ public:
 signals:
     void iterationDone(const DSSolverIterationInfo&);
     void solverFinished(SchemeSolverResult&);
+    void layersChanged(SchemeLayer& activator,
+                       SchemeLayer& inhibitor);
 
 private slots:
     void threadFinished();
@@ -40,6 +43,7 @@ protected:
 
 private:
     bool AcquireIterationInfo(SchemeSolverIterationInfo& info);
+    void AcquireCurrentLayers(SchemeLayer& u1, SchemeLayer& u2);
 
     QMutex mtx;
     bool solverNeedStop;
