@@ -2,8 +2,6 @@
 #include <functional>
 #include "dssolverthread.hpp"
 
-#define SLEEP_INTERVAL_MS 1
-
 using namespace std::placeholders;
 
 DSSolverThread::DSSolverThread(std::shared_ptr<SchemeSolver> solver):
