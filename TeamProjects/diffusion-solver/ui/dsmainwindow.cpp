@@ -66,6 +66,8 @@ DSMainWindow::DSMainWindow(DSWindowManager* manager, QWidget *parent) :
             this, SLOT(updateDisplayedLayer()));
     connect(model, SIGNAL(resultAcquired()),
             this, SLOT(displayRunResults()));
+    connect(model, SIGNAL(currentLayersChanged(SchemeLayer&,SchemeLayer&)),
+            this, SLOT(updateCurrentLayers(SchemeLayer&,SchemeLayer&)));
 
     connect(ui->explicitSolverRadioButton, SIGNAL(clicked()),
             model, SLOT(selectExplicitSolver()));
@@ -277,7 +279,12 @@ void DSMainWindow::displayRunResults()
     // TODO: Show run info
 }
 
-
+void DSMainWindow::updateCurrentLayers(SchemeLayer& activator,
+                                       SchemeLayer& inhibitor)
+{
+    displayActivatorLayer(activator);
+    displayInhibitorLayer(inhibitor);
+}
 
 /*
  * Private worker methods implementation

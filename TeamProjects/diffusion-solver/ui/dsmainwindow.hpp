@@ -46,6 +46,8 @@ public slots:
     void updateDisplayedLayer();
     void displayRunResults();
 
+    void updateCurrentLayers(SchemeLayer&, SchemeLayer&);
+
 private:
     static int maxPlotPointsNumber() { return 400; }
 

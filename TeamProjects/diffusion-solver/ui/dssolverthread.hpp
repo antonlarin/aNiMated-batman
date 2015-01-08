@@ -56,6 +56,7 @@ private:
     std::once_flag registerMetaTypeFlag;
     std::shared_ptr<SchemeSolver> solver;
     high_resolution_clock::time_point updateIterationInfoPoint;
+    high_resolution_clock::time_point updateCurrentLayersPoint;
 };
 
 #endif // DSSOLVERTHREAD_HPP

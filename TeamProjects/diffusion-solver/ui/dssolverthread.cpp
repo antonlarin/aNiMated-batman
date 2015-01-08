@@ -48,6 +48,7 @@ void DSSolverThread::run()
     mtx.unlock();
 
     updateIterationInfoPoint = high_resolution_clock::now();
+    updateCurrentLayersPoint = high_resolution_clock::now();
     result = solver->Solve();
 }
 
@@ -79,10 +80,10 @@ void DSSolverThread::AcquireCurrentLayers(SchemeLayer& u1, SchemeLayer& u2)
 {
     high_resolution_clock::time_point anotherPoint = high_resolution_clock::now();
     milliseconds sinceLastIterationInfoUpdate =
-            duration_cast<milliseconds>(anotherPoint - updateIterationInfoPoint);
+            duration_cast<milliseconds>(anotherPoint - updateCurrentLayersPoint);
     if (sinceLastIterationInfoUpdate > GetMaxUpdateIterationSpan())
     {
-        updateIterationInfoPoint = anotherPoint;
+        updateCurrentLayersPoint = anotherPoint;
         emit layersChanged(u1, u2);
     }
 }

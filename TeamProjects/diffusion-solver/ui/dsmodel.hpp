@@ -54,6 +54,7 @@ signals:
     void layerIndexChanged();
     void resultAcquired();
     void iterationDone(DSSolverIterationInfo&);
+    void currentLayersChanged(SchemeLayer&, SchemeLayer&);
     void comparedLayersChanged();
 
 public slots:
@@ -64,6 +65,7 @@ public slots:
 private slots:
     void solverThreadFinished(SchemeSolverResult&);
     void solverThreadIterationDone(DSSolverIterationInfo&);
+    void solverThreadLayersChanged(SchemeLayer&, SchemeLayer&);
 
 private:
     void UpdateSolver(SchemeSolver* solver);

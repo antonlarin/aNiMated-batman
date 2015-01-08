@@ -193,6 +193,9 @@ void DSModel::UpdateSolver(SchemeSolver* slvr)
 
     connect(solverThread.get(), SIGNAL(iterationDone(DSSolverIterationInfo&)),
             this, SLOT(solverThreadIterationDone(DSSolverIterationInfo&)));
+
+    connect(solverThread.get(), SIGNAL(layersChanged(SchemeLayer&, SchemeLayer&)),
+            this, SLOT(solverThreadLayersChanged(SchemeLayer&, SchemeLayer&)));
 }
 
 /*
@@ -223,5 +226,10 @@ void DSModel::solverThreadFinished(SchemeSolverResult& res)
 void DSModel::solverThreadIterationDone(DSSolverIterationInfo& info)
 {
     emit iterationDone(info);
+}
+
+void DSModel::solverThreadLayersChanged(SchemeLayer& u1, SchemeLayer& u2)
+{
+    emit currentLayersChanged(u1, u2);
 }
 
