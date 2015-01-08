@@ -70,7 +70,7 @@ bool DSSolverThread::AcquireIterationInfo(SchemeSolverIterationInfo& info)
     return !stop;
 }
 
-void AcquireCurrentLayers(SchemeLayer& u1, SchemeLayer& u2)
+void DSSolverThread::AcquireCurrentLayers(SchemeLayer& u1, SchemeLayer& u2)
 {
 
 }
