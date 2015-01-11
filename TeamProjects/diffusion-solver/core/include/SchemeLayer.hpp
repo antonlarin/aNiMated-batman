@@ -14,6 +14,8 @@ namespace diffusioncore {
    private:
       std::shared_ptr<double> mHolder;
       int mLength;
+      double mMinValue;
+      double mMaxValue;
 
    public:
       static double MaxDifference(
@@ -29,6 +31,9 @@ namespace diffusioncore {
       int GetLength() const;
       double Get(int index) const;
       double operator[] (int index) const;
+
+      double GetMinValue() const;
+      double GetMaxValue() const;
 
    private: 
       void Initialize(const double* v, int length);
