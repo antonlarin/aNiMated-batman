@@ -306,16 +306,20 @@ void DSMainWindow::initPlots()
 }
 
 void DSMainWindow::resetPlotsScale(double activatorMin, double activatorMax,
-                              double inhibitorMin, double inhibitorMax)
+                                   double inhibitorMin, double inhibitorMax)
 {
-    double yrange = activatorMax - activatorMin;
-    ui->activatorPlot->yAxis->setRange(activatorMin - 0.05 * yrange,
-                                       activatorMax + 0.05 * yrange);
+    double activatorYRange = activatorMax - activatorMin;
+    double activatorPlotMargin = plotRelativeYMargin() *
+            std::max(activatorYRange, minPlotYRange());
+    ui->activatorPlot->yAxis->setRange(activatorMin - activatorPlotMargin,
+                                       activatorMax + activatorPlotMargin);
 
 
-    yrange = inhibitorMax - inhibitorMin;
-    ui->inhibitorPlot->yAxis->setRange(inhibitorMin - 0.05 * yrange,
-                                       inhibitorMax + 0.05 * yrange);
+    double inhibitorYRange = inhibitorMax - inhibitorMin;
+    double inhibitorPlotMargin = plotRelativeYMargin() *
+            std::max(inhibitorYRange, minPlotYRange());
+    ui->inhibitorPlot->yAxis->setRange(inhibitorMin - inhibitorPlotMargin,
+                                       inhibitorMax + inhibitorPlotMargin);
 }
 
 void DSMainWindow::displayActivatorLayer(const SchemeLayer& layer)

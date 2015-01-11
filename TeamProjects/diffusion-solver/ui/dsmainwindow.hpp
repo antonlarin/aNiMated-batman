@@ -50,10 +50,12 @@ public slots:
 
 private:
     static int maxPlotPointsNumber() { return 400; }
+    static double minPlotYRange() { return 1e-4; }
+    static double plotRelativeYMargin() { return 0.05; }
 
     void initPlots();
     void resetPlotsScale(double activatorMin, double activatorMax,
-                    double inhibitorMin, double inhibitorMax);
+                         double inhibitorMin, double inhibitorMax);
     void displayActivatorLayer(const SchemeLayer& layer);
     void displayInhibitorLayer(const SchemeLayer& layer);
 
