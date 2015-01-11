@@ -56,6 +56,8 @@ private:
     void initPlots();
     void resetPlotsScale(double activatorMin, double activatorMax,
                          double inhibitorMin, double inhibitorMax);
+    void expandPlotsScale(double activatorMin, double activatorMax,
+                          double inhibitorMin, double inhibitorMax);
     void displayActivatorLayer(const SchemeLayer& layer);
     void displayInhibitorLayer(const SchemeLayer& layer);
 
