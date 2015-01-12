@@ -64,6 +64,7 @@ private:
     Ui::DSMainWindow *ui;
     double activatorPlotMargin;
     double inhibitorPlotMargin;
+    bool plotsNeedScaleReset;
 };
 
 #endif // DSMAINWINDOW_HPP

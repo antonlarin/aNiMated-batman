@@ -9,7 +9,8 @@ DSMainWindow::DSMainWindow(DSWindowManager* manager, QWidget *parent) :
     IDSWindow(manager),
     ui(new Ui::DSMainWindow),
     activatorPlotMargin(0.0),
-    inhibitorPlotMargin(0.0)
+    inhibitorPlotMargin(0.0),
+    plotsNeedScaleReset(false)
 {
     ui->setupUi(this);
 
@@ -194,6 +195,7 @@ void DSMainWindow::startFiniteRun()
 {
     try
     {
+        plotsNeedScaleReset = true;
         getManager()->getModel()->StartRun(SchemeSolverMode::AllLayers);
         getManager()->showSolvingProgressDialog();
     }
@@ -208,6 +210,7 @@ void DSMainWindow::startStabilityRun()
 {
     try
     {
+        plotsNeedScaleReset = true;
         getManager()->getModel()->StartRun(SchemeSolverMode::StableLayer);
         getManager()->showSolvingProgressDialog();
     }
@@ -286,8 +289,17 @@ void DSMainWindow::displayRunResults()
 void DSMainWindow::updateCurrentLayers(SchemeLayer& activator,
                                        SchemeLayer& inhibitor)
 {
-    expandPlotsScale(activator.GetMinValue(), activator.GetMaxValue(),
-                     inhibitor.GetMinValue(), inhibitor.GetMaxValue());
+    if (plotsNeedScaleReset)
+    {
+        resetPlotsScale(activator.GetMinValue(), activator.GetMaxValue(),
+                        inhibitor.GetMinValue(), inhibitor.GetMaxValue());
+        plotsNeedScaleReset = false;
+    }
+    else
+    {
+        expandPlotsScale(activator.GetMinValue(), activator.GetMaxValue(),
+                         inhibitor.GetMinValue(), inhibitor.GetMaxValue());
+    }
     displayActivatorLayer(activator);
     displayInhibitorLayer(inhibitor);
 }
