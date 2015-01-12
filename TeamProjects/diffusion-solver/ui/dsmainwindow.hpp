@@ -43,7 +43,7 @@ public slots:
     void startFiniteRun();
     void startStabilityRun();
 
-    void updateDisplayedLayer();
+    void showSelectedLayer();
     void displayRunResults();
 
     void updateCurrentLayers(SchemeLayer&, SchemeLayer&);
@@ -62,6 +62,8 @@ private:
     void displayInhibitorLayer(const SchemeLayer& layer);
 
     Ui::DSMainWindow *ui;
+    double activatorPlotMargin;
+    double inhibitorPlotMargin;
 };
 
 #endif // DSMAINWINDOW_HPP

@@ -7,7 +7,9 @@
 DSMainWindow::DSMainWindow(DSWindowManager* manager, QWidget *parent) :
     QMainWindow(parent),
     IDSWindow(manager),
-    ui(new Ui::DSMainWindow)
+    ui(new Ui::DSMainWindow),
+    activatorPlotMargin(0.0),
+    inhibitorPlotMargin(0.0)
 {
     ui->setupUi(this);
 
@@ -63,7 +65,7 @@ DSMainWindow::DSMainWindow(DSWindowManager* manager, QWidget *parent) :
 
     DSModel* model = getManager()->getModel();
     connect(model, SIGNAL(layerIndexChanged()),
-            this, SLOT(updateDisplayedLayer()));
+            this, SLOT(showSelectedLayer()));
     connect(model, SIGNAL(resultAcquired()),
             this, SLOT(displayRunResults()));
     connect(model, SIGNAL(currentLayersChanged(SchemeLayer&,SchemeLayer&)),
@@ -257,7 +259,7 @@ void DSMainWindow::changeLayerStep(const QString& newLayerStep)
         getManager()->getModel()->SetLayerStep(value);
 }
 
-void DSMainWindow::updateDisplayedLayer()
+void DSMainWindow::showSelectedLayer()
 {
     DSModel* model = getManager()->getModel();
     ui->totalLayerNumLabel->setText(tr("из %1, шаг").
@@ -266,8 +268,6 @@ void DSMainWindow::updateDisplayedLayer()
                                   arg(model->GetCurrentLayerIndex()));
     ui->layerStepEdit->setText(tr("%1").
                                arg(model->GetLayerStep()));
-    resetPlotsScale(model->GetActivatorMinimum(), model->GetActivatorMaximum(),
-                    model->GetInhibitorMinimum(), model->GetInhibitorMaximum());
     displayActivatorLayer(model->GetCurrentActivatorLayer());
     displayInhibitorLayer(model->GetCurrentInhibitorLayer());
 }
@@ -276,7 +276,9 @@ void DSMainWindow::displayRunResults()
 {
     DSModel* model = getManager()->getModel();
     model->SetCurrentLayerIndex(model->GetLayerCount() - 1);
-    updateDisplayedLayer();
+    resetPlotsScale(model->GetActivatorMinimum(), model->GetActivatorMaximum(),
+                    model->GetInhibitorMinimum(), model->GetInhibitorMaximum());
+    showSelectedLayer();
     ui->layerPairAnalysisAction->setEnabled(true);
     // TODO: Show run info
 }
@@ -313,14 +315,14 @@ void DSMainWindow::resetPlotsScale(double activatorMin, double activatorMax,
                                    double inhibitorMin, double inhibitorMax)
 {
     double activatorYRange = activatorMax - activatorMin;
-    double activatorPlotMargin = plotRelativeYMargin() *
+    activatorPlotMargin = plotRelativeYMargin() *
             std::max(activatorYRange, minPlotYRange());
     ui->activatorPlot->yAxis->setRange(activatorMin - activatorPlotMargin,
                                        activatorMax + activatorPlotMargin);
 
 
     double inhibitorYRange = inhibitorMax - inhibitorMin;
-    double inhibitorPlotMargin = plotRelativeYMargin() *
+    inhibitorPlotMargin = plotRelativeYMargin() *
             std::max(inhibitorYRange, minPlotYRange());
     ui->inhibitorPlot->yAxis->setRange(inhibitorMin - inhibitorPlotMargin,
                                        inhibitorMax + inhibitorPlotMargin);
@@ -334,22 +336,24 @@ void DSMainWindow::expandPlotsScale(double activatorMin, double activatorMax,
     double newActivatorRange = activatorMax - activatorMin;
     double newActivatorMargin = plotRelativeYMargin() *
             std::max(newActivatorRange, minPlotYRange());
+    activatorPlotMargin = std::max(activatorPlotMargin, newActivatorMargin);
     ui->activatorPlot->yAxis->setRange(
                 std::min(currentActivatorMin,
-                         activatorMin - newActivatorMargin),
+                         activatorMin - activatorPlotMargin),
                 std::max(currentActivatorMax,
-                         activatorMax + newActivatorMargin));
+                         activatorMax + activatorPlotMargin));
 
     double currentInhibitorMin = ui->inhibitorPlot->yAxis->range().lower;
     double currentInhibitorMax = ui->inhibitorPlot->yAxis->range().upper;
     double newInhibitorRange = inhibitorMax - inhibitorMin;
     double newInhibitorMargin = plotRelativeYMargin() *
             std::max(newInhibitorRange, minPlotYRange());
+    inhibitorPlotMargin = std::max(inhibitorPlotMargin, newInhibitorMargin);
     ui->inhibitorPlot->yAxis->setRange(
                 std::min(currentInhibitorMin,
-                         inhibitorMin - newInhibitorMargin),
+                         inhibitorMin - inhibitorPlotMargin),
                 std::max(currentInhibitorMax,
-                         inhibitorMax + newInhibitorMargin));
+                         inhibitorMax + inhibitorPlotMargin));
 }
 
 void DSMainWindow::displayActivatorLayer(const SchemeLayer& layer)
