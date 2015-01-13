@@ -18,23 +18,17 @@ namespace diffusioncore {
       double* mPrevLayer;
       double* mCurrLayer;
 
-      double mMinValue;
-      double mMaxValue;
-
    public:
       SchemeGrid(int layersCount,
                  SchemeLayer& initialLayer,
                  SchemeSolverMode solverMode);
       ~SchemeGrid();
 
-      std::shared_ptr<double> Source();
-      SchemeSolution Solution(SchemeTask& task, int layersCount);
-
-      double* GetPrevousLayer();
-      double* GetCurrentLayer();
+      std::shared_ptr<double> Source() const;
+      double* GetPrevousLayer() const;
+      double* GetCurrentLayer() const;
 
       void NextLayer();
-      void UpdateMinMaxValues(double value);
 
    private:
       void InitializeGrid(SchemeLayer& initialLayer);

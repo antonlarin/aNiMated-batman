@@ -15,7 +15,7 @@ namespace diffusioncore {
       virtual ~SchemeSolverImplicit();
    
    protected:
-      virtual void PrepareSolver();
+      virtual void PrepareSolverOverride();
       virtual void CleanupSolver(); 
       virtual void DoSolverIteration();
 

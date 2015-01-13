@@ -19,6 +19,12 @@ void SchemeSolverCommon::InitializeGrid(SchemeTask& task) {
    auto initialLayerU2 = task.GetInitialLayerU2();
    auto gridU2 = new SchemeGrid(layersCount, initialLayerU2, solvingMode);
    mGridU2.reset(gridU2);
+
+   auto builderU1 = new SchemeSolutionBuilder(task, GetSolverMode());
+   mBuilderU1.reset(builderU1);
+
+   auto builderU2 = new SchemeSolutionBuilder(task, GetSolverMode());
+   mBuilderU2.reset(builderU2);
 }
 
 bool SchemeSolverCommon::CheckStopCondition(int itersCount) {
@@ -43,7 +49,7 @@ bool SchemeSolverCommon::CheckStopCondition(int itersCount) {
 SchemeSolverResult SchemeSolverCommon::SolveOverride(SchemeTask task) {
    InitializeSchemeParameters(task);
    InitializeGrid(task);
-   PrepareSolver();
+   PrepareSolver(task);
 
    int iterationsCount = 0;
    int maxIterations = task.GetMaximumIterations();
@@ -62,8 +68,11 @@ SchemeSolverResult SchemeSolverCommon::SolveOverride(SchemeTask task) {
       mGridU2->NextLayer();
    }
 
-   SchemeSolution solutionU1 = mGridU1->Solution(task, iterationsCount + 1);
-   SchemeSolution solutionU2 = mGridU2->Solution(task, iterationsCount + 1);
+   mBuilderU1->SetIterationsCount(iterationsCount);
+   mBuilderU2->SetIterationsCount(iterationsCount);
+
+   SchemeSolution solutionU1 = mBuilderU1->Build(*mGridU1.get());
+   SchemeSolution solutionU2 = mBuilderU2->Build(*mGridU2.get());
    SchemeStatistic statistic(iterationsCount, mMaxDiffU1, mMaxDiffU2);
    SchemeSolverResult result(solutionU1, solutionU2, statistic, task);
 
@@ -87,9 +96,20 @@ void SchemeSolverCommon::InitializeSchemeParameters(SchemeTask& task) {
 }
 
 void SchemeSolverCommon::CheckParametersOverride(SchemeTask task) { }
-void SchemeSolverCommon::PrepareSolver() { }
 void SchemeSolverCommon::CleanupSolver() { }
+void SchemeSolverCommon::PrepareSolverOverride() { }
 
+void SchemeSolverCommon::PrepareSolver(const SchemeTask& task) { 
+   mBuilderU1->ResetMinMaxValues();
+   mBuilderU2->ResetMinMaxValues();
+
+   auto initialLayerU1 = task.GetInitialLayerU1();
+   auto initialLayerU2 = task.GetInitialLayerU2();
+   mBuilderU1->UpdateMinMaxValues(initialLayerU1);
+   mBuilderU2->UpdateMinMaxValues(initialLayerU2);
+
+   PrepareSolverOverride();
+}
 
 void SchemeSolverCommon::UpdateCurrentLayersInfoInternal() {
    SchemeLayer layerU1(mCurrLayerU1, mIntervalsCount + 1);

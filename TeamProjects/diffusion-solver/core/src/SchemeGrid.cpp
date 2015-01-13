@@ -16,9 +16,6 @@ SchemeGrid::SchemeGrid(int layersCount,
    mLayersCount = layersCount;
    mPointsCount = initialLayer.GetLength();
 
-   mMinValue =  std::numeric_limits<double>::infinity();
-   mMaxValue = -std::numeric_limits<double>::infinity();
-
    InitializeGrid(initialLayer);
    InitializeLayers();
 }
@@ -26,27 +23,8 @@ SchemeGrid::SchemeGrid(int layersCount,
 SchemeGrid::~SchemeGrid() { }
 
 
-std::shared_ptr<double> SchemeGrid::Source() {
+std::shared_ptr<double> SchemeGrid::Source() const {
    return mGrid;
-}
-
-SchemeSolution SchemeGrid::Solution(SchemeTask& task, int layersCount) {
-   double k = task.GetStepTime();
-   int n = task.GetIntervalsCount();
-   std::shared_ptr<double> solution;
-   switch (mSolverMode) {
-      case SchemeSolverMode::AllLayers:
-         return SchemeSolution(mGrid, n, layersCount, k, 
-                               mMinValue, mMaxValue);
-
-      case SchemeSolverMode::StableLayer:
-         solution = CopyShared(mCurrLayer, n + 1);
-         return SchemeSolution(solution, n, 1, k, 
-                               mMinValue, mMaxValue);
-
-      default:
-         throw std::runtime_error("Invalid solving mode");
-   }   
 }
 
 void SchemeGrid::NextLayer() {
@@ -65,16 +43,11 @@ void SchemeGrid::NextLayer() {
    }
 }
 
-void SchemeGrid::UpdateMinMaxValues(double value) {
-   mMinValue = std::min(mMinValue, value);
-   mMaxValue = std::max(mMaxValue, value);
-}
-
-double* SchemeGrid::GetPrevousLayer() {
+double* SchemeGrid::GetPrevousLayer() const {
    return mPrevLayer;
 }
 
-double* SchemeGrid::GetCurrentLayer() {
+double* SchemeGrid::GetCurrentLayer() const {
    return mCurrLayer;
 }
 
@@ -101,7 +74,6 @@ void SchemeGrid::InitializeGrid(SchemeLayer& initialLayer) {
 
    for (int i = 0; i < n; i++) {
       grid[i] = initialLayer[i];
-      UpdateMinMaxValues(grid[i]);
    }
 }
 
