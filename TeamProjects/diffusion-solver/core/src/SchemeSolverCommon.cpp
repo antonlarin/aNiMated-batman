@@ -76,7 +76,7 @@ SchemeSolverResult SchemeSolverCommon::SolveOverride(SchemeTask task) {
    SchemeStatistic statistic(iterationsCount, mMaxDiffU1, mMaxDiffU2);
    SchemeSolverResult result(solutionU1, solutionU2, statistic, task);
 
-   CleanupSolver();
+   CleanupSolver(task);
    return result;
 }
 
@@ -96,8 +96,9 @@ void SchemeSolverCommon::InitializeSchemeParameters(SchemeTask& task) {
 }
 
 void SchemeSolverCommon::CheckParametersOverride(SchemeTask task) { }
-void SchemeSolverCommon::CleanupSolver() { }
-void SchemeSolverCommon::PrepareSolverOverride() { }
+void SchemeSolverCommon::CleanupSolverOverride(const SchemeTask& task) { }
+void SchemeSolverCommon::PrepareSolverOverride(const SchemeTask& task) { }
+
 
 void SchemeSolverCommon::PrepareSolver(const SchemeTask& task) { 
    mBuilderU1->ResetMinMaxValues();
@@ -108,7 +109,11 @@ void SchemeSolverCommon::PrepareSolver(const SchemeTask& task) {
    mBuilderU1->UpdateMinMaxValues(initialLayerU1);
    mBuilderU2->UpdateMinMaxValues(initialLayerU2);
 
-   PrepareSolverOverride();
+   PrepareSolverOverride(task);
+}
+
+void SchemeSolverCommon::CleanupSolver(const SchemeTask& task) {
+   CleanupSolverOverride(task);
 }
 
 void SchemeSolverCommon::UpdateCurrentLayersInfoInternal() {

@@ -45,7 +45,7 @@ void SchemeSolverImplicit::DoSolverIteration() {
    }
 }
 
-void SchemeSolverImplicit::PrepareSolverOverride() {
+void SchemeSolverImplicit::PrepareSolverOverride(const SchemeTask& task) {
    int n = mIntervalsCount;
    mAlpha = new double[n + 1];
    mBeta = new double[n + 1];
@@ -54,7 +54,7 @@ void SchemeSolverImplicit::PrepareSolverOverride() {
    mBeta[0] = 0;
 }
 
-void SchemeSolverImplicit::CleanupSolver() { 
+void SchemeSolverImplicit::CleanupSolverOverride(const SchemeTask& task) { 
    delete[] mAlpha;
    delete[] mBeta;
 }
