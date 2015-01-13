@@ -30,14 +30,12 @@ std::shared_ptr<double> SchemeGrid::Source() {
    return mGrid;
 }
 
-SchemeSolution SchemeGrid::Solution(SchemeTask& task) {
-   int layersCount;
+SchemeSolution SchemeGrid::Solution(SchemeTask& task, int layersCount) {
    double k = task.GetStepTime();
    int n = task.GetIntervalsCount();
    std::shared_ptr<double> solution;
    switch (mSolverMode) {
       case SchemeSolverMode::AllLayers:
-         layersCount = task.GetMaximumIterations() + 1;
          return SchemeSolution(mGrid, n, layersCount, k, 
                                mMinValue, mMaxValue);
 

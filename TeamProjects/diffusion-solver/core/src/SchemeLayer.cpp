@@ -38,12 +38,23 @@ int SchemeLayer::GetLength() const {
    return mLength;
 }
 
+double SchemeLayer::GetMinValue() const {
+   return mMinValue;
+}
+
+double SchemeLayer::GetMaxValue() const {
+   return mMaxValue;
+}
+
 void SchemeLayer::Initialize(const double* v, int length) {
    mLength = length;
    double* dest = new double[length];
    memcpy(dest, v, length * sizeof(double));
    mHolder = std::shared_ptr<double>(
-      dest, array_deleter<double>());  
+      dest, array_deleter<double>());
+
+   mMinValue = Min(v, length);
+   mMaxValue = Max(v, length);
 }
 
 

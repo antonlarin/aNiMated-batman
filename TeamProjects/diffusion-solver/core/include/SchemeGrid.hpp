@@ -28,7 +28,7 @@ namespace diffusioncore {
       ~SchemeGrid();
 
       std::shared_ptr<double> Source();
-      SchemeSolution Solution(SchemeTask& task);
+      SchemeSolution Solution(SchemeTask& task, int layersCount);
 
       double* GetPrevousLayer();
       double* GetCurrentLayer();
