@@ -53,8 +53,8 @@ void SchemeLayer::Initialize(const double* v, int length) {
    mHolder = std::shared_ptr<double>(
       dest, array_deleter<double>());
 
-   mMinValue = *std::min_element(mHolder.get(), mHolder.get() + mLength);
-   mMaxValue = *std::max_element(mHolder.get(), mHolder.get() + mLength);
+   mMinValue = Min(v, length);
+   mMaxValue = Max(v, length);
 }
 
 
