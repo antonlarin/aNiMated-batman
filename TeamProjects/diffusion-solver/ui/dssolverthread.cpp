@@ -2,8 +2,6 @@
 #include <functional>
 #include "dssolverthread.hpp"
 
-#define SLEEP_INTERVAL_MS 1
-
 using namespace std::placeholders;
 
 DSSolverThread::DSSolverThread(std::shared_ptr<SchemeSolver> solver):
@@ -49,6 +47,8 @@ void DSSolverThread::run()
     solverNeedStop = false;
     mtx.unlock();
 
+    updateIterationInfoPoint = high_resolution_clock::now();
+    updateCurrentLayersPoint = high_resolution_clock::now();
     result = solver->Solve();
 }
 
@@ -59,8 +59,14 @@ void DSSolverThread::threadFinished()
 
 bool DSSolverThread::AcquireIterationInfo(SchemeSolverIterationInfo& info)
 {
-    emit iterationDone(DSSolverIterationInfo(info));
-    QThread::msleep(SLEEP_INTERVAL_MS);
+    high_resolution_clock::time_point anotherPoint = high_resolution_clock::now();
+    milliseconds sinceLastIterationInfoUpdate =
+            duration_cast<milliseconds>(anotherPoint - updateIterationInfoPoint);
+    if (sinceLastIterationInfoUpdate > GetMaxUpdateIterationSpan())
+    {
+        updateIterationInfoPoint = anotherPoint;
+        emit iterationDone(DSSolverIterationInfo(info));
+    }
 
     mtx.lock();
     bool stop = solverNeedStop;
@@ -72,5 +78,12 @@ bool DSSolverThread::AcquireIterationInfo(SchemeSolverIterationInfo& info)
 
 void DSSolverThread::AcquireCurrentLayers(SchemeLayer& u1, SchemeLayer& u2)
 {
-
+    high_resolution_clock::time_point anotherPoint = high_resolution_clock::now();
+    milliseconds sinceLastIterationInfoUpdate =
+            duration_cast<milliseconds>(anotherPoint - updateCurrentLayersPoint);
+    if (sinceLastIterationInfoUpdate > GetMaxUpdateIterationSpan())
+    {
+        updateCurrentLayersPoint = anotherPoint;
+        emit layersChanged(u1, u2);
+    }
 }

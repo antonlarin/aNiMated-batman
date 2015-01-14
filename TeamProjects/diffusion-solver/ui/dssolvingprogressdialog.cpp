@@ -2,14 +2,15 @@
 #include "dssolvingprogressdialog.hpp"
 #include "ui_dssolvingprogressdialog.h"
 
-DSSolvingProgressDialog::DSSolvingProgressDialog(DSModel* model,
+DSSolvingProgressDialog::DSSolvingProgressDialog(DSWindowManager* manager,
                                                  QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::DSSolvingProgressDialog),
-    model(model)
+    IDSWindow(manager),
+    ui(new Ui::DSSolvingProgressDialog)
 {
     ui->setupUi(this);
 
+    DSModel* model = getManager()->getModel();
     connect(model, SIGNAL(iterationDone(DSSolverIterationInfo&)),
             this, SLOT(updateIterationInfo(DSSolverIterationInfo&)));
 
@@ -23,6 +24,11 @@ DSSolvingProgressDialog::DSSolvingProgressDialog(DSModel* model,
 DSSolvingProgressDialog::~DSSolvingProgressDialog()
 {
     delete ui;
+}
+
+void DSSolvingProgressDialog::showWindow()
+{
+    show();
 }
 
 

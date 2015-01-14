@@ -5,11 +5,14 @@
 #include <memory>
 #include <functional>
 #include <diffusioncore>
+#include <chrono>
 
 #include <QMutex>
 #include <QThread>
 
 #include "dssolveriterationinfo.hpp"
+
+using namespace std::chrono;
 
 using diffusioncore::SchemeSolver;
 using diffusioncore::SchemeSolverResult;
@@ -45,12 +48,15 @@ private:
     bool AcquireIterationInfo(SchemeSolverIterationInfo& info);
     void AcquireCurrentLayers(SchemeLayer& u1, SchemeLayer& u2);
 
+    milliseconds GetMaxUpdateIterationSpan() const { return milliseconds(10); }
+
     QMutex mtx;
     bool solverNeedStop;
     SchemeSolverResult result;
     std::once_flag registerMetaTypeFlag;
     std::shared_ptr<SchemeSolver> solver;
-
+    high_resolution_clock::time_point updateIterationInfoPoint;
+    high_resolution_clock::time_point updateCurrentLayersPoint;
 };
 
 #endif // DSSOLVERTHREAD_HPP

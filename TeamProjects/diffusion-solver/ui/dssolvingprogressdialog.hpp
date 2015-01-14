@@ -3,29 +3,28 @@
 
 #include <QDialog>
 
-#include "dsmodel.hpp"
+#include "dswindowmanager.hpp"
 #include "dssolveriterationinfo.hpp"
 
 namespace Ui {
 class DSSolvingProgressDialog;
 }
 
-class DSSolvingProgressDialog : public QDialog
+class DSSolvingProgressDialog : public QDialog, public IDSWindow
 {
     Q_OBJECT
 
 public:
-    explicit DSSolvingProgressDialog(DSModel* model, QWidget *parent = 0);
-    ~DSSolvingProgressDialog();
+    explicit DSSolvingProgressDialog(DSWindowManager* manager, QWidget *parent = 0);
+    virtual ~DSSolvingProgressDialog();
+
+    virtual void showWindow();
 
 public slots:
     void updateIterationInfo(const DSSolverIterationInfo&);
 
 private:
     Ui::DSSolvingProgressDialog *ui;
-
-    DSModel* model;
-
 };
 
 #endif // DSSOLVINGPROGRESSDIALOG_HPP

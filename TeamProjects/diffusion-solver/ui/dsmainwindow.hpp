@@ -3,21 +3,21 @@
 
 #include <QMainWindow>
 
-#include "dsmodel.hpp"
-#include "dsinitconditionsdialog.hpp"
-#include "dssolvingprogressdialog.hpp"
+#include "dswindowmanager.hpp"
 
 namespace Ui {
 class DSMainWindow;
 }
 
-class DSMainWindow : public QMainWindow
+class DSMainWindow : public QMainWindow, public IDSWindow
 {
     Q_OBJECT
 
 public:
-    explicit DSMainWindow(DSModel* newModel, QWidget *parent = 0);
+    explicit DSMainWindow(DSWindowManager* manager, QWidget *parent = 0);
     virtual ~DSMainWindow();
+
+    virtual void showWindow();
 
 public slots:
     void lambda1CoeffChanged(const QString& newLambda1);
@@ -43,26 +43,28 @@ public slots:
     void startFiniteRun();
     void startStabilityRun();
 
-    void openInitConditionsDialog();
-
-    void updateDisplayedLayer();
+    void showSelectedLayer();
     void displayRunResults();
+
+    void updateCurrentLayers(SchemeLayer&, SchemeLayer&);
 
 private:
     static int maxPlotPointsNumber() { return 400; }
+    static double minPlotYRange() { return 1e-4; }
+    static double plotRelativeYMargin() { return 0.05; }
 
     void initPlots();
     void resetPlotsScale(double activatorMin, double activatorMax,
-                    double inhibitorMin, double inhibitorMax);
+                         double inhibitorMin, double inhibitorMax);
+    void expandPlotsScale(double activatorMin, double activatorMax,
+                          double inhibitorMin, double inhibitorMax);
     void displayActivatorLayer(const SchemeLayer& layer);
     void displayInhibitorLayer(const SchemeLayer& layer);
 
-    void showSolvingProgressDialog();
-
     Ui::DSMainWindow *ui;
-    DSInitConditionsDialog* initConditionsDialog;
-    DSSolvingProgressDialog* solvingProgressDialog;
-    DSModel* model;
+    double activatorPlotMargin;
+    double inhibitorPlotMargin;
+    bool plotsNeedScaleReset;
 };
 
 #endif // DSMAINWINDOW_HPP

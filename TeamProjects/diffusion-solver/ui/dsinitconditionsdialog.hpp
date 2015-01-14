@@ -7,7 +7,7 @@
 
 #include <vector>
 
-#include "dsmodel.hpp"
+#include "dswindowmanager.hpp"
 
 using std::vector;
 
@@ -15,37 +15,39 @@ namespace Ui {
 class DSInitConditionsDialog;
 }
 
-class DSInitConditionsDialog : public QDialog
+class DSInitConditionsDialog : public QDialog, public IDSWindow
 {
     Q_OBJECT
 
 public:
-    explicit DSInitConditionsDialog(DSModel* model, QWidget *parent = 0);
-    ~DSInitConditionsDialog();
+    explicit DSInitConditionsDialog(DSWindowManager* manager,
+                                    QWidget *parent = 0);
+    virtual ~DSInitConditionsDialog();
+
+    virtual void showWindow();
 
 public slots:
     void acceptInitialConditions();
-    void addHarmonic1();
-    void addHarmonic2();
-    void addHarmonic3();
-    void addHarmonic4();
-    void addHarmonic5();
-    void removeHarmonic1();
-    void removeHarmonic2();
-    void removeHarmonic3();
-    void removeHarmonic4();
-    void removeHarmonic5();
-
-private:
-    void setSelectorItemLists();
-    void displayCurrentInitialConditions();
     void addHarmonic(int index);
     void removeHarmonic(int index);
+    void activatorHarmonicCoeffChanged(const QString& value);
+    void inhibitorHarmonicCoeffChanged(const QString& value);
+
+private:
+    static int maxHarmonicOrder() { return 20; }
+    static int maxHarmonicsCount() { return 6; }
+
+    vector<double> getCurrentActivatorCoeffs();
+    vector<double> getCurrentInhibitorCoeffs();
+
+    void initPlots();
+    void populateSelectorItemLists();
+
     void updateSelectedHarmonics();
+    void displayCurrentInitialConditions();
+    void displayPlotsOfCurrentInitialConditions();
 
     Ui::DSInitConditionsDialog *ui;
-
-    DSModel* model;
 
     vector<bool> selectedHarmonics;
     vector<bool> activeHarmonicControls;
