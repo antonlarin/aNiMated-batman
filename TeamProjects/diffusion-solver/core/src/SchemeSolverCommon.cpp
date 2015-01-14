@@ -62,8 +62,8 @@ SchemeSolverResult SchemeSolverCommon::SolveOverride(SchemeTask task) {
       mGridU2->NextLayer();
    }
 
-   SchemeSolution solutionU1 = mGridU1->Solution(task);
-   SchemeSolution solutionU2 = mGridU2->Solution(task);
+   SchemeSolution solutionU1 = mGridU1->Solution(task, iterationsCount + 1);
+   SchemeSolution solutionU2 = mGridU2->Solution(task, iterationsCount + 1);
    SchemeStatistic statistic(iterationsCount, mMaxDiffU1, mMaxDiffU2);
    SchemeSolverResult result(solutionU1, solutionU2, statistic, task);
 
