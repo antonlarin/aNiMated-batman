@@ -7,7 +7,10 @@
 DSMainWindow::DSMainWindow(DSWindowManager* manager, QWidget *parent) :
     QMainWindow(parent),
     IDSWindow(manager),
-    ui(new Ui::DSMainWindow)
+    ui(new Ui::DSMainWindow),
+    activatorPlotMargin(0.0),
+    inhibitorPlotMargin(0.0),
+    plotsNeedScaleReset(false)
 {
     ui->setupUi(this);
 
@@ -63,7 +66,7 @@ DSMainWindow::DSMainWindow(DSWindowManager* manager, QWidget *parent) :
 
     DSModel* model = getManager()->getModel();
     connect(model, SIGNAL(layerIndexChanged()),
-            this, SLOT(updateDisplayedLayer()));
+            this, SLOT(showSelectedLayer()));
     connect(model, SIGNAL(resultAcquired()),
             this, SLOT(displayRunResults()));
     connect(model, SIGNAL(currentLayersChanged(SchemeLayer&,SchemeLayer&)),
@@ -192,6 +195,7 @@ void DSMainWindow::startFiniteRun()
 {
     try
     {
+        plotsNeedScaleReset = true;
         getManager()->getModel()->StartRun(SchemeSolverMode::AllLayers);
         getManager()->showSolvingProgressDialog();
     }
@@ -206,6 +210,7 @@ void DSMainWindow::startStabilityRun()
 {
     try
     {
+        plotsNeedScaleReset = true;
         getManager()->getModel()->StartRun(SchemeSolverMode::StableLayer);
         getManager()->showSolvingProgressDialog();
     }
@@ -257,7 +262,7 @@ void DSMainWindow::changeLayerStep(const QString& newLayerStep)
         getManager()->getModel()->SetLayerStep(value);
 }
 
-void DSMainWindow::updateDisplayedLayer()
+void DSMainWindow::showSelectedLayer()
 {
     DSModel* model = getManager()->getModel();
     ui->totalLayerNumLabel->setText(tr("из %1, шаг").
@@ -266,15 +271,17 @@ void DSMainWindow::updateDisplayedLayer()
                                   arg(model->GetCurrentLayerIndex()));
     ui->layerStepEdit->setText(tr("%1").
                                arg(model->GetLayerStep()));
-    resetPlotsScale(model->GetActivatorMinimum(), model->GetActivatorMaximum(),
-                    model->GetInhibitorMinimum(), model->GetInhibitorMaximum());
     displayActivatorLayer(model->GetCurrentActivatorLayer());
     displayInhibitorLayer(model->GetCurrentInhibitorLayer());
 }
 
 void DSMainWindow::displayRunResults()
 {
-    updateDisplayedLayer();
+    DSModel* model = getManager()->getModel();
+    model->SetCurrentLayerIndex(model->GetLayerCount() - 1);
+    resetPlotsScale(model->GetActivatorMinimum(), model->GetActivatorMaximum(),
+                    model->GetInhibitorMinimum(), model->GetInhibitorMaximum());
+    showSelectedLayer();
     ui->layerPairAnalysisAction->setEnabled(true);
     // TODO: Show run info
 }
@@ -282,6 +289,17 @@ void DSMainWindow::displayRunResults()
 void DSMainWindow::updateCurrentLayers(SchemeLayer& activator,
                                        SchemeLayer& inhibitor)
 {
+    if (plotsNeedScaleReset)
+    {
+        resetPlotsScale(activator.GetMinValue(), activator.GetMaxValue(),
+                        inhibitor.GetMinValue(), inhibitor.GetMaxValue());
+        plotsNeedScaleReset = false;
+    }
+    else
+    {
+        expandPlotsScale(activator.GetMinValue(), activator.GetMaxValue(),
+                         inhibitor.GetMinValue(), inhibitor.GetMaxValue());
+    }
     displayActivatorLayer(activator);
     displayInhibitorLayer(inhibitor);
 }
@@ -306,16 +324,48 @@ void DSMainWindow::initPlots()
 }
 
 void DSMainWindow::resetPlotsScale(double activatorMin, double activatorMax,
-                              double inhibitorMin, double inhibitorMax)
+                                   double inhibitorMin, double inhibitorMax)
 {
-    double yrange = activatorMax - activatorMin;
-    ui->activatorPlot->yAxis->setRange(activatorMin - 0.05 * yrange,
-                                       activatorMax + 0.05 * yrange);
+    double activatorYRange = activatorMax - activatorMin;
+    activatorPlotMargin = plotRelativeYMargin() *
+            std::max(activatorYRange, minPlotYRange());
+    ui->activatorPlot->yAxis->setRange(activatorMin - activatorPlotMargin,
+                                       activatorMax + activatorPlotMargin);
 
 
-    yrange = inhibitorMax - inhibitorMin;
-    ui->inhibitorPlot->yAxis->setRange(inhibitorMin - 0.05 * yrange,
-                                       inhibitorMax + 0.05 * yrange);
+    double inhibitorYRange = inhibitorMax - inhibitorMin;
+    inhibitorPlotMargin = plotRelativeYMargin() *
+            std::max(inhibitorYRange, minPlotYRange());
+    ui->inhibitorPlot->yAxis->setRange(inhibitorMin - inhibitorPlotMargin,
+                                       inhibitorMax + inhibitorPlotMargin);
+}
+
+void DSMainWindow::expandPlotsScale(double activatorMin, double activatorMax,
+                                    double inhibitorMin, double inhibitorMax)
+{
+    double currentActivatorMin = ui->activatorPlot->yAxis->range().lower;
+    double currentActivatorMax = ui->activatorPlot->yAxis->range().upper;
+    double newActivatorRange = activatorMax - activatorMin;
+    double newActivatorMargin = plotRelativeYMargin() *
+            std::max(newActivatorRange, minPlotYRange());
+    activatorPlotMargin = std::max(activatorPlotMargin, newActivatorMargin);
+    ui->activatorPlot->yAxis->setRange(
+                std::min(currentActivatorMin,
+                         activatorMin - activatorPlotMargin),
+                std::max(currentActivatorMax,
+                         activatorMax + activatorPlotMargin));
+
+    double currentInhibitorMin = ui->inhibitorPlot->yAxis->range().lower;
+    double currentInhibitorMax = ui->inhibitorPlot->yAxis->range().upper;
+    double newInhibitorRange = inhibitorMax - inhibitorMin;
+    double newInhibitorMargin = plotRelativeYMargin() *
+            std::max(newInhibitorRange, minPlotYRange());
+    inhibitorPlotMargin = std::max(inhibitorPlotMargin, newInhibitorMargin);
+    ui->inhibitorPlot->yAxis->setRange(
+                std::min(currentInhibitorMin,
+                         inhibitorMin - inhibitorPlotMargin),
+                std::max(currentInhibitorMax,
+                         inhibitorMax + inhibitorPlotMargin));
 }
 
 void DSMainWindow::displayActivatorLayer(const SchemeLayer& layer)

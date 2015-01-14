@@ -43,21 +43,28 @@ public slots:
     void startFiniteRun();
     void startStabilityRun();
 
-    void updateDisplayedLayer();
+    void showSelectedLayer();
     void displayRunResults();
 
     void updateCurrentLayers(SchemeLayer&, SchemeLayer&);
 
 private:
     static int maxPlotPointsNumber() { return 400; }
+    static double minPlotYRange() { return 1e-4; }
+    static double plotRelativeYMargin() { return 0.05; }
 
     void initPlots();
     void resetPlotsScale(double activatorMin, double activatorMax,
-                    double inhibitorMin, double inhibitorMax);
+                         double inhibitorMin, double inhibitorMax);
+    void expandPlotsScale(double activatorMin, double activatorMax,
+                          double inhibitorMin, double inhibitorMax);
     void displayActivatorLayer(const SchemeLayer& layer);
     void displayInhibitorLayer(const SchemeLayer& layer);
 
     Ui::DSMainWindow *ui;
+    double activatorPlotMargin;
+    double inhibitorPlotMargin;
+    bool plotsNeedScaleReset;
 };
 
 #endif // DSMAINWINDOW_HPP
