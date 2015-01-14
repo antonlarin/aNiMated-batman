@@ -23,10 +23,10 @@ void SchemeSolverImplicit::DoSolverIteration() {
    }
    
    mCurrLayerU1[n] = mBeta[n - 1] / (-mAlpha[n - 1] + 1);
-   mBuilderU1->UpdateMinMaxValues(mCurrLayerU1[n]);
+   mBuilderU1.UpdateMinMaxValues(mCurrLayerU1[n]);
    for (int i = n; i > 0; i--) {
       mCurrLayerU1[i - 1] = mAlpha[i - 1] * mCurrLayerU1[i] + mBeta[i - 1];
-      mBuilderU1->UpdateMinMaxValues(mCurrLayerU1[i - 1]);
+      mBuilderU1.UpdateMinMaxValues(mCurrLayerU1[i - 1]);
    }
 
    for (int i = 1; i < n; i++) {
@@ -38,10 +38,10 @@ void SchemeSolverImplicit::DoSolverIteration() {
    }
 
    mCurrLayerU2[n] = mBeta[n - 1] / (-mAlpha[n - 1] + 1);
-   mBuilderU2->UpdateMinMaxValues(mCurrLayerU2[n]);
+   mBuilderU2.UpdateMinMaxValues(mCurrLayerU2[n]);
    for (int i = n; i > 0; i--) {
       mCurrLayerU2[i - 1] = mAlpha[i - 1] * mCurrLayerU2[i] + mBeta[i - 1];
-      mBuilderU2->UpdateMinMaxValues(mCurrLayerU2[i - 1]);
+      mBuilderU2.UpdateMinMaxValues(mCurrLayerU2[i - 1]);
    }
 }
 
