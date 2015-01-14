@@ -8,10 +8,16 @@
 using namespace diffusioncore;
 using namespace diffusioncore::utils;
 
+SchemeSolutionBuilder::SchemeSolutionBuilder() {
+   mIsInitialized = false;
+   ResetMinMaxValues();
+}
+
 SchemeSolutionBuilder::SchemeSolutionBuilder(const SchemeTask& task, 
                                              SchemeSolverMode solverMode) {
    mTask = task;
    mSolverMode = solverMode;
+   mIsInitialized = true;
    ResetMinMaxValues();
 }
 
@@ -35,11 +41,13 @@ void SchemeSolutionBuilder::ResetMinMaxValues() {
 
 void SchemeSolutionBuilder::SetIterationsCount(int itersCount) {
    assert(itersCount > 0);
+   CheckIsInitialized();
    mIterationsCount = itersCount;
 }
 
 
 SchemeSolution SchemeSolutionBuilder::Build(const SchemeGrid& grid) const {
+   CheckIsInitialized();
    auto source = grid.Source();
    double k = mTask.GetStepTime();
    int n = mTask.GetIntervalsCount();
@@ -59,4 +67,9 @@ SchemeSolution SchemeSolutionBuilder::Build(const SchemeGrid& grid) const {
       default:
          throw std::runtime_error("Invalid solving mode");
    }
+}
+
+void SchemeSolutionBuilder::CheckIsInitialized() const {
+   if (!mIsInitialized)
+      throw std::runtime_error("Object is not initialized");
 }

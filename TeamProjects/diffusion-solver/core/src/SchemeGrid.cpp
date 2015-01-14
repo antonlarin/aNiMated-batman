@@ -1,11 +1,16 @@
 #include <limits>
 #include <cassert>
 #include <algorithm>
+#include <stdexcept>
 #include "CoreUtils.hpp"
 #include "SchemeGrid.hpp"
 
 using namespace diffusioncore;
 using namespace diffusioncore::utils;
+
+SchemeGrid::SchemeGrid() {
+   mIsInitialized = false;
+}
 
 SchemeGrid::SchemeGrid(int layersCount,
                        SchemeLayer& initialLayer,
@@ -18,16 +23,20 @@ SchemeGrid::SchemeGrid(int layersCount,
 
    InitializeGrid(initialLayer);
    InitializeLayers();
+
+   mIsInitialized = true;
 }
 
 SchemeGrid::~SchemeGrid() { }
 
 
 std::shared_ptr<double> SchemeGrid::Source() const {
+   CheckIsInitialized();
    return mGrid;
 }
 
 void SchemeGrid::NextLayer() {
+   CheckIsInitialized();
    switch (mSolverMode) {
       case SchemeSolverMode::AllLayers:
          mPrevLayer = mCurrLayer;
@@ -44,10 +53,12 @@ void SchemeGrid::NextLayer() {
 }
 
 double* SchemeGrid::GetPrevousLayer() const {
+   CheckIsInitialized();
    return mPrevLayer;
 }
 
 double* SchemeGrid::GetCurrentLayer() const {
+   CheckIsInitialized();
    return mCurrLayer;
 }
 
@@ -80,4 +91,9 @@ void SchemeGrid::InitializeGrid(SchemeLayer& initialLayer) {
 void SchemeGrid::InitializeLayers() {
    mPrevLayer = mGrid.get();
    mCurrLayer = mGrid.get() + mPointsCount;
+}
+
+void SchemeGrid::CheckIsInitialized() const {
+   if (!mIsInitialized)
+      throw std::runtime_error("Object is not initialized");
 }

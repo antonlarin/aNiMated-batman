@@ -17,7 +17,10 @@ namespace diffusioncore {
       int mIterationsCount;
       SchemeSolverMode mSolverMode;
 
+      bool mIsInitialized;
+
    public:
+      SchemeSolutionBuilder();
       SchemeSolutionBuilder(const SchemeTask& task, 
                             SchemeSolverMode solverMode);
       ~SchemeSolutionBuilder();
@@ -30,6 +33,9 @@ namespace diffusioncore {
 
       SchemeSolution Build(const SchemeGrid& grid) const;
       
+   private:
+      void CheckIsInitialized() const;
+
    };
 }
 

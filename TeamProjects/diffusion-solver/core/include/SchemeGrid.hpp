@@ -18,7 +18,10 @@ namespace diffusioncore {
       double* mPrevLayer;
       double* mCurrLayer;
 
+      bool mIsInitialized;
+
    public:
+      SchemeGrid();
       SchemeGrid(int layersCount,
                  SchemeLayer& initialLayer,
                  SchemeSolverMode solverMode);
@@ -33,6 +36,7 @@ namespace diffusioncore {
    private:
       void InitializeGrid(SchemeLayer& initialLayer);
       void InitializeLayers();
+      void CheckIsInitialized() const;
 
    };
 }
