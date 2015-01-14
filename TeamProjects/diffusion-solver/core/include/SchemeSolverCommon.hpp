@@ -43,16 +43,16 @@ namespace diffusioncore {
    protected:
       virtual void DoSolverIteration() = 0;
       virtual void InitializeGrid(const SchemeTask& task); 
-      virtual bool CheckStopCondition(int iterCount);
       virtual void InitializeSchemeParameters(const SchemeTask& task);
-      
+      virtual bool UpdateCurrentSolution(int iterCount, 
+                                         const SchemeTask& task);
+
       virtual void CheckParametersOverride(const SchemeTask& task);
       virtual void PrepareSolverOverride(const SchemeTask& task);
       virtual void CleanupSolverOverride(const SchemeTask& task);
       virtual SchemeSolverResult SolveOverride(SchemeTask task);
 
    private:
-      void UpdateCurrentLayersInfoInternal();
       void PrepareSolver(const SchemeTask& task);
       void CleanupSolver(const SchemeTask& task);
 

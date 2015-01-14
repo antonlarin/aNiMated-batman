@@ -48,25 +48,28 @@ void SchemeSolutionBuilder::SetIterationsCount(int itersCount) {
 
 SchemeSolution SchemeSolutionBuilder::Build(const SchemeGrid& grid) const {
    CheckIsInitialized();
-   auto source = grid.Source();
-   double k = mTask.GetStepTime();
-   int n = mTask.GetIntervalsCount();
-   int layersCount = mIterationsCount + 1;
    
-   std::shared_ptr<double> solution;
+   int layersCount;
+   SharedVector solution;
+
    switch (mSolverMode) {
       case SchemeSolverMode::AllLayers:
-         return SchemeSolution(source, n, layersCount, k, 
-                               mCurrentMin, mCurrentMax);
+         layersCount = mIterationsCount + 1;
+         solution = grid.Source();
+         break;
 
       case SchemeSolverMode::StableLayer:
-         solution = CopyShared(grid.GetCurrentLayer(), n + 1);
-         return SchemeSolution(solution, n, 1, k, 
-                               mCurrentMin, mCurrentMax);
+         layersCount = 1;
+         solution = CopyShared(grid.GetCurrentLayer(), 
+                               mTask.GetIntervalsCount() + 1);
+         break;
 
       default:
          throw std::runtime_error("Invalid solving mode");
    }
+
+   return SchemeSolution(mTask, solution, layersCount, 
+                         mCurrentMin, mCurrentMax);
 }
 
 void SchemeSolutionBuilder::CheckIsInitialized() const {

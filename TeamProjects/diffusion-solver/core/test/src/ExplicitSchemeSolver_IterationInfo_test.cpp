@@ -32,8 +32,8 @@ TEST(SchemeSolverExplicit_IterationInfo, IterationsCounting) {
    SetSolverDefaultParameters(solver, targetItersCount);
 
    int iterCounter = 0;
-   std::function<bool(SchemeSolverIterationInfo&)> iterCallback =
-      [&](SchemeSolverIterationInfo& info) -> bool {
+   std::function<bool(SchemeSolverResult&)> iterCallback =
+      [&](SchemeSolverResult& info) -> bool {
          iterCounter++;
          return true;
       };

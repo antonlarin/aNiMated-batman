@@ -1,6 +1,5 @@
 #include "CoreUtils.hpp"
 #include "SchemeSolverCommon.hpp"
-#include "SchemeSolverIterationInfo.hpp"
 using namespace diffusioncore;
 using namespace diffusioncore::utils;
 
@@ -18,16 +17,18 @@ void SchemeSolverCommon::InitializeGrid(const SchemeTask& task) {
    mGridU2 = SchemeGrid(layersCount, initialLayerU2, solvingMode);
 }
 
-bool SchemeSolverCommon::CheckStopCondition(int itersCount) {
+bool SchemeSolverCommon::UpdateCurrentSolution(int itersCount, 
+                                               const SchemeTask& task) {
    int n = mIntervalsCount;
    mMaxDiffU1 = MaxDifference(mCurrLayerU1, mPrevLayerU1, n + 1);
    mMaxDiffU2 = MaxDifference(mCurrLayerU2, mPrevLayerU2, n + 1);
-   SchemeSolverIterationInfo iterInfo(itersCount, 
-                                      mIterationsCount,
-                                      mMaxDiffU1,
-                                      mMaxDiffU2);
-   UpdateCurrentLayersInfoInternal();
-   if (!UpdateIterationInfo(iterInfo))
+
+   SchemeSolution solutionU1 = mBuilderU1.Build(mGridU1);
+   SchemeSolution solutionU2 = mBuilderU2.Build(mGridU2);
+   SchemeStatistic statistic(itersCount, mMaxDiffU1, mMaxDiffU2);
+   SchemeSolverResult result(solutionU1, solutionU2, statistic, task);
+   
+   if (!UpdateIterationInfo(result))
       return true;
 
    if (GetSolverMode() == SchemeSolverMode::StableLayer)
@@ -49,16 +50,17 @@ SchemeSolverResult SchemeSolverCommon::SolveOverride(SchemeTask task) {
       mPrevLayerU2 = mGridU2.GetPrevousLayer();
       
       iterationsCount++;
+      mBuilderU1.SetIterationsCount(iterationsCount);
+      mBuilderU2.SetIterationsCount(iterationsCount);
+      
       DoSolverIteration();
-      if (CheckStopCondition(iterationsCount))
+      if (UpdateCurrentSolution(iterationsCount, task))
          break;
 
       mGridU1.NextLayer();
       mGridU2.NextLayer();
    }
 
-   mBuilderU1.SetIterationsCount(iterationsCount);
-   mBuilderU2.SetIterationsCount(iterationsCount);
 
    SchemeSolution solutionU1 = mBuilderU1.Build(mGridU1);
    SchemeSolution solutionU2 = mBuilderU2.Build(mGridU2);
@@ -106,10 +108,4 @@ void SchemeSolverCommon::PrepareSolver(const SchemeTask& task) {
 
 void SchemeSolverCommon::CleanupSolver(const SchemeTask& task) {
    CleanupSolverOverride(task);
-}
-
-void SchemeSolverCommon::UpdateCurrentLayersInfoInternal() {
-   SchemeLayer layerU1(mCurrLayerU1, mIntervalsCount + 1);
-   SchemeLayer layerU2(mCurrLayerU2, mIntervalsCount + 1);
-   UpdateCurrentLayersInfo(layerU1, layerU2);   
 }

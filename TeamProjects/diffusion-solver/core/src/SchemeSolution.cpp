@@ -1,6 +1,6 @@
+#include <cmath>
 #include <cassert>
 #include <stdexcept>
-#include <cmath>
 #include "CoreUtils.hpp"
 #include "SchemeSolution.hpp"
 
@@ -12,22 +12,21 @@ SchemeSolution::SchemeSolution() {
    mSolutionSize = 0;
 }
 
-SchemeSolution::SchemeSolution(SharedVector solution, 
-                               int intervalsCount, 
-                               int layersCount,
-                               double timeStep,
-                               double minValue,
+SchemeSolution::SchemeSolution(const SchemeTask& task, 
+                               SharedVector solutionSource, 
+                               int layersCount, 
+                               double minValue, 
                                double maxValue) {
    assert(layersCount > 0);
-   assert(intervalsCount > 0);
 
    mMinValue = minValue;
    mMaxValue = maxValue;
-   mSolution = solution;
-   mTimeStep = timeStep;
+
+   mSolution = solutionSource;
    mLayersCount = layersCount;
-   mIntervalsCount = intervalsCount;
-   mSolutionSize = (intervalsCount + 1) * mLayersCount;
+   mTimeStep = task.GetStepTime();
+   mIntervalsCount = task.GetIntervalsCount();
+   mSolutionSize = (mIntervalsCount + 1) * mLayersCount;
 }
 
 SchemeSolution::~SchemeSolution() { }
