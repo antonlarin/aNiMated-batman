@@ -50,7 +50,7 @@ void SchemeLayer::Initialize(const double* v, int length) {
    mLength = length;
    double* dest = new double[length];
    memcpy(dest, v, length * sizeof(double));
-   mHolder = std::shared_ptr<double>(
+   mHolder = SharedVector(
       dest, array_deleter<double>());
 
    mMinValue = Min(v, length);

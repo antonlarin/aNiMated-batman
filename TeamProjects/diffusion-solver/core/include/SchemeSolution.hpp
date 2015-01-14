@@ -1,7 +1,6 @@
 #ifndef SchemeSolution_H
 #define SchemeSolution_H
 
-#include <memory>
 #include "CoreGlobal.hpp"
 #include "SchemeLayer.hpp"
 
@@ -9,7 +8,7 @@ namespace diffusioncore {
    class EXPORT_API SchemeSolution
    {
    private:
-      std::shared_ptr<double> mSolution;
+      SharedVector mSolution;
       size_t mSolutionSize;
       double mTimeStep;
       int mLayersCount;
@@ -20,7 +19,7 @@ namespace diffusioncore {
 
    public:
       SchemeSolution();
-      SchemeSolution(std::shared_ptr<double> solution, 
+      SchemeSolution(SharedVector solutionSource, 
                      int intervalsCount, 
                      int layersCount,
                      double timeStep,
@@ -28,6 +27,8 @@ namespace diffusioncore {
                      double maxValue);
       ~SchemeSolution();
       
+      // TODO: Add friend setters for min/max values 
+
       SchemeLayer GetLayer(int index) const;
       SchemeLayer GetLayerByTime(double time) const;
       SchemeLayer GetLastLayer() const;

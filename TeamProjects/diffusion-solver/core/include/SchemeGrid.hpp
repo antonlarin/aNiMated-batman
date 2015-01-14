@@ -1,7 +1,7 @@
 #ifndef SchemeGrid_H
 #define SchemeGrid_H
 
-#include <memory>
+#include "CoreGlobal.hpp"
 #include "SchemeTask.hpp"
 #include "SchemeLayer.hpp"
 #include "SchemeSolution.hpp"
@@ -10,7 +10,7 @@
 namespace diffusioncore {
    class SchemeGrid final {
    private:
-      std::shared_ptr<double> mGrid;
+      SharedVector mGrid;
       SchemeSolverMode mSolverMode;
       int mPointsCount;
       int mLayersCount;
@@ -27,7 +27,7 @@ namespace diffusioncore {
                  SchemeSolverMode solverMode);
       ~SchemeGrid();
 
-      std::shared_ptr<double> Source() const;
+      SharedVector Source() const;
       double* GetPrevousLayer() const;
       double* GetCurrentLayer() const;
 

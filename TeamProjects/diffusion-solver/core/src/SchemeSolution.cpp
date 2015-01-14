@@ -12,7 +12,7 @@ SchemeSolution::SchemeSolution() {
    mSolutionSize = 0;
 }
 
-SchemeSolution::SchemeSolution(std::shared_ptr<double> solution, 
+SchemeSolution::SchemeSolution(SharedVector solution, 
                                int intervalsCount, 
                                int layersCount,
                                double timeStep,

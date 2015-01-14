@@ -30,7 +30,7 @@ SchemeGrid::SchemeGrid(int layersCount,
 SchemeGrid::~SchemeGrid() { }
 
 
-std::shared_ptr<double> SchemeGrid::Source() const {
+SharedVector SchemeGrid::Source() const {
    CheckIsInitialized();
    return mGrid;
 }
@@ -81,7 +81,7 @@ void SchemeGrid::InitializeGrid(SchemeLayer& initialLayer) {
    }
 
    double* grid = new double[gridSize];
-   mGrid = std::shared_ptr<double>(grid, array_deleter<double>());
+   mGrid = SharedVector(grid, array_deleter<double>());
 
    for (int i = 0; i < n; i++) {
       grid[i] = initialLayer[i];

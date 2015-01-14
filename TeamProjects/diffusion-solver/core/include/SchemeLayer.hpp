@@ -6,13 +6,12 @@
 #endif
 
 #include <vector>
-#include <memory>
 #include "CoreGlobal.hpp"
 
 namespace diffusioncore {
    class EXPORT_API SchemeLayer final {
    private:
-      std::shared_ptr<double> mHolder;
+      SharedVector mHolder;
       int mLength;
       double mMinValue;
       double mMaxValue;
