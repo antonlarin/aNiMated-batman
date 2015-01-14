@@ -4,7 +4,6 @@
 #include <QDialog>
 
 #include "dswindowmanager.hpp"
-#include "dssolveriterationinfo.hpp"
 
 namespace Ui {
 class DSSolvingProgressDialog;
@@ -21,7 +20,7 @@ public:
     virtual void showWindow();
 
 public slots:
-    void updateIterationInfo(const DSSolverIterationInfo&);
+    void updateResult(const SchemeSolverResult&);
 
 private:
     Ui::DSSolvingProgressDialog *ui;

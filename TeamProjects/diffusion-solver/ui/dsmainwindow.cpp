@@ -69,8 +69,8 @@ DSMainWindow::DSMainWindow(DSWindowManager* manager, QWidget *parent) :
             this, SLOT(showSelectedLayer()));
     connect(model, SIGNAL(resultAcquired()),
             this, SLOT(displayRunResults()));
-    connect(model, SIGNAL(currentLayersChanged(SchemeLayer&,SchemeLayer&)),
-            this, SLOT(updateCurrentLayers(SchemeLayer&,SchemeLayer&)));
+    connect(model, SIGNAL(resultChanged(const SchemeSolverResult&)),
+            this, SLOT(updateModelResult(const SchemeSolverResult&)));
 
     connect(ui->explicitSolverRadioButton, SIGNAL(clicked()),
             model, SLOT(selectExplicitSolver()));
@@ -286,20 +286,29 @@ void DSMainWindow::displayRunResults()
     // TODO: Show run info
 }
 
-void DSMainWindow::updateCurrentLayers(SchemeLayer& activator,
-                                       SchemeLayer& inhibitor)
+void DSMainWindow::updateModelResult(const SchemeSolverResult& result)
 {
+    SchemeSolution activatorSolution = result.GetSolutionU1();
+    SchemeSolution inhibitorSolution = result.GetSolutionU2();
+
     if (plotsNeedScaleReset)
     {
-        resetPlotsScale(activator.GetMinValue(), activator.GetMaxValue(),
-                        inhibitor.GetMinValue(), inhibitor.GetMaxValue());
+        resetPlotsScale(activatorSolution.GetMinimum(),
+                        activatorSolution.GetMaximum(),
+                        inhibitorSolution.GetMinimum(),
+                        inhibitorSolution.GetMaximum());
         plotsNeedScaleReset = false;
     }
     else
     {
-        expandPlotsScale(activator.GetMinValue(), activator.GetMaxValue(),
-                         inhibitor.GetMinValue(), inhibitor.GetMaxValue());
+        expandPlotsScale(activatorSolution.GetMinimum(),
+                         activatorSolution.GetMaximum(),
+                         inhibitorSolution.GetMinimum(),
+                         inhibitorSolution.GetMaximum());
     }
+
+    SchemeLayer activator = activatorSolution.GetLastLayer();
+    SchemeLayer inhibitor = inhibitorSolution.GetLastLayer();
     displayActivatorLayer(activator);
     displayInhibitorLayer(inhibitor);
 }

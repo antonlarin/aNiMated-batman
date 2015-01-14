@@ -46,7 +46,7 @@ public slots:
     void showSelectedLayer();
     void displayRunResults();
 
-    void updateCurrentLayers(SchemeLayer&, SchemeLayer&);
+    void updateModelResult(const SchemeSolverResult&);
 
 private:
     static int maxPlotPointsNumber() { return 400; }

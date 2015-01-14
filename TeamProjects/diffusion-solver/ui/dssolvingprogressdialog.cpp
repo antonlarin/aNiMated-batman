@@ -11,8 +11,8 @@ DSSolvingProgressDialog::DSSolvingProgressDialog(DSWindowManager* manager,
     ui->setupUi(this);
 
     DSModel* model = getManager()->getModel();
-    connect(model, SIGNAL(iterationDone(DSSolverIterationInfo&)),
-            this, SLOT(updateIterationInfo(DSSolverIterationInfo&)));
+    connect(model, SIGNAL(resultChanged(const SchemeSolverResult&)),
+            this, SLOT(updateResult(const SchemeSolverResult&)));
 
     connect(model, SIGNAL(resultAcquired()),
             this, SLOT(close()));
@@ -32,10 +32,13 @@ void DSSolvingProgressDialog::showWindow()
 }
 
 
-void DSSolvingProgressDialog::updateIterationInfo(const DSSolverIterationInfo& info)
+void DSSolvingProgressDialog::updateResult(const SchemeSolverResult& res)
 {
-    int iters = info.GetCurrentIterationNumber();
-    int total = info.GetPlannedIterationsCount();
+    auto stat = res.GetStatistic();
+    auto task = res.GetTask();
+
+    int iters = stat.GetIterationsCount();
+    int total = task.GetMaximumLayers() - 1;
 
     QString labelText;
     labelText.sprintf("Пройдено %d итераций из %d", iters, total);
@@ -44,8 +47,8 @@ void DSSolvingProgressDialog::updateIterationInfo(const DSSolverIterationInfo& i
     ui->progressIterationsCounter->setMaximum(total);
     ui->progressIterationsCounter->setValue(iters);
 
-    double activatorAccuracy = info.GetActivatorCurrentAccuracy();
-    double inhibitorAccuracy = info.GetInhibitorCurrentAccuracy();
+    double activatorAccuracy = stat.GetStopAccuracyU1();
+    double inhibitorAccuracy = stat.GetStopAccuracyU2();
 
     labelText.sprintf("%f", activatorAccuracy);
     ui->labelActivatorAccuracyValue->setText(labelText);
