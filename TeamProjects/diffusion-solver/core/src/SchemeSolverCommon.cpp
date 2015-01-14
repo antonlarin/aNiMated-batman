@@ -9,7 +9,7 @@ SchemeSolverCommon::~SchemeSolverCommon() { }
    
 
 void SchemeSolverCommon::InitializeGrid(const SchemeTask& task) {
-   int layersCount = task.GetMaximumIterations() + 1;
+   int layersCount = task.GetMaximumLayers();
    SchemeSolverMode solvingMode = GetSolverMode();
 
    auto initialLayerU1 = task.GetInitialLayerU1();
