@@ -9,8 +9,7 @@
 #include "SchemeSolution.hpp"
 
 namespace diffusioncore {
-   class SchemeSolutionBuilder final
-   {
+   class SchemeSolutionBuilder final {
    private:
       SchemeTask mTask;
       double mCurrentMin;
