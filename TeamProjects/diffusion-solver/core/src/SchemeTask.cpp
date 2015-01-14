@@ -109,6 +109,9 @@ void SchemeTask::SetMaximumIterations(int value) {
    assert(value > 0);
    mMaximumIterations = value;
 }
+int SchemeTask::GetMaximumIterations() const {
+   return mMaximumIterations;
+}
 
 
 double SchemeTask::GetSegmentBegin() const {
@@ -119,9 +122,8 @@ double SchemeTask::GetSegmentEnd() const {
    return 1.0;
 }
 
-
-int SchemeTask::GetMaximumIterations() const {
-   return mMaximumIterations;
+int SchemeTask::GetMaximumLayers() const {
+   return mMaximumIterations + 1;
 }
 
 int SchemeTask::GetIntervalsCount() const {

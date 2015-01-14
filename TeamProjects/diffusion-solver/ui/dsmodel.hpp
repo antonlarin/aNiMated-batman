@@ -30,7 +30,6 @@ public:
     PROPERTY(int, SecondComparedLayerIndex)
 
     void AcquireResult(SchemeSolverResult& newResult);
-    void AcquireIterationInfo(SchemeSolverIterationInfo& info);
 
     void StartRun(SchemeSolverMode mode);
 
@@ -53,8 +52,7 @@ public:
 signals:
     void layerIndexChanged();
     void resultAcquired();
-    void iterationDone(DSSolverIterationInfo&);
-    void currentLayersChanged(SchemeLayer&, SchemeLayer&);
+    void resultChanged(const SchemeSolverResult&);
     void comparedLayersChanged();
 
 public slots:
@@ -63,9 +61,8 @@ public slots:
     void selectExplicitSolver();
 
 private slots:
-    void solverThreadFinished(SchemeSolverResult&);
-    void solverThreadIterationDone(DSSolverIterationInfo&);
-    void solverThreadLayersChanged(SchemeLayer&, SchemeLayer&);
+    void solverThreadFinished(const SchemeSolverResult&);
+    void solverThreadResultChanged(const SchemeSolverResult&);
 
 private:
     void UpdateSolver(SchemeSolver* solver);
@@ -76,7 +73,6 @@ private:
     shared_ptr<SchemeTask> task;
     shared_ptr<SchemeSolver> solver;
     unique_ptr<SchemeSolverResult> result;
-    unique_ptr<SchemeSolverIterationInfo> iterInfo;
     unique_ptr<DSSolverThread> solverThread;
 
     int currentLayerIndex;

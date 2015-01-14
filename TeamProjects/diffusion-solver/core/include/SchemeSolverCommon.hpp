@@ -5,6 +5,7 @@
 #include "CoreGlobal.hpp"
 #include "SchemeGrid.hpp"
 #include "SchemeSolver.hpp"
+#include "SchemeSolutionBuilder.hpp"
 
 namespace diffusioncore {
    class EXPORT_API SchemeSolverCommon : public SchemeSolver {
@@ -22,8 +23,10 @@ namespace diffusioncore {
       int mIntervalsCount;
       int mIterationsCount;
 
-      std::unique_ptr<SchemeGrid> mGridU1;
-      std::unique_ptr<SchemeGrid> mGridU2;
+      SchemeGrid mGridU1;
+      SchemeGrid mGridU2;
+      SchemeSolutionBuilder mBuilderU1;
+      SchemeSolutionBuilder mBuilderU2;
 
       double* mPrevLayerU1;
       double* mCurrLayerU1;
@@ -38,17 +41,20 @@ namespace diffusioncore {
       virtual ~SchemeSolverCommon();
       
    protected:
-      virtual void PrepareSolver();
-      virtual void CleanupSolver();
       virtual void DoSolverIteration() = 0;
-      virtual void InitializeGrid(SchemeTask& task); 
-      virtual bool CheckStopCondition(int iterCount);
-      virtual void CheckParametersOverride(SchemeTask task);
+      virtual void InitializeGrid(const SchemeTask& task); 
+      virtual void InitializeSchemeParameters(const SchemeTask& task);
+      virtual bool UpdateCurrentSolution(int iterCount, 
+                                         const SchemeTask& task);
+
+      virtual void CheckParametersOverride(const SchemeTask& task);
+      virtual void PrepareSolverOverride(const SchemeTask& task);
+      virtual void CleanupSolverOverride(const SchemeTask& task);
       virtual SchemeSolverResult SolveOverride(SchemeTask task);
-      virtual void InitializeSchemeParameters(SchemeTask& task);
 
    private:
-      void UpdateCurrentLayersInfoInternal();
+      void PrepareSolver(const SchemeTask& task);
+      void CleanupSolver(const SchemeTask& task);
 
    };
 }

@@ -22,4 +22,9 @@
    void Set ## N(T value);
 
 
+#include <memory>
+namespace diffusioncore {
+   typedef std::shared_ptr<double> SharedVector;
+}
+
 #endif

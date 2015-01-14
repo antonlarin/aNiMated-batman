@@ -28,11 +28,6 @@ void SchemeSolver::RegisterIterationCallback(
    mIterationCallback = callback;
 }
 
-void SchemeSolver::RegisterLayerChangedCallback(
-   SolverLayersChangedCallback callback) {
-   mLayersChangedCallback = callback;
-}
-
 
 SchemeSolverResult SchemeSolver::Solve() {  
    if (!mTask)
@@ -46,19 +41,12 @@ SchemeSolverResult SchemeSolver::Solve() {
 
 void SchemeSolver::CheckParametersOverride(SchemeTask task) { }
 
-bool SchemeSolver::UpdateIterationInfo(SchemeSolverIterationInfo& info) {
+bool SchemeSolver::UpdateIterationInfo(SchemeSolverResult& result) {
    if (mIterationCallback)
-      return mIterationCallback(info);
+      return mIterationCallback(result);
 
    return true;
 }
-
-void SchemeSolver::UpdateCurrentLayersInfo(SchemeLayer& u1, 
-                                           SchemeLayer& u2) {
-   if (mLayersChangedCallback)
-      mLayersChangedCallback(u1, u2);
-}
-
 
 void SchemeSolver::CheckParameters(SchemeTask task) {
    CheckParametersOverride(task);

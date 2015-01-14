@@ -1,15 +1,15 @@
 #ifndef SchemeSolution_H
 #define SchemeSolution_H
 
-#include <memory>
 #include "CoreGlobal.hpp"
+#include "SchemeTask.hpp"
 #include "SchemeLayer.hpp"
 
 namespace diffusioncore {
-   class EXPORT_API SchemeSolution
-   {
+   class EXPORT_API SchemeSolution {
+
    private:
-      std::shared_ptr<double> mSolution;
+      SharedVector mSolution;
       size_t mSolutionSize;
       double mTimeStep;
       int mLayersCount;
@@ -20,14 +20,13 @@ namespace diffusioncore {
 
    public:
       SchemeSolution();
-      SchemeSolution(std::shared_ptr<double> solution, 
-                     int intervalsCount, 
+      SchemeSolution(const SchemeTask& task, 
+                     SharedVector solutionSource, 
                      int layersCount,
-                     double timeStep,
-                     double minValue,
+                     double minValue, 
                      double maxValue);
       ~SchemeSolution();
-      
+
       SchemeLayer GetLayer(int index) const;
       SchemeLayer GetLayerByTime(double time) const;
       SchemeLayer GetLastLayer() const;

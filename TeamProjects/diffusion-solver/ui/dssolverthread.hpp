@@ -10,17 +10,12 @@
 #include <QMutex>
 #include <QThread>
 
-#include "dssolveriterationinfo.hpp"
-
 using namespace std::chrono;
 
 using diffusioncore::SchemeSolver;
 using diffusioncore::SchemeSolverResult;
-using diffusioncore::SchemeSolverIterationInfo;
 
-Q_DECLARE_METATYPE(SchemeLayer)
 Q_DECLARE_METATYPE(SchemeSolverResult)
-Q_DECLARE_METATYPE(DSSolverIterationInfo)
 
 class DSSolverThread : public QThread
 {
@@ -33,10 +28,8 @@ public:
     void StopSolver();
 
 signals:
-    void iterationDone(const DSSolverIterationInfo&);
-    void solverFinished(SchemeSolverResult&);
-    void layersChanged(SchemeLayer& activator,
-                       SchemeLayer& inhibitor);
+    void resultChanged(const SchemeSolverResult&);
+    void solverFinished(const SchemeSolverResult&);
 
 private slots:
     void threadFinished();
@@ -45,8 +38,7 @@ protected:
     void run();
 
 private:
-    bool AcquireIterationInfo(SchemeSolverIterationInfo& info);
-    void AcquireCurrentLayers(SchemeLayer& u1, SchemeLayer& u2);
+    bool UpdateCurrentSolverResult(SchemeSolverResult& info);
 
     milliseconds GetMaxUpdateIterationSpan() const { return milliseconds(10); }
 
@@ -56,7 +48,6 @@ private:
     std::once_flag registerMetaTypeFlag;
     std::shared_ptr<SchemeSolver> solver;
     high_resolution_clock::time_point updateIterationInfoPoint;
-    high_resolution_clock::time_point updateCurrentLayersPoint;
 };
 
 #endif // DSSOLVERTHREAD_HPP
