@@ -42,6 +42,7 @@ namespace diffusioncore {
       double GetSegmentEnd() const;
       double GetSegmentBegin() const;
 
+      int GetMaximumLayers() const;
       int GetIntervalsCount() const;
       SchemeLayer GetInitialLayerU1() const;
       SchemeLayer GetInitialLayerU2() const;
