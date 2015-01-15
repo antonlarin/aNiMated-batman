@@ -176,6 +176,12 @@ double DSModel::GetInhibitorMinimum() const
     return solutionInhibitor.GetMinimum();
 }
 
+int DSModel::GetPerformedIterationsCount() const
+{
+    SchemeStatistic stat = result->GetStatistic();
+    return stat.GetIterationsCount();
+}
+
 int DSModel::GetLayerCount() const
 {
     return result->GetLayersCount();
