@@ -261,7 +261,7 @@ void DSMainWindow::showSelectedLayer()
 {
     DSModel* model = getManager()->getModel();
     ui->totalLayerNumLabel->setText(tr("из %1, шаг").
-                                    arg(model->GetLayerCount()));
+                                    arg(model->GetPerformedIterationsCount()));
     ui->currentLayerEdit->setText(tr("%1").
                                   arg(model->GetCurrentLayerIndex()));
     ui->layerStepEdit->setText(tr("%1").
