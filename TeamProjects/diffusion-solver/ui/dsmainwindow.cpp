@@ -287,9 +287,9 @@ void DSMainWindow::updateModelResult(const SchemeSolverResult& result)
     SchemeSolution inhibitorSolution = result.GetSolutionU2();
 
     resetPlotsScale(activatorSolution.GetMinimum(),
-                     activatorSolution.GetMaximum(),
-                     inhibitorSolution.GetMinimum(),
-                     inhibitorSolution.GetMaximum());
+                    activatorSolution.GetMaximum(),
+                    inhibitorSolution.GetMinimum(),
+                    inhibitorSolution.GetMaximum());
 
     SchemeLayer activator = activatorSolution.GetLastLayer();
     SchemeLayer inhibitor = inhibitorSolution.GetLastLayer();
