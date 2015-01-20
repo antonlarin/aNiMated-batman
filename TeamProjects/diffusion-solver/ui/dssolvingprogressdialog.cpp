@@ -40,9 +40,8 @@ void DSSolvingProgressDialog::updateResult(const SchemeSolverResult& res)
     int iters = stat.GetIterationsCount();
     int total = task.GetMaximumLayers() - 1;
 
-    QString labelText;
-    labelText.sprintf("Пройдено %d итераций из %d", iters, total);
-    ui->labelIterationNumber->setText(labelText);
+    ui->labelIterationNumber->setText(
+                tr("Пройдено %1 итераций из %2").arg(iters).arg(total));
 
     ui->progressIterationsCounter->setMaximum(total);
     ui->progressIterationsCounter->setValue(iters);
@@ -50,9 +49,9 @@ void DSSolvingProgressDialog::updateResult(const SchemeSolverResult& res)
     double activatorAccuracy = stat.GetStopAccuracyU1();
     double inhibitorAccuracy = stat.GetStopAccuracyU2();
 
-    labelText.sprintf("%f", activatorAccuracy);
-    ui->labelActivatorAccuracyValue->setText(labelText);
+    ui->labelActivatorAccuracyValue->setText(
+                tr("%1").arg(activatorAccuracy));
 
-    labelText.sprintf("%f", inhibitorAccuracy);
-    ui->labelInhibitorAccuracyValue->setText(labelText);
+    ui->labelInhibitorAccuracyValue->setText(
+                tr("%1").arg(inhibitorAccuracy));
 }
