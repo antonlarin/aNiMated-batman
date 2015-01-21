@@ -21,7 +21,7 @@ void SetSolverDefaultParameters(SchemeSolver& solver) {
    SchemeLayer layer(std::vector<double>(200, 0));
    task->SetInitialLayers(layer, layer);
 
-   solver.RegisterTask(task);
+   solver.SetCurrentTask(task);
    solver.SetSolverMode(SchemeSolverMode::StableLayer);
 }
 
