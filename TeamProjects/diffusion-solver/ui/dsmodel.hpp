@@ -69,11 +69,11 @@ private:
 
 private:
     DSParameterSet parameters;
+    DSSolverThread solverThread;
 
     shared_ptr<SchemeTask> task;
     shared_ptr<SchemeSolver> solver;
     unique_ptr<SchemeSolverResult> result;
-    unique_ptr<DSSolverThread> solverThread;
 
     int currentLayerIndex;
     int layerStep;

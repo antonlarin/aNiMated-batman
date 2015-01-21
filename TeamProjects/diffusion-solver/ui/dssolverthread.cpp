@@ -4,28 +4,33 @@
 
 using namespace std::placeholders;
 
-DSSolverThread::DSSolverThread(std::shared_ptr<SchemeSolver> solver):
-    solverNeedStop(false),
-    solver(solver)
+DSSolverThread::DSSolverThread()
 {
-    std::call_once(registerMetaTypeFlag, []() -> void
-    {
-        qRegisterMetaType<SchemeSolverResult>();
-        qRegisterMetaType<SchemeSolverResult>("SchemeSolverResult&");
-    });
+    Initialize();
+}
 
-    auto iterMethod = &DSSolverThread::UpdateCurrentSolverResult;
-    auto iterCallback = std::bind(iterMethod, this, _1);
-    solver->RegisterIterationCallback(iterCallback);
-
-    connect(this, SIGNAL(finished()),
-            this, SLOT(threadFinished()));
+DSSolverThread::DSSolverThread(std::shared_ptr<SchemeSolver> solver)
+{
+    Initialize();
+    UpdateSolver(solver);
 }
 
 DSSolverThread::~DSSolverThread()
 {
 }
 
+void DSSolverThread::Initialize()
+{
+    solverNeedStop = false;
+    std::call_once(registerMetaTypeFlag, []() -> void
+    {
+        qRegisterMetaType<SchemeSolverResult>();
+        qRegisterMetaType<SchemeSolverResult>("SchemeSolverResult&");
+    });
+
+    connect(this, SIGNAL(finished()),
+            this, SLOT(threadFinished()));
+}
 
 void DSSolverThread::StopSolver()
 {
@@ -34,8 +39,22 @@ void DSSolverThread::StopSolver()
     mtx.unlock();
 }
 
+void DSSolverThread::UpdateSolver(std::shared_ptr<SchemeSolver> slvr)
+{
+    if (isRunning())
+        throw std::runtime_error("Solver thread is running");
+
+    solver = slvr;
+    auto iterMethod = &DSSolverThread::UpdateCurrentSolverResult;
+    auto iterCallback = std::bind(iterMethod, this, _1);
+    solver->SetIterationCallback(iterCallback);
+}
+
 void DSSolverThread::run()
 {
+    if (!solver)
+        throw std::runtime_error("Solver is not set");
+
     mtx.lock();
     solverNeedStop = false;
     mtx.unlock();

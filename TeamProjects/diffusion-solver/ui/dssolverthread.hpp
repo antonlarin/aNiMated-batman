@@ -22,10 +22,12 @@ class DSSolverThread : public QThread
     Q_OBJECT
 
 public:
+    DSSolverThread();
     DSSolverThread(std::shared_ptr<SchemeSolver> solver);
     ~DSSolverThread();
 
     void StopSolver();
+    void UpdateSolver(std::shared_ptr<SchemeSolver> solver);
 
 signals:
     void resultChanged(const SchemeSolverResult&);
@@ -38,6 +40,7 @@ protected:
     void run();
 
 private:
+    void Initialize();
     bool UpdateCurrentSolverResult(SchemeSolverResult& info);
 
     milliseconds GetMaxUpdateIterationSpan() const { return milliseconds(10); }
