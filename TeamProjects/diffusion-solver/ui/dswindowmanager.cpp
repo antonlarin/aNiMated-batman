@@ -4,6 +4,7 @@
 #include "dsinitconditionsdialog.hpp"
 #include "dssolvingprogressdialog.hpp"
 #include "dslayerpairanalysiswindow.hpp"
+#include "dssummarydialog.hpp"
 
 DSWindowManager::DSWindowManager(DSModel* model) :
     QObject(),
@@ -11,8 +12,12 @@ DSWindowManager::DSWindowManager(DSModel* model) :
     mainWindow(new DSMainWindow(this)),
     initialConditionsDialog(nullptr),
     solvingProgressDialog(nullptr),
-    layerPairAnalysisWindow(nullptr)
-{}
+    layerPairAnalysisWindow(nullptr),
+    summaryDialog(nullptr)
+{
+    connect(getModel(), SIGNAL(resultAcquired()),
+            this, SLOT(showSummaryDialog()));
+}
 
 
 
@@ -29,6 +34,12 @@ void DSWindowManager::showLayerPairAnalysisWindow()
 {
     layerPairAnalysisWindow.reset(new DSLayerPairAnalysisWindow(this));
     layerPairAnalysisWindow->showWindow();
+}
+
+void DSWindowManager::showSummaryDialog()
+{
+    summaryDialog.reset(new DSSummaryDialog(this));
+    summaryDialog->showWindow();
 }
 
 

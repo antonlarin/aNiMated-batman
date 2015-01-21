@@ -278,7 +278,6 @@ void DSMainWindow::displayRunResults()
                     model->GetInhibitorMinimum(), model->GetInhibitorMaximum());
     showSelectedLayer();
     ui->layerPairAnalysisAction->setEnabled(true);
-    // TODO: Show run info
 }
 
 void DSMainWindow::updateModelResult(const SchemeSolverResult& result)
