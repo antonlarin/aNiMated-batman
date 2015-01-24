@@ -188,6 +188,18 @@ int DSModel::GetPerformedIterationsCount() const
     return stat.GetIterationsCount();
 }
 
+double DSModel::GetAchievedActivatorAccuracy() const
+{
+    SchemeStatistic stat = result->GetStatistic();
+    return stat.GetStopAccuracyU1();
+}
+
+double DSModel::GetAchievedInhibitorAccuracy() const
+{
+    SchemeStatistic stat = result->GetStatistic();
+    return stat.GetStopAccuracyU2();
+}
+
 int DSModel::GetLayerCount() const
 {
     return result->GetLayersCount();
