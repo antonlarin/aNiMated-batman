@@ -3,7 +3,7 @@
 
 #include <QDialog>
 
-#include "idswindow.hpp"
+#include "dswindowmanager.hpp"
 
 namespace Ui {
 class DSSummaryDialog;
