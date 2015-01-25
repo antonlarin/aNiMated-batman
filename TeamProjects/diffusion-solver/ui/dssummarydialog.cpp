@@ -24,6 +24,8 @@ void DSSummaryDialog::showWindow()
                 tr("%1").arg(model->GetAchievedActivatorAccuracy()));
     ui->inhibitorAccuracyValueLabel->setText(
                 tr("%1").arg(model->GetAchievedInhibitorAccuracy()));
+    ui->iterationsPerformedValueLabel->setText(
+                tr("%1").arg(model->GetPerformedIterationsCount()));
 
     show();
 }

@@ -20,21 +20,24 @@
    <bool>true</bool>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
-    <widget class="QLabel" name="activatorAccuracyLabel">
-     <property name="text">
-      <string>Точность по активатору:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="QLabel" name="activatorAccuracyValueLabel">
+   <item row="2" column="1">
+    <widget class="QLabel" name="inhibitorAccuracyValueLabel">
      <property name="text">
       <string>TextLabel</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
+   <item row="3" column="1">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Close</set>
+     </property>
+     <property name="centerButtons">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
     <widget class="QLabel" name="inhibitorAccuracyLabel">
      <property name="text">
       <string>Точность по ингибитору:</string>
@@ -42,19 +45,30 @@
     </widget>
    </item>
    <item row="1" column="1">
-    <widget class="QLabel" name="inhibitorAccuracyValueLabel">
+    <widget class="QLabel" name="activatorAccuracyValueLabel">
      <property name="text">
       <string>TextLabel</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Close</set>
+   <item row="1" column="0">
+    <widget class="QLabel" name="activatorAccuracyLabel">
+     <property name="text">
+      <string>Точность по активатору:</string>
      </property>
-     <property name="centerButtons">
-      <bool>false</bool>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="iterationsPerformedLabel">
+     <property name="text">
+      <string>Пройдено итераций:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QLabel" name="iterationsPerformedValueLabel">
+     <property name="text">
+      <string>TextLabel</string>
      </property>
     </widget>
    </item>
