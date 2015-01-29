@@ -48,6 +48,8 @@ public slots:
 
     void updateModelResult(const SchemeSolverResult&);
 
+    void modelSolverError(const DSSolverException&);
+
 private:
     static int maxPlotPointsNumber() { return 400; }
     static double minPlotYRange() { return 1e-4; }

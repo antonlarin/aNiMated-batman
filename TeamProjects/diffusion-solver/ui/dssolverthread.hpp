@@ -10,12 +10,15 @@
 #include <QMutex>
 #include <QThread>
 
+#include "dssolverexception.hpp"
+
 using namespace std::chrono;
 
 using diffusioncore::SchemeSolver;
 using diffusioncore::SchemeSolverResult;
 
 Q_DECLARE_METATYPE(SchemeSolverResult)
+Q_DECLARE_METATYPE(DSSolverException)
 
 class DSSolverThread : public QThread
 {
@@ -32,6 +35,7 @@ public:
 signals:
     void resultChanged(const SchemeSolverResult&);
     void solverFinished(const SchemeSolverResult&);
+    void solverError(const DSSolverException&);
 
 private slots:
     void threadFinished();

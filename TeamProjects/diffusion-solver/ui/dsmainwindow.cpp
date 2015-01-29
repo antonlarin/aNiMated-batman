@@ -68,6 +68,8 @@ DSMainWindow::DSMainWindow(DSWindowManager* manager, QWidget *parent) :
             this, SLOT(displayRunResults()));
     connect(model, SIGNAL(resultChanged(const SchemeSolverResult&)),
             this, SLOT(updateModelResult(const SchemeSolverResult&)));
+    connect(model, SIGNAL(solverError(const DSSolverException&)),
+            this, SLOT(modelSolverError(const DSSolverException&)));
 
     connect(ui->explicitSolverRadioButton, SIGNAL(clicked()),
             model, SLOT(selectExplicitSolver()));
@@ -295,6 +297,12 @@ void DSMainWindow::updateModelResult(const SchemeSolverResult& result)
     SchemeLayer inhibitor = inhibitorSolution.GetLastLayer();
     displayActivatorLayer(activator);
     displayInhibitorLayer(inhibitor);
+}
+
+void DSMainWindow::modelSolverError(const DSSolverException& ex)
+{
+    // TODO: Replace error message to error code
+    QMessageBox::critical(this, "Ошибка", ex.GetSource().what());
 }
 
 /*

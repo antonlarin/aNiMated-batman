@@ -23,7 +23,8 @@ SOURCES += main.cpp\
     dslayerpairanalysiswindow.cpp \
     dsparameterset.cpp \
     dswindowmanager.cpp \
-    idswindow.cpp
+    idswindow.cpp \
+    dssolverexception.cpp
 
 HEADERS  += dsmainwindow.hpp \
     dsmodel.hpp \
@@ -34,7 +35,8 @@ HEADERS  += dsmainwindow.hpp \
     dslayerpairanalysiswindow.hpp \
     dsparameterset.hpp \
     dswindowmanager.hpp \
-    idswindow.hpp
+    idswindow.hpp \
+    dssolverexception.hpp
 
 FORMS    += dsmainwindow.ui \
     dsinitconditionsdialog.ui \
