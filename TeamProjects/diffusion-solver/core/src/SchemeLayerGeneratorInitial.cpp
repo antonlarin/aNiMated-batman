@@ -32,6 +32,11 @@ SchemeLayer SchemeLayerGeneratorInitial::Generate() {
    return res;
 }
 
+bool SchemeLayerGeneratorInitial::CheckParameters() {
+   SchemeLayer genLayer = Generate();
+   return genLayer.CheckIsPositive();
+}
+
 
 double SchemeLayerGeneratorInitial::GetValue(double x) {
    double sum = 0;
