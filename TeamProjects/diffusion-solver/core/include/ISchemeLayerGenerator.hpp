@@ -12,6 +12,7 @@ namespace diffusioncore {
       virtual ~ISchemeLayerGenerator();
       
       virtual SchemeLayer Generate() = 0;
+      virtual bool CheckParameters() = 0;
 
    };
 }
