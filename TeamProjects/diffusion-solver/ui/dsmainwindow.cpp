@@ -314,11 +314,13 @@ void DSMainWindow::initPlots()
     ui->activatorPlot->xAxis->setLabel("x");
     ui->activatorPlot->yAxis->setLabel("Концентрация активатора");
     ui->activatorPlot->xAxis->setRange(0, 1);
+    ui->activatorPlot->graph(0)->setPen(QPen(QColor(0, 255, 0)));
 
     ui->inhibitorPlot->addGraph();
     ui->inhibitorPlot->xAxis->setLabel("x");
     ui->inhibitorPlot->yAxis->setLabel("Концентрация ингибитора");
     ui->inhibitorPlot->xAxis->setRange(0, 1);
+    ui->inhibitorPlot->graph(0)->setPen(QPen(QColor(255, 0, 0)));
 
     // Scale y axes on plots with some junk values
     resetPlotsScale(0, 1, 0, 1);
