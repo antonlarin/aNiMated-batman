@@ -696,7 +696,7 @@
     </property>
     <widget class="QMenu" name="menu">
      <property name="title">
-      <string>Сохоанить график</string>
+      <string>Сохранить график</string>
      </property>
      <addaction name="saveActivatorPlotAction"/>
      <addaction name="saveInhibitorPlotAction"/>
