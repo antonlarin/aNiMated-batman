@@ -388,31 +388,37 @@ void DSMainWindow::saveActivatorPlot()
 {
     QString filePath = QFileDialog::getSaveFileName(0, "Сохранить график концентрации активатора", "", "*.png");
 
+    if(filePath.indexOf(".png") < 0 && !filePath.isEmpty())
+        filePath += ".png";
+
     if(!filePath.isEmpty())
     {
-        QFile file(filePath + ".png");
+        QFile file(filePath);
         if (!file.open(QIODevice::WriteOnly|QFile::WriteOnly))
         {
             QMessageBox::warning(0,"Ошибка сохранения файла",
                        QObject::tr( "\n Невозможно создать файл"));
         }
         else
-            ui->activatorPlot->savePng(filePath + ".png", 0, 0, 1.0, -1);
+            ui->activatorPlot->savePng(filePath, 640, 480, 1.0, -1);
     }
 }
 void DSMainWindow::saveInhibitorPlot()
 {
     QString filePath = QFileDialog::getSaveFileName(0, "Сохранить график концентрации ингибитора", "", "*.png");
 
+    if(filePath.indexOf(".png") < 0 && !filePath.isEmpty())
+        filePath += ".png";
+
     if(!filePath.isEmpty())
     {
-        QFile file(filePath + ".png");
+        QFile file(filePath);
         if (!file.open(QIODevice::WriteOnly|QFile::WriteOnly))
         {
             QMessageBox::warning(0,"Ошибка сохранения файла",
                        QObject::tr( "\n Невозможно создать файл"));
         }
         else
-            ui->inhibitorPlot->savePng(filePath + ".png", 0, 0, 1.0, -1);
+            ui->inhibitorPlot->savePng(filePath, 640, 480, 1.0, -1);
     }
 }
