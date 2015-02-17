@@ -60,6 +60,10 @@ DSMainWindow::DSMainWindow(DSWindowManager* manager, QWidget *parent) :
             getManager(), SLOT(showInitialConditionsDialog()));
     connect(ui->layerPairAnalysisAction, SIGNAL(triggered()),
             getManager(), SLOT(showLayerPairAnalysisWindow()));
+    connect(ui->saveInhibitorPlotAction, SIGNAL(triggered()),
+            this, SLOT(saveInhibitorPlot()));
+    connect(ui->saveActivatorPlotAction, SIGNAL(triggered()),
+                    this, SLOT(saveActivatorPlot()));
 
     DSModel* model = getManager()->getModel();
     connect(model, SIGNAL(layerIndexChanged()),
@@ -379,4 +383,36 @@ void DSMainWindow::displayInhibitorLayer(const SchemeLayer& layer)
 
     ui->inhibitorPlot->graph(0)->setData(xs, ys);
     ui->inhibitorPlot->replot();
+}
+void DSMainWindow::saveActivatorPlot()
+{
+    QString filePath = QFileDialog::getSaveFileName(0, "Сохранить график концентрации активатора", "", "*.png");
+
+    if(!filePath.isEmpty())
+    {
+        QFile file(filePath + ".png");
+        if (!file.open(QIODevice::WriteOnly|QFile::WriteOnly))
+        {
+            QMessageBox::warning(0,"Ошибка сохранения файла",
+                       QObject::tr( "\n Невозможно создать файл"));
+        }
+        else
+            ui->activatorPlot->savePng(filePath + ".png", 0, 0, 1.0, -1);
+    }
+}
+void DSMainWindow::saveInhibitorPlot()
+{
+    QString filePath = QFileDialog::getSaveFileName(0, "Сохранить график концентрации ингибитора", "", "*.png");
+
+    if(!filePath.isEmpty())
+    {
+        QFile file(filePath + ".png");
+        if (!file.open(QIODevice::WriteOnly|QFile::WriteOnly))
+        {
+            QMessageBox::warning(0,"Ошибка сохранения файла",
+                       QObject::tr( "\n Невозможно создать файл"));
+        }
+        else
+            ui->inhibitorPlot->savePng(filePath + ".png", 0, 0, 1.0, -1);
+    }
 }

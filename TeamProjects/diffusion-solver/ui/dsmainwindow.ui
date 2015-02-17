@@ -694,6 +694,14 @@
     <property name="title">
      <string>Файл</string>
     </property>
+    <widget class="QMenu" name="menu">
+     <property name="title">
+      <string>Сохоанить график</string>
+     </property>
+     <addaction name="saveActivatorPlotAction"/>
+     <addaction name="saveInhibitorPlotAction"/>
+    </widget>
+    <addaction name="menu"/>
     <addaction name="quitAction"/>
    </widget>
    <addaction name="fileMenu"/>
@@ -723,6 +731,22 @@
    </property>
    <property name="text">
     <string>Сравнение пары слоёв</string>
+   </property>
+  </action>
+  <action name="saveActivatorPlotAction">
+   <property name="text">
+    <string>Концентрации активатора</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="saveInhibitorPlotAction">
+   <property name="text">
+    <string>Концентрации ингибитора</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
    </property>
   </action>
  </widget>
