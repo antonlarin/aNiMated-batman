@@ -46,6 +46,11 @@ double SchemeLayer::GetMaxValue() const {
    return mMaxValue;
 }
 
+bool SchemeLayer::CheckIsPositive() const {
+   return GetMinValue() >= 0;
+}
+
+
 void SchemeLayer::Initialize(const double* v, int length) {
    mLength = length;
    double* dest = new double[length];

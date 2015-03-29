@@ -1,4 +1,7 @@
 #include "dsparameterset.hpp"
+#include <SchemeLayerGeneratorInitial.hpp>
+
+using diffusioncore::SchemeLayerGeneratorInitial;
 
 DSParameterSet::DSParameterSet() :
     lambda1(1.0),
@@ -230,9 +233,15 @@ vector<double> DSParameterSet::GetActivatorInitialConditions() const
 
 bool DSParameterSet::SetActivatorInitialConditions(vector<double> value)
 {
-    activatorInitConditionsCoeffs = value;
-    // TODO: perhaps perform validity check here
-    return true;
+    SchemeLayerGeneratorInitial generator;
+    generator.SetIntervalsCount(gridDimension);
+    generator.SetCoefficients(value);
+    if (generator.CheckParameters())
+    {
+        activatorInitConditionsCoeffs = value;
+        return true;
+    }
+    return false;
 }
 
 vector<double> DSParameterSet::GetInhibitorInitialConditions() const
@@ -242,7 +251,13 @@ vector<double> DSParameterSet::GetInhibitorInitialConditions() const
 
 bool DSParameterSet::SetInhibitorInitialConditions(vector<double> value)
 {
-    inhibitorInitConditionsCoeffs = value;
-    // TODO: perhaps perform validity check here
-    return true;
+    SchemeLayerGeneratorInitial generator;
+    generator.SetIntervalsCount(gridDimension);
+    generator.SetCoefficients(value);
+    if (generator.CheckParameters())
+    {
+        inhibitorInitConditionsCoeffs = value;
+        return true;
+    }
+    return false;
 }

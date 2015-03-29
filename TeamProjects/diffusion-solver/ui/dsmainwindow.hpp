@@ -46,7 +46,12 @@ public slots:
     void showSelectedLayer();
     void displayRunResults();
 
+    void saveActivatorPlot();
+    void saveInhibitorPlot();
+
     void updateModelResult(const SchemeSolverResult&);
+
+    void modelSolverError(const DSSolverException&);
 
 private:
     static int maxPlotPointsNumber() { return 400; }

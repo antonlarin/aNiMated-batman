@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     dsparameterset.cpp \
     dswindowmanager.cpp \
     idswindow.cpp \
-    dssummarydialog.cpp
+    dssummarydialog.cpp \
+    dssolverexception.cpp
 
 HEADERS  += dsmainwindow.hpp \
     dsmodel.hpp \
@@ -36,7 +37,8 @@ HEADERS  += dsmainwindow.hpp \
     dsparameterset.hpp \
     dswindowmanager.hpp \
     idswindow.hpp \
-    dssummarydialog.hpp
+    dssummarydialog.hpp \
+    dssolverexception.hpp
 
 FORMS    += dsmainwindow.ui \
     dsinitconditionsdialog.ui \

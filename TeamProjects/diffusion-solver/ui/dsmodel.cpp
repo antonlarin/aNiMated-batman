@@ -20,6 +20,9 @@ DSModel::DSModel() :
     connect(&solverThread, SIGNAL(resultChanged(const SchemeSolverResult&)),
             this, SLOT(solverThreadResultChanged(const SchemeSolverResult&)));
 
+    connect(&solverThread, SIGNAL(solverError(const DSSolverException&)),
+            this, SLOT(solverThreadHandleError(const DSSolverException&)));
+
     selectExplicitSolver();
 }
 
@@ -243,3 +246,7 @@ void DSModel::solverThreadResultChanged(const SchemeSolverResult& res)
     emit resultChanged(res);
 }
 
+void DSModel::solverThreadHandleError(const DSSolverException& ex)
+{
+    emit solverError(ex);
+}

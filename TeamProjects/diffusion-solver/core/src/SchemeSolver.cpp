@@ -40,7 +40,13 @@ SchemeSolverResult SchemeSolver::Solve() {
 }
 
 
-void SchemeSolver::CheckParametersOverride(SchemeTask task) { }
+void SchemeSolver::CheckParametersOverride(SchemeTask task) { 
+   SchemeLayer layerU1 = task.GetInitialLayerU1();
+   SchemeLayer layerU2 = task.GetInitialLayerU2();
+   if (!layerU1.CheckIsPositive() ||
+       !layerU2.CheckIsPositive())
+      throw std::runtime_error("Initial layer has negative value");
+}
 
 bool SchemeSolver::UpdateIterationInfo(SchemeSolverResult& result) {
    if (mIterationCallback)

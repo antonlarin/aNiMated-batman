@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QComboBox>
 #include <QLineEdit>
+#include <QAbstractButton>
 
 #include <vector>
 

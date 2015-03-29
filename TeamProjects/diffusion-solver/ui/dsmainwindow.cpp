@@ -60,6 +60,10 @@ DSMainWindow::DSMainWindow(DSWindowManager* manager, QWidget *parent) :
             getManager(), SLOT(showInitialConditionsDialog()));
     connect(ui->layerPairAnalysisAction, SIGNAL(triggered()),
             getManager(), SLOT(showLayerPairAnalysisWindow()));
+    connect(ui->saveInhibitorPlotAction, SIGNAL(triggered()),
+            this, SLOT(saveInhibitorPlot()));
+    connect(ui->saveActivatorPlotAction, SIGNAL(triggered()),
+                    this, SLOT(saveActivatorPlot()));
 
     DSModel* model = getManager()->getModel();
     connect(model, SIGNAL(layerIndexChanged()),
@@ -68,6 +72,8 @@ DSMainWindow::DSMainWindow(DSWindowManager* manager, QWidget *parent) :
             this, SLOT(displayRunResults()));
     connect(model, SIGNAL(resultChanged(const SchemeSolverResult&)),
             this, SLOT(updateModelResult(const SchemeSolverResult&)));
+    connect(model, SIGNAL(solverError(const DSSolverException&)),
+            this, SLOT(modelSolverError(const DSSolverException&)));
 
     connect(ui->explicitSolverRadioButton, SIGNAL(clicked()),
             model, SLOT(selectExplicitSolver()));
@@ -296,6 +302,12 @@ void DSMainWindow::updateModelResult(const SchemeSolverResult& result)
     displayInhibitorLayer(inhibitor);
 }
 
+void DSMainWindow::modelSolverError(const DSSolverException& ex)
+{
+    // TODO: Replace error message to error code
+    QMessageBox::critical(this, "Ошибка", ex.GetSource().what());
+}
+
 /*
  * Private worker methods implementation
  */
@@ -305,11 +317,13 @@ void DSMainWindow::initPlots()
     ui->activatorPlot->xAxis->setLabel("x");
     ui->activatorPlot->yAxis->setLabel("Концентрация активатора");
     ui->activatorPlot->xAxis->setRange(0, 1);
+    ui->activatorPlot->graph(0)->setPen(QPen(QColor(0, 255, 0)));
 
     ui->inhibitorPlot->addGraph();
     ui->inhibitorPlot->xAxis->setLabel("x");
     ui->inhibitorPlot->yAxis->setLabel("Концентрация ингибитора");
     ui->inhibitorPlot->xAxis->setRange(0, 1);
+    ui->inhibitorPlot->graph(0)->setPen(QPen(QColor(255, 0, 0)));
 
     // Scale y axes on plots with some junk values
     resetPlotsScale(0, 1, 0, 1);
@@ -368,4 +382,42 @@ void DSMainWindow::displayInhibitorLayer(const SchemeLayer& layer)
 
     ui->inhibitorPlot->graph(0)->setData(xs, ys);
     ui->inhibitorPlot->replot();
+}
+void DSMainWindow::saveActivatorPlot()
+{
+    QString filePath = QFileDialog::getSaveFileName(0, "Сохранить график концентрации активатора", "", "*.png");
+
+    if(filePath.indexOf(".png") < 0 && !filePath.isEmpty())
+        filePath += ".png";
+
+    if(!filePath.isEmpty())
+    {
+        QFile file(filePath);
+        if (!file.open(QIODevice::WriteOnly|QFile::WriteOnly))
+        {
+            QMessageBox::warning(0,"Ошибка сохранения файла",
+                       QObject::tr( "\n Невозможно создать файл"));
+        }
+        else
+            ui->activatorPlot->savePng(filePath, 640, 480, 1.0, -1);
+    }
+}
+void DSMainWindow::saveInhibitorPlot()
+{
+    QString filePath = QFileDialog::getSaveFileName(0, "Сохранить график концентрации ингибитора", "", "*.png");
+
+    if(filePath.indexOf(".png") < 0 && !filePath.isEmpty())
+        filePath += ".png";
+
+    if(!filePath.isEmpty())
+    {
+        QFile file(filePath);
+        if (!file.open(QIODevice::WriteOnly|QFile::WriteOnly))
+        {
+            QMessageBox::warning(0,"Ошибка сохранения файла",
+                       QObject::tr( "\n Невозможно создать файл"));
+        }
+        else
+            ui->inhibitorPlot->savePng(filePath, 640, 480, 1.0, -1);
+    }
 }

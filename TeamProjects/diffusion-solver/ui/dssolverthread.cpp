@@ -26,6 +26,9 @@ void DSSolverThread::Initialize()
     {
         qRegisterMetaType<SchemeSolverResult>();
         qRegisterMetaType<SchemeSolverResult>("SchemeSolverResult&");
+
+        qRegisterMetaType<DSSolverException>();
+        qRegisterMetaType<DSSolverException>("DSSolverException&");
     });
 
     connect(this, SIGNAL(finished()),
@@ -60,7 +63,16 @@ void DSSolverThread::run()
     mtx.unlock();
 
     updateIterationInfoPoint = high_resolution_clock::now();
-    result = solver->Solve();
+
+    try
+    {
+        result = solver->Solve();
+    }
+    catch (std::exception ex)
+    {
+        DSSolverException qex(ex);
+        emit solverError(qex);
+    }
 }
 
 void DSSolverThread::threadFinished()
