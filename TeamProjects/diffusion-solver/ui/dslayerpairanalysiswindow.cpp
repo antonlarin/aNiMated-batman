@@ -154,11 +154,11 @@ void DSLayerPairAnalysisWindow::updatePlots(const SchemeLayer& activatorLayer1,
         activator1Values.push_back(activatorLayer1.Get(i));
         activator2Values.push_back(activatorLayer2.Get(i));
         activatorDifferenceValues.push_back(
-                    abs(activatorLayer1.Get(i) - activatorLayer2.Get(i)));
+                    fabs(activatorLayer1.Get(i) - activatorLayer2.Get(i)));
         inhibitor1Values.push_back(inhibitorLayer1.Get(i));
         inhibitor2Values.push_back(inhibitorLayer2.Get(i));
         inhibitorDifferenceValues.push_back(
-                    abs(inhibitorLayer1.Get(i) - inhibitorLayer2.Get(i)));
+                    fabs(inhibitorLayer1.Get(i) - inhibitorLayer2.Get(i)));
     }
 
     ui->activatorsPlot->graph(0)->setData(xs, activator1Values);
