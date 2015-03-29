@@ -696,7 +696,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="parametersMenu">
@@ -780,6 +780,30 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>lambda1Edit</tabstop>
+  <tabstop>lambda2Edit</tabstop>
+  <tabstop>kEdit</tabstop>
+  <tabstop>cEdit</tabstop>
+  <tabstop>rhoEdit</tabstop>
+  <tabstop>nuEdit</tabstop>
+  <tabstop>gammaEdit</tabstop>
+  <tabstop>gridDimEdit</tabstop>
+  <tabstop>timeStepEdit</tabstop>
+  <tabstop>activatorAccuracyEdit</tabstop>
+  <tabstop>inhibitorAccuracyEdit</tabstop>
+  <tabstop>iterationsEdit</tabstop>
+  <tabstop>explicitSolverRadioButton</tabstop>
+  <tabstop>implicitSolverRadioButton</tabstop>
+  <tabstop>finiteRunButton</tabstop>
+  <tabstop>stabilityRunButton</tabstop>
+  <tabstop>firstLayerButton</tabstop>
+  <tabstop>prevLayerButton</tabstop>
+  <tabstop>currentLayerEdit</tabstop>
+  <tabstop>layerStepEdit</tabstop>
+  <tabstop>nextLayerButton</tabstop>
+  <tabstop>lastLayerButton</tabstop>
+ </tabstops>
  <resources>
   <include location="resources.qrc"/>
  </resources>
