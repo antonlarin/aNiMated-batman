@@ -39,6 +39,10 @@ SchemeSolverResult SchemeSolver::Solve() {
    return SolveOverride(task);
 }
 
+SchemeSolverResult SchemeSolver::ContinueSolving() {
+   return ContinueSolvingOverride(mCurrentTask->Clone());  
+}
+
 
 void SchemeSolver::CheckParametersOverride(SchemeTask task) { 
    SchemeLayer layerU1 = task.GetInitialLayerU1();

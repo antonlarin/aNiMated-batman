@@ -35,6 +35,7 @@ namespace diffusioncore {
 
       double mMaxDiffU1;
       double mMaxDiffU2;
+      int mPerformedIterationsCount;
 
    public:
       SchemeSolverCommon();
@@ -51,8 +52,12 @@ namespace diffusioncore {
       virtual void PrepareSolverOverride(const SchemeTask& task);
       virtual void CleanupSolverOverride(const SchemeTask& task);
       virtual SchemeSolverResult SolveOverride(SchemeTask task);
+      virtual SchemeSolverResult ContinueSolvingOverride(SchemeTask task);
 
    private:
+      void SolvingLoop(const SchemeTask& task);
+      SchemeSolverResult ConstructSolvingResult(const SchemeTask& task);
+
       void PrepareSolver(const SchemeTask& task);
       void CleanupSolver(const SchemeTask& task);
 
