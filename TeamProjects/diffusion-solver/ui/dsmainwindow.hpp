@@ -42,6 +42,7 @@ public slots:
 
     void startFiniteRun();
     void startStabilityRun();
+    void continueRun();
 
     void showSelectedLayer();
     void displayRunResults();

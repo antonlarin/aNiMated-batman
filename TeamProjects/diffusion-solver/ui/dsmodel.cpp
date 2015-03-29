@@ -139,6 +139,12 @@ void DSModel::StartRun(SchemeSolverMode mode)
     solverThread.start();
 }
 
+void DSModel::ContinueRun()
+{
+    solverThread.SetContinuationFlag(true);
+    solverThread.start();
+}
+
 const SchemeLayer DSModel::GetActivatorLayer(int index)
 {
     SchemeSolution solutionActivator = result->GetSolutionU1();

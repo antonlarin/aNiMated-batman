@@ -53,6 +53,8 @@ DSMainWindow::DSMainWindow(DSWindowManager* manager, QWidget *parent) :
             this, SLOT(startFiniteRun()));
     connect(ui->stabilityRunButton, SIGNAL(clicked()),
             this, SLOT(startStabilityRun()));
+    connect(ui->continueRunButton, SIGNAL(clicked()),
+            this, SLOT(continueRun()));
 
     connect(ui->quitAction, SIGNAL(triggered()),
             this, SLOT(close()));
@@ -220,6 +222,12 @@ void DSMainWindow::startStabilityRun()
         QMessageBox::critical(this, QString("Неверные параметры"),
                               QString(e.what()));
     }
+}
+
+void DSMainWindow::continueRun()
+{
+    getManager()->getModel()->ContinueRun();
+    getManager()->showSolvingProgressDialog();
 }
 
 void DSMainWindow::goToPrevLayer()

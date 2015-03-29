@@ -22,6 +22,7 @@ DSSolverThread::~DSSolverThread()
 void DSSolverThread::Initialize()
 {
     solverNeedStop = false;
+    isContinuationRun = false;
     std::call_once(registerMetaTypeFlag, []() -> void
     {
         qRegisterMetaType<SchemeSolverResult>();
@@ -53,6 +54,11 @@ void DSSolverThread::UpdateSolver(std::shared_ptr<SchemeSolver> slvr)
     solver->SetIterationCallback(iterCallback);
 }
 
+void DSSolverThread::SetContinuationFlag(bool isContinuation)
+{
+    isContinuationRun = isContinuation;
+}
+
 void DSSolverThread::run()
 {
     if (!solver)
@@ -66,7 +72,14 @@ void DSSolverThread::run()
 
     try
     {
-        result = solver->Solve();
+        if (!isContinuationRun)
+        {
+            result = solver->Solve();
+        }
+        else
+        {
+            result = solver->ContinueSolving();
+        }
     }
     catch (std::exception ex)
     {

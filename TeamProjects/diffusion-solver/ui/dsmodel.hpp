@@ -32,6 +32,7 @@ public:
     void AcquireResult(SchemeSolverResult& newResult);
 
     void StartRun(SchemeSolverMode mode);
+    void ContinueRun();
 
     const SchemeLayer GetActivatorLayer(int index);
     const SchemeLayer GetInhibitorLayer(int index);
