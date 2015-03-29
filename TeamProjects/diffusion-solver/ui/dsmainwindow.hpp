@@ -65,6 +65,8 @@ private:
     void displayActivatorLayer(const SchemeLayer& layer);
     void displayInhibitorLayer(const SchemeLayer& layer);
 
+    void showWarningMessages();
+
     Ui::DSMainWindow *ui;
 };
 

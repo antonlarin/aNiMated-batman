@@ -200,6 +200,7 @@ void DSMainWindow::startFiniteRun()
 {
     try
     {
+        this->showWarningMessages();
         getManager()->getModel()->StartRun(SchemeSolverMode::AllLayers);
         getManager()->showSolvingProgressDialog();
     }
@@ -214,6 +215,7 @@ void DSMainWindow::startStabilityRun()
 {
     try
     {
+        showWarningMessages();
         getManager()->getModel()->StartRun(SchemeSolverMode::StableLayer);
         getManager()->showSolvingProgressDialog();
     }
@@ -428,5 +430,19 @@ void DSMainWindow::saveInhibitorPlot()
         }
         else
             ui->inhibitorPlot->savePng(filePath, 640, 480, 1.0, -1);
+    }
+}
+void DSMainWindow::showWarningMessages()
+{
+    if( ui->explicitSolverRadioButton->isChecked())
+    {
+        double lambda1 = getManager()->getModel()->AccessParameters()->GetLambda1();
+        double lambda2 = getManager()->getModel()->AccessParameters()->GetLambda2();
+        double h = 1.0/getManager()->getModel()->AccessParameters()->GetGridDimension();
+        double k = getManager()->getModel()->AccessParameters()->GetTimeStep();
+
+        if(k>h*h/std::max(lambda1, lambda2)/2)
+            QMessageBox::critical(this, QString("Неверные параметры"),
+                                  QString("При выбранных параметрах явная схема неустойчива"));
     }
 }
