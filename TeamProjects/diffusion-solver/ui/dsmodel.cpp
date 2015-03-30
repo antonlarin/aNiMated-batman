@@ -136,6 +136,7 @@ void DSModel::StartRun(SchemeSolverMode mode)
     }
 
     currentLayerIndex = 0;
+    solverThread.SetContinuationFlag(false);
     solverThread.start();
 }
 
@@ -209,6 +210,11 @@ double DSModel::GetAchievedInhibitorAccuracy() const
     return stat.GetStopAccuracyU2();
 }
 
+bool DSModel::IsContinuationAvailable() const
+{
+    return continuationAvailable;
+}
+
 int DSModel::GetLayerCount() const
 {
     return result->GetLayersCount();
@@ -244,6 +250,7 @@ void DSModel::selectExplicitSolver()
 void DSModel::solverThreadFinished(const SchemeSolverResult& res)
 {
     result.reset(new SchemeSolverResult(res));
+    continuationAvailable = result->IsContinuationAvailable();
     emit resultAcquired();
 }
 

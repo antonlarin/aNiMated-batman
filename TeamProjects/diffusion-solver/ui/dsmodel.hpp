@@ -49,6 +49,7 @@ public:
     double GetAchievedActivatorAccuracy() const;
     double GetAchievedInhibitorAccuracy() const;
 
+    bool IsContinuationAvailable() const;
 
 signals:
     void layerIndexChanged();
@@ -78,6 +79,7 @@ private:
     shared_ptr<SchemeSolver> solver;
     unique_ptr<SchemeSolverResult> result;
 
+    bool continuationAvailable;
     int currentLayerIndex;
     int layerStep;
 

@@ -292,6 +292,7 @@ void DSMainWindow::displayRunResults()
                     model->GetInhibitorMinimum(), model->GetInhibitorMaximum());
     showSelectedLayer();
     ui->layerPairAnalysisAction->setEnabled(true);
+    ui->continueRunButton->setEnabled(model->IsContinuationAvailable());
 }
 
 void DSMainWindow::updateModelResult(const SchemeSolverResult& result)

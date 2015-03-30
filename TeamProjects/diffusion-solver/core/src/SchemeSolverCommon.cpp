@@ -26,7 +26,7 @@ bool SchemeSolverCommon::UpdateCurrentSolution(int itersCount,
    SchemeSolution solutionU1 = mBuilderU1.Build(mGridU1);
    SchemeSolution solutionU2 = mBuilderU2.Build(mGridU2);
    SchemeStatistic statistic(itersCount, mMaxDiffU1, mMaxDiffU2);
-   SchemeSolverResult result(solutionU1, solutionU2, statistic, task);
+   SchemeSolverResult result(solutionU1, solutionU2, statistic, task, true);
    
    if (!UpdateIterationInfo(result))
       return true;
@@ -105,7 +105,20 @@ SchemeSolverResult SchemeSolverCommon::ConstructSolvingResult(
    SchemeSolution solutionU1 = mBuilderU1.Build(mGridU1);
    SchemeSolution solutionU2 = mBuilderU2.Build(mGridU2);
    SchemeStatistic statistic(mPerformedIterationsCount, mMaxDiffU1, mMaxDiffU2);
-   return SchemeSolverResult(solutionU1, solutionU2, statistic, task);
+   
+   int maxIterations = task.GetMaximumIterations();
+   bool isContinuationAvailable;
+   if (maxIterations > mPerformedIterationsCount)
+   {
+      isContinuationAvailable = true;
+   }
+   else
+   {
+      isContinuationAvailable = false;
+   }
+
+   return SchemeSolverResult(solutionU1, solutionU2, statistic, task,
+                             isContinuationAvailable);
 }
 
 void SchemeSolverCommon::PrepareSolver(const SchemeTask& task) { 
