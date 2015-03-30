@@ -5,6 +5,7 @@
 #include "dssolvingprogressdialog.hpp"
 #include "dslayerpairanalysiswindow.hpp"
 #include "dssummarydialog.hpp"
+#include "dsequationhelpdialog.hpp"
 
 DSWindowManager::DSWindowManager(DSModel* model) :
     QObject(),
@@ -42,7 +43,13 @@ void DSWindowManager::showSummaryDialog()
     summaryDialog->showWindow();
 }
 
+void DSWindowManager::showEquationHelpDialog()
+{
+    if (!equationHelpDialog)
+        equationHelpDialog = std::make_unique<DSEquationHelpDialog>(this);
 
+    equationHelpDialog->showWindow();
+}
 
 /*
  * Other methods implementation

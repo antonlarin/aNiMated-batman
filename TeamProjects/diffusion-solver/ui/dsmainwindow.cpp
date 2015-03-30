@@ -55,6 +55,8 @@ DSMainWindow::DSMainWindow(DSWindowManager* manager, QWidget *parent) :
             this, SLOT(startStabilityRun()));
     connect(ui->continueRunButton, SIGNAL(clicked()),
             this, SLOT(continueRun()));
+    connect(ui->lastResultsButton, SIGNAL(clicked()),
+            getManager(), SLOT(showSummaryDialog()));
 
     connect(ui->quitAction, SIGNAL(triggered()),
             this, SLOT(close()));
@@ -65,9 +67,9 @@ DSMainWindow::DSMainWindow(DSWindowManager* manager, QWidget *parent) :
     connect(ui->saveInhibitorPlotAction, SIGNAL(triggered()),
             this, SLOT(saveInhibitorPlot()));
     connect(ui->saveActivatorPlotAction, SIGNAL(triggered()),
-                    this, SLOT(saveActivatorPlot()));
+            this, SLOT(saveActivatorPlot()));
     connect(ui->showEquationsHelpAction, SIGNAL(triggered()),
-                    this,SLOT(showEquationsHelpWindow()));
+            getManager(), SLOT(showEquationHelpDialog()));
 
     DSModel* model = getManager()->getModel();
     connect(model, SIGNAL(layerIndexChanged()),
@@ -234,6 +236,10 @@ void DSMainWindow::continueRun()
     getManager()->showSolvingProgressDialog();
 }
 
+void DSMainWindow::showLastRunResults() {
+
+}
+
 void DSMainWindow::goToPrevLayer()
 {
     DSModel* model = getManager()->getModel();
@@ -296,6 +302,7 @@ void DSMainWindow::displayRunResults()
                     model->GetInhibitorMinimum(), model->GetInhibitorMaximum());
     showSelectedLayer();
     ui->layerPairAnalysisAction->setEnabled(true);
+    ui->lastResultsButton->setEnabled(true);
     ui->continueRunButton->setEnabled(model->IsContinuationAvailable());
 }
 
@@ -449,9 +456,7 @@ void DSMainWindow::showWarningMessages()
     }
 }
 
-void DSMainWindow::showEquationsHelpWindow() {
-    if (!equationHelpDialog)
-        equationHelpDialog.reset(new DSEquationHelpDialog(this));
-
-    equationHelpDialog->show();
+void DSMainWindow::showEquationsHelpWindow()
+{
+    getManager()->showEquationHelpDialog();
 }

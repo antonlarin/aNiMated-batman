@@ -1,7 +1,9 @@
 #include "dsequationhelpdialog.hpp"
 #include "ui_dsequationhelpdialog.h"
 
-DSEquationHelpDialog::DSEquationHelpDialog(QWidget *parent) :
+DSEquationHelpDialog::DSEquationHelpDialog(DSWindowManager* manager,
+                                           QWidget* parent) :
+    IDSWindow(manager),
     QDialog(parent),
     ui(new Ui::DSEquationHelpDialog)
 {
@@ -11,4 +13,10 @@ DSEquationHelpDialog::DSEquationHelpDialog(QWidget *parent) :
 DSEquationHelpDialog::~DSEquationHelpDialog()
 {
     delete ui;
+}
+
+
+void DSEquationHelpDialog::showWindow()
+{
+    show();
 }

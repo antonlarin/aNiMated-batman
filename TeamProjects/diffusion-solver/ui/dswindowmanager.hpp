@@ -24,6 +24,7 @@ public slots:
     void showInitialConditionsDialog();
     void showLayerPairAnalysisWindow();
     void showSummaryDialog();
+    void showEquationHelpDialog();
 
 private:
     DSModel* model;
@@ -33,6 +34,7 @@ private:
     unique_ptr<IDSWindow> solvingProgressDialog;
     unique_ptr<IDSWindow> layerPairAnalysisWindow;
     unique_ptr<IDSWindow> summaryDialog;
+    unique_ptr<IDSWindow> equationHelpDialog;
 };
 
 #endif // DSWINDOWMANAGER_H
