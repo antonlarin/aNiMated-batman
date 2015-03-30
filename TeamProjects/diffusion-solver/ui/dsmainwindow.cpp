@@ -464,8 +464,3 @@ void DSMainWindow::showWarningMessages()
                                   QString("При выбранных параметрах явная схема неустойчива"));
     }
 }
-
-void DSMainWindow::showEquationsHelpWindow()
-{
-    getManager()->showEquationHelpDialog();
-}
