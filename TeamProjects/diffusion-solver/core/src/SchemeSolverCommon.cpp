@@ -52,7 +52,10 @@ SchemeSolverResult SchemeSolverCommon::SolveOverride(SchemeTask task) {
 SchemeSolverResult SchemeSolverCommon::ContinueSolvingOverride(SchemeTask task) {
    PrepareSolverOverride(task);
 
+   mGridU1.NextLayer();
+   mGridU2.NextLayer();
    SolvingLoop(task);
+
    SchemeSolverResult result = ConstructSolvingResult(task);
 
    CleanupSolverOverride(task);
