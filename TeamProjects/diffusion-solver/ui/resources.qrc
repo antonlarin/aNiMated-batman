@@ -2,4 +2,18 @@
     <qresource prefix="/icons">
         <file>images/icon.jpg</file>
     </qresource>
+    <qresource prefix="/equations">
+        <file>images/equation-system.png</file>
+        <file>images/c.png</file>
+        <file>images/gamma.png</file>
+        <file>images/k.png</file>
+        <file>images/lambda1.png</file>
+        <file>images/lambda2.png</file>
+        <file>images/nu.png</file>
+        <file>images/rho.png</file>
+        <file>images/t.png</file>
+        <file>images/u1.png</file>
+        <file>images/u2.png</file>
+        <file>images/x.png</file>
+    </qresource>
 </RCC>

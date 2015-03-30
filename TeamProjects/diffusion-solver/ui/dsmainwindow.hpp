@@ -1,9 +1,11 @@
 #ifndef DSMAINWINDOW_HPP
 #define DSMAINWINDOW_HPP
 
+#include <memory>
 #include <QMainWindow>
 
 #include "dswindowmanager.hpp"
+#include "dsequationhelpdialog.hpp"
 
 namespace Ui {
 class DSMainWindow;
@@ -54,6 +56,8 @@ public slots:
 
     void modelSolverError(const DSSolverException&);
 
+    void showEquationsHelpWindow();
+
 private:
     static int maxPlotPointsNumber() { return 400; }
     static double minPlotYRange() { return 1e-4; }
@@ -68,6 +72,7 @@ private:
     void showWarningMessages();
 
     Ui::DSMainWindow *ui;
+    std::unique_ptr<DSEquationHelpDialog> equationHelpDialog;
 };
 
 #endif // DSMAINWINDOW_HPP

@@ -66,6 +66,8 @@ DSMainWindow::DSMainWindow(DSWindowManager* manager, QWidget *parent) :
             this, SLOT(saveInhibitorPlot()));
     connect(ui->saveActivatorPlotAction, SIGNAL(triggered()),
                     this, SLOT(saveActivatorPlot()));
+    connect(ui->showEquationsHelpAction, SIGNAL(triggered()),
+                    this,SLOT(showEquationsHelpWindow()));
 
     DSModel* model = getManager()->getModel();
     connect(model, SIGNAL(layerIndexChanged()),
@@ -445,4 +447,11 @@ void DSMainWindow::showWarningMessages()
             QMessageBox::critical(this, QString("Неверные параметры"),
                                   QString("При выбранных параметрах явная схема неустойчива"));
     }
+}
+
+void DSMainWindow::showEquationsHelpWindow() {
+    if (!equationHelpDialog)
+        equationHelpDialog.reset(new DSEquationHelpDialog(this));
+
+    equationHelpDialog->show();
 }
