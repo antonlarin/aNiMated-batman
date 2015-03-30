@@ -4,28 +4,37 @@
 
 using namespace std::placeholders;
 
-DSSolverThread::DSSolverThread(std::shared_ptr<SchemeSolver> solver):
-    solverNeedStop(false),
-    solver(solver)
+DSSolverThread::DSSolverThread()
 {
-    std::call_once(registerMetaTypeFlag, []() -> void
-    {
-        qRegisterMetaType<SchemeSolverResult>();
-        qRegisterMetaType<SchemeSolverResult>("SchemeSolverResult&");
-    });
+    Initialize();
+}
 
-    auto iterMethod = &DSSolverThread::UpdateCurrentSolverResult;
-    auto iterCallback = std::bind(iterMethod, this, _1);
-    solver->RegisterIterationCallback(iterCallback);
-
-    connect(this, SIGNAL(finished()),
-            this, SLOT(threadFinished()));
+DSSolverThread::DSSolverThread(std::shared_ptr<SchemeSolver> solver)
+{
+    Initialize();
+    UpdateSolver(solver);
 }
 
 DSSolverThread::~DSSolverThread()
 {
 }
 
+void DSSolverThread::Initialize()
+{
+    solverNeedStop = false;
+    isContinuationRun = false;
+    std::call_once(registerMetaTypeFlag, []() -> void
+    {
+        qRegisterMetaType<SchemeSolverResult>();
+        qRegisterMetaType<SchemeSolverResult>("SchemeSolverResult&");
+
+        qRegisterMetaType<DSSolverException>();
+        qRegisterMetaType<DSSolverException>("DSSolverException&");
+    });
+
+    connect(this, SIGNAL(finished()),
+            this, SLOT(threadFinished()));
+}
 
 void DSSolverThread::StopSolver()
 {
@@ -34,14 +43,49 @@ void DSSolverThread::StopSolver()
     mtx.unlock();
 }
 
+void DSSolverThread::UpdateSolver(std::shared_ptr<SchemeSolver> slvr)
+{
+    if (isRunning())
+        throw std::runtime_error("Solver thread is running");
+
+    solver = slvr;
+    auto iterMethod = &DSSolverThread::UpdateCurrentSolverResult;
+    auto iterCallback = std::bind(iterMethod, this, _1);
+    solver->SetIterationCallback(iterCallback);
+}
+
+void DSSolverThread::SetContinuationFlag(bool isContinuation)
+{
+    isContinuationRun = isContinuation;
+}
+
 void DSSolverThread::run()
 {
+    if (!solver)
+        throw std::runtime_error("Solver is not set");
+
     mtx.lock();
     solverNeedStop = false;
     mtx.unlock();
 
     updateIterationInfoPoint = high_resolution_clock::now();
-    result = solver->Solve();
+
+    try
+    {
+        if (!isContinuationRun)
+        {
+            result = solver->Solve();
+        }
+        else
+        {
+            result = solver->ContinueSolving();
+        }
+    }
+    catch (std::exception ex)
+    {
+        DSSolverException qex(ex);
+        emit solverError(qex);
+    }
 }
 
 void DSSolverThread::threadFinished()

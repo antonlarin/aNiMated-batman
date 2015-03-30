@@ -116,8 +116,27 @@ void DSInitConditionsDialog::acceptInitialConditions()
     std::vector<double> inhibitorCoeffs = getCurrentInhibitorCoeffs();
 
     DSModel* model = getManager()->getModel();
-    model->AccessParameters()->SetActivatorInitialConditions(activatorCoeffs);
-    model->AccessParameters()->SetInhibitorInitialConditions(inhibitorCoeffs);
+    QString errMessage;
+    bool hasErr = false;
+    if (!model->AccessParameters()->SetActivatorInitialConditions(activatorCoeffs))
+    {
+        hasErr = true;
+        errMessage += "Начальный слой активатора должен быть положительным "
+                      "на отрезке [0, 1].\n";
+    }
+
+    if (!model->AccessParameters()->SetInhibitorInitialConditions(inhibitorCoeffs))
+    {
+        hasErr = true;
+        errMessage += "Начальный слой ингибитора должен быть положительным "
+                      "на отрезке [0, 1].\n";
+    }
+
+    if (hasErr)
+    {
+        errMessage += "Необходимо изменить коэффициенты.";
+        QMessageBox::information(this, "Некорректные параметры", errMessage);
+    }
 }
 
 void DSInitConditionsDialog::addHarmonic(int index)

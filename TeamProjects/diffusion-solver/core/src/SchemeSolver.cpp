@@ -5,7 +5,7 @@ using namespace diffusioncore;
 
 SchemeSolver::SchemeSolver() {
    mSolverMode = SchemeSolverMode::StableLayer;
-   mTask = std::make_shared<SchemeTask>();
+   mCurrentTask = std::make_shared<SchemeTask>();
 }
 
 SchemeSolver::~SchemeSolver() { }
@@ -18,28 +18,39 @@ SchemeSolverMode SchemeSolver::GetSolverMode() const {
    return mSolverMode;
 }
 
-
-void SchemeSolver::RegisterTask(std::shared_ptr<SchemeTask> task) {
-   mTask = task;
+void SchemeSolver::SetCurrentTask(std::shared_ptr<SchemeTask> task) {
+   mCurrentTask = task;
+}
+std::shared_ptr<SchemeTask> SchemeSolver::GetCurrentTask() const {
+   return mCurrentTask;
 }
 
-void SchemeSolver::RegisterIterationCallback(
-   SolverIterationCallback callback) {
+void SchemeSolver::SetIterationCallback(SolverIterationCallback callback) {
    mIterationCallback = callback;
 }
+SolverIterationCallback SchemeSolver::GetIterationCallback() const {
+   return mIterationCallback;
+} 
 
 
 SchemeSolverResult SchemeSolver::Solve() {  
-   if (!mTask)
-      throw std::runtime_error("Task is not registred");
-
-   auto task = mTask->Clone();
+   SchemeTask task = mCurrentTask->Clone();
    CheckParameters(task);
    return SolveOverride(task);
 }
 
+SchemeSolverResult SchemeSolver::ContinueSolving() {
+   return ContinueSolvingOverride(mCurrentTask->Clone());  
+}
 
-void SchemeSolver::CheckParametersOverride(SchemeTask task) { }
+
+void SchemeSolver::CheckParametersOverride(SchemeTask task) { 
+   SchemeLayer layerU1 = task.GetInitialLayerU1();
+   SchemeLayer layerU2 = task.GetInitialLayerU2();
+   if (!layerU1.CheckIsPositive() ||
+       !layerU2.CheckIsPositive())
+      throw std::runtime_error("Initial layer has negative value");
+}
 
 bool SchemeSolver::UpdateIterationInfo(SchemeSolverResult& result) {
    if (mIterationCallback)

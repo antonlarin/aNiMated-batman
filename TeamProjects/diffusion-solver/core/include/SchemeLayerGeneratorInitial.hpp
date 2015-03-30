@@ -20,6 +20,7 @@ namespace diffusioncore {
       void SetIntervalsCount(int intervalsCount);
 
       virtual SchemeLayer Generate();
+      virtual bool CheckParameters();
 
    private:
       double GetValue(double x);

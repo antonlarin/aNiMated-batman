@@ -21,7 +21,7 @@ void SetSolverDefaultParameters(SchemeSolver& solver, int maxIter) {
    SchemeLayer layer(std::vector<double>(200, 0));
    task->SetInitialLayers(layer, layer);
 
-   solver.RegisterTask(task);
+   solver.SetCurrentTask(task);
    solver.SetSolverMode(SchemeSolverMode::AllLayers);
 }
 
@@ -38,7 +38,7 @@ TEST(SchemeSolverExplicit_IterationInfo, IterationsCounting) {
          return true;
       };
 
-   solver.RegisterIterationCallback(iterCallback);
+   solver.SetIterationCallback(iterCallback);
    solver.Solve();
 
    ASSERT_EQ(targetItersCount, iterCounter);

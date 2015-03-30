@@ -34,6 +34,8 @@ namespace diffusioncore {
       double GetMinValue() const;
       double GetMaxValue() const;
 
+      bool CheckIsPositive() const;
+
    private: 
       void Initialize(const double* v, int length);
 

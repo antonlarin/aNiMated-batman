@@ -32,7 +32,9 @@ public:
     void AcquireResult(SchemeSolverResult& newResult);
 
     void StartRun(SchemeSolverMode mode);
+    void ContinueRun();
 
+    double GetCurrentLayerTime() const;
     const SchemeLayer GetActivatorLayer(int index);
     const SchemeLayer GetInhibitorLayer(int index);
 
@@ -48,12 +50,14 @@ public:
     double GetAchievedActivatorAccuracy() const;
     double GetAchievedInhibitorAccuracy() const;
 
+    bool IsContinuationAvailable() const;
 
 signals:
     void layerIndexChanged();
     void resultAcquired();
     void resultChanged(const SchemeSolverResult&);
     void comparedLayersChanged();
+    void solverError(const DSSolverException&);
 
 public slots:
     void stopSolver();
@@ -63,18 +67,20 @@ public slots:
 private slots:
     void solverThreadFinished(const SchemeSolverResult&);
     void solverThreadResultChanged(const SchemeSolverResult&);
+    void solverThreadHandleError(const DSSolverException&);
 
 private:
     void UpdateSolver(SchemeSolver* solver);
 
 private:
     DSParameterSet parameters;
+    DSSolverThread solverThread;
 
     shared_ptr<SchemeTask> task;
     shared_ptr<SchemeSolver> solver;
     unique_ptr<SchemeSolverResult> result;
-    unique_ptr<DSSolverThread> solverThread;
 
+    bool continuationAvailable;
     int currentLayerIndex;
     int layerStep;
 

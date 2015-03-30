@@ -14,6 +14,15 @@ DSModel::DSModel() :
     firstComparedLayerIndex(0),
     secondComparedLayerIndex(0)
 {
+    connect(&solverThread, SIGNAL(solverFinished(SchemeSolverResult&)),
+            this, SLOT(solverThreadFinished(SchemeSolverResult&)));
+
+    connect(&solverThread, SIGNAL(resultChanged(const SchemeSolverResult&)),
+            this, SLOT(solverThreadResultChanged(const SchemeSolverResult&)));
+
+    connect(&solverThread, SIGNAL(solverError(const DSSolverException&)),
+            this, SLOT(solverThreadHandleError(const DSSolverException&)));
+
     selectExplicitSolver();
 }
 
@@ -127,7 +136,20 @@ void DSModel::StartRun(SchemeSolverMode mode)
     }
 
     currentLayerIndex = 0;
-    solverThread->start();
+    solverThread.SetContinuationFlag(false);
+    solverThread.start();
+}
+
+void DSModel::ContinueRun()
+{
+    solverThread.SetContinuationFlag(true);
+    solverThread.start();
+}
+
+double DSModel::GetCurrentLayerTime() const
+{
+    double timeStep = parameters.GetTimeStep();
+    return currentLayerIndex * timeStep;
 }
 
 const SchemeLayer DSModel::GetActivatorLayer(int index)
@@ -176,6 +198,29 @@ double DSModel::GetInhibitorMinimum() const
     return solutionInhibitor.GetMinimum();
 }
 
+int DSModel::GetPerformedIterationsCount() const
+{
+    SchemeStatistic stat = result->GetStatistic();
+    return stat.GetIterationsCount();
+}
+
+double DSModel::GetAchievedActivatorAccuracy() const
+{
+    SchemeStatistic stat = result->GetStatistic();
+    return stat.GetStopAccuracyU1();
+}
+
+double DSModel::GetAchievedInhibitorAccuracy() const
+{
+    SchemeStatistic stat = result->GetStatistic();
+    return stat.GetStopAccuracyU2();
+}
+
+bool DSModel::IsContinuationAvailable() const
+{
+    return continuationAvailable;
+}
+
 int DSModel::GetLayerCount() const
 {
     return result->GetLayersCount();
@@ -184,15 +229,9 @@ int DSModel::GetLayerCount() const
 
 void DSModel::UpdateSolver(SchemeSolver* slvr)
 {
-    slvr->RegisterTask(task);
     solver.reset(slvr);
-    solverThread.reset(new DSSolverThread(solver));
-
-    connect(solverThread.get(), SIGNAL(solverFinished(SchemeSolverResult&)),
-            this, SLOT(solverThreadFinished(SchemeSolverResult&)));
-
-    connect(solverThread.get(), SIGNAL(resultChanged(const SchemeSolverResult&)),
-            this, SLOT(solverThreadResultChanged(const SchemeSolverResult&)));
+    solver->SetCurrentTask(task);
+    solverThread.UpdateSolver(solver);
 }
 
 /*
@@ -200,7 +239,7 @@ void DSModel::UpdateSolver(SchemeSolver* slvr)
  */
 void DSModel::stopSolver()
 {
-    solverThread->StopSolver();
+    solverThread.StopSolver();
 }
 
 void DSModel::selectImplicitSolver()
@@ -217,6 +256,7 @@ void DSModel::selectExplicitSolver()
 void DSModel::solverThreadFinished(const SchemeSolverResult& res)
 {
     result.reset(new SchemeSolverResult(res));
+    continuationAvailable = result->IsContinuationAvailable();
     emit resultAcquired();
 }
 
@@ -225,3 +265,7 @@ void DSModel::solverThreadResultChanged(const SchemeSolverResult& res)
     emit resultChanged(res);
 }
 
+void DSModel::solverThreadHandleError(const DSSolverException& ex)
+{
+    emit solverError(ex);
+}

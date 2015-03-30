@@ -16,7 +16,7 @@ namespace diffusioncore {
    class EXPORT_API SchemeSolver {
    private:
       SchemeSolverMode mSolverMode;
-      std::shared_ptr<SchemeTask> mTask;
+      std::shared_ptr<SchemeTask> mCurrentTask;
       SolverIterationCallback mIterationCallback;
 
    public:
@@ -24,16 +24,19 @@ namespace diffusioncore {
       virtual ~SchemeSolver();
 
       PROPERTY(SchemeSolverMode, SolverMode);
+      PROPERTY(std::shared_ptr<SchemeTask>, CurrentTask);
+      PROPERTY(SolverIterationCallback, IterationCallback);
 
-      void RegisterTask(std::shared_ptr<SchemeTask> task);
       void RegisterIterationCallback(SolverIterationCallback callback);
 
       SchemeSolverResult Solve();
+      SchemeSolverResult ContinueSolving();
 
    protected:
       bool UpdateIterationInfo(SchemeSolverResult& result);
 
       virtual SchemeSolverResult SolveOverride(SchemeTask task) = 0;
+      virtual SchemeSolverResult ContinueSolvingOverride(SchemeTask task) = 0;
       virtual void CheckParametersOverride(SchemeTask task);
 
    private:

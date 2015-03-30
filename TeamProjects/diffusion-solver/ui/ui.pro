@@ -23,7 +23,10 @@ SOURCES += main.cpp\
     dslayerpairanalysiswindow.cpp \
     dsparameterset.cpp \
     dswindowmanager.cpp \
-    idswindow.cpp
+    idswindow.cpp \
+    dssummarydialog.cpp \
+    dssolverexception.cpp \
+    dsequationhelpdialog.cpp
 
 HEADERS  += dsmainwindow.hpp \
     dsmodel.hpp \
@@ -34,12 +37,17 @@ HEADERS  += dsmainwindow.hpp \
     dslayerpairanalysiswindow.hpp \
     dsparameterset.hpp \
     dswindowmanager.hpp \
-    idswindow.hpp
+    idswindow.hpp \
+    dssummarydialog.hpp \
+    dssolverexception.hpp \
+    dsequationhelpdialog.hpp
 
 FORMS    += dsmainwindow.ui \
     dsinitconditionsdialog.ui \
     dssolvingprogressdialog.ui \
-    dslayerpairanalysiswindow.ui
+    dslayerpairanalysiswindow.ui \
+    dssummarydialog.ui \
+    dsequationhelpdialog.ui
 
 win32: LIBS += -L$$PWD/../core/bin/ -ldiffusion-solver
 else:unix:!macx: LIBS += -L$$PWD/../core-build/ \

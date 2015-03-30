@@ -18,13 +18,15 @@ namespace diffusioncore {
       int mLayersCount;
       int mIntervalsCount;
       bool mIsInitialized;
+      bool mIsContinuationAvailable;
 
    public:
       SchemeSolverResult();
       SchemeSolverResult(const SchemeSolution& solutionU1,
                          const SchemeSolution& solutionU2,
                          const SchemeStatistic& statistic,
-                         const SchemeTask& task);
+                         const SchemeTask& task,
+                         bool isContinuationAvailable);
       ~SchemeSolverResult();
 
       int GetLayersCount() const;
@@ -34,6 +36,8 @@ namespace diffusioncore {
       SchemeSolution GetSolutionU2() const;
       SchemeStatistic GetStatistic() const;
       SchemeTask GetTask() const;
+
+      bool IsContinuationAvailable() const;
 
    private:
       void CheckIsInitialized() const;

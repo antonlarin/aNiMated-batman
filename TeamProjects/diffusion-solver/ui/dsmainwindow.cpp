@@ -7,10 +7,7 @@
 DSMainWindow::DSMainWindow(DSWindowManager* manager, QWidget *parent) :
     QMainWindow(parent),
     IDSWindow(manager),
-    ui(new Ui::DSMainWindow),
-    activatorPlotMargin(0.0),
-    inhibitorPlotMargin(0.0),
-    plotsNeedScaleReset(false)
+    ui(new Ui::DSMainWindow)
 {
     ui->setupUi(this);
 
@@ -56,6 +53,10 @@ DSMainWindow::DSMainWindow(DSWindowManager* manager, QWidget *parent) :
             this, SLOT(startFiniteRun()));
     connect(ui->stabilityRunButton, SIGNAL(clicked()),
             this, SLOT(startStabilityRun()));
+    connect(ui->continueRunButton, SIGNAL(clicked()),
+            this, SLOT(continueRun()));
+    connect(ui->lastResultsButton, SIGNAL(clicked()),
+            getManager(), SLOT(showSummaryDialog()));
 
     connect(ui->quitAction, SIGNAL(triggered()),
             this, SLOT(close()));
@@ -63,6 +64,12 @@ DSMainWindow::DSMainWindow(DSWindowManager* manager, QWidget *parent) :
             getManager(), SLOT(showInitialConditionsDialog()));
     connect(ui->layerPairAnalysisAction, SIGNAL(triggered()),
             getManager(), SLOT(showLayerPairAnalysisWindow()));
+    connect(ui->saveInhibitorPlotAction, SIGNAL(triggered()),
+            this, SLOT(saveInhibitorPlot()));
+    connect(ui->saveActivatorPlotAction, SIGNAL(triggered()),
+            this, SLOT(saveActivatorPlot()));
+    connect(ui->showEquationsHelpAction, SIGNAL(triggered()),
+            getManager(), SLOT(showEquationHelpDialog()));
 
     DSModel* model = getManager()->getModel();
     connect(model, SIGNAL(layerIndexChanged()),
@@ -71,12 +78,15 @@ DSMainWindow::DSMainWindow(DSWindowManager* manager, QWidget *parent) :
             this, SLOT(displayRunResults()));
     connect(model, SIGNAL(resultChanged(const SchemeSolverResult&)),
             this, SLOT(updateModelResult(const SchemeSolverResult&)));
+    connect(model, SIGNAL(solverError(const DSSolverException&)),
+            this, SLOT(modelSolverError(const DSSolverException&)));
 
     connect(ui->explicitSolverRadioButton, SIGNAL(clicked()),
             model, SLOT(selectExplicitSolver()));
     connect(ui->implicitSolverRadioButton, SIGNAL(clicked()),
             model, SLOT(selectImplicitSolver()));
 
+    ui->plotControlPanel->setVisible(false);
     initPlots();
 }
 
@@ -195,7 +205,7 @@ void DSMainWindow::startFiniteRun()
 {
     try
     {
-        plotsNeedScaleReset = true;
+        this->showWarningMessages();
         getManager()->getModel()->StartRun(SchemeSolverMode::AllLayers);
         getManager()->showSolvingProgressDialog();
     }
@@ -210,7 +220,7 @@ void DSMainWindow::startStabilityRun()
 {
     try
     {
-        plotsNeedScaleReset = true;
+        showWarningMessages();
         getManager()->getModel()->StartRun(SchemeSolverMode::StableLayer);
         getManager()->showSolvingProgressDialog();
     }
@@ -219,6 +229,16 @@ void DSMainWindow::startStabilityRun()
         QMessageBox::critical(this, QString("Неверные параметры"),
                               QString(e.what()));
     }
+}
+
+void DSMainWindow::continueRun()
+{
+    getManager()->getModel()->ContinueRun();
+    getManager()->showSolvingProgressDialog();
+}
+
+void DSMainWindow::showLastRunResults() {
+
 }
 
 void DSMainWindow::goToPrevLayer()
@@ -265,12 +285,19 @@ void DSMainWindow::changeLayerStep(const QString& newLayerStep)
 void DSMainWindow::showSelectedLayer()
 {
     DSModel* model = getManager()->getModel();
-    ui->totalLayerNumLabel->setText(tr("из %1, шаг").
-                                    arg(model->GetLayerCount()));
-    ui->currentLayerEdit->setText(tr("%1").
-                                  arg(model->GetCurrentLayerIndex()));
-    ui->layerStepEdit->setText(tr("%1").
-                               arg(model->GetLayerStep()));
+    ui->totalLayerNumLabel->setText(
+        QString("из %1, шаг").arg(model->GetPerformedIterationsCount())
+    );
+    ui->currentLayerEdit->setText(
+        QString("%1").arg(model->GetCurrentLayerIndex())
+    );
+    ui->layerStepEdit->setText(
+        QString("%1").arg(model->GetLayerStep())
+    );
+    ui->currentLayerTimeLabel->setText(
+        QString(", t = %1").arg(model->GetCurrentLayerTime())
+    );
+
     displayActivatorLayer(model->GetCurrentActivatorLayer());
     displayInhibitorLayer(model->GetCurrentInhibitorLayer());
 }
@@ -282,8 +309,10 @@ void DSMainWindow::displayRunResults()
     resetPlotsScale(model->GetActivatorMinimum(), model->GetActivatorMaximum(),
                     model->GetInhibitorMinimum(), model->GetInhibitorMaximum());
     showSelectedLayer();
+    ui->plotControlPanel->setVisible(true);
     ui->layerPairAnalysisAction->setEnabled(true);
-    // TODO: Show run info
+    ui->lastResultsButton->setEnabled(true);
+    ui->continueRunButton->setEnabled(model->IsContinuationAvailable());
 }
 
 void DSMainWindow::updateModelResult(const SchemeSolverResult& result)
@@ -291,26 +320,21 @@ void DSMainWindow::updateModelResult(const SchemeSolverResult& result)
     SchemeSolution activatorSolution = result.GetSolutionU1();
     SchemeSolution inhibitorSolution = result.GetSolutionU2();
 
-    if (plotsNeedScaleReset)
-    {
-        resetPlotsScale(activatorSolution.GetMinimum(),
-                        activatorSolution.GetMaximum(),
-                        inhibitorSolution.GetMinimum(),
-                        inhibitorSolution.GetMaximum());
-        plotsNeedScaleReset = false;
-    }
-    else
-    {
-        expandPlotsScale(activatorSolution.GetMinimum(),
-                         activatorSolution.GetMaximum(),
-                         inhibitorSolution.GetMinimum(),
-                         inhibitorSolution.GetMaximum());
-    }
+    resetPlotsScale(activatorSolution.GetMinimum(),
+                    activatorSolution.GetMaximum(),
+                    inhibitorSolution.GetMinimum(),
+                    inhibitorSolution.GetMaximum());
 
     SchemeLayer activator = activatorSolution.GetLastLayer();
     SchemeLayer inhibitor = inhibitorSolution.GetLastLayer();
     displayActivatorLayer(activator);
     displayInhibitorLayer(inhibitor);
+}
+
+void DSMainWindow::modelSolverError(const DSSolverException& ex)
+{
+    // TODO: Replace error message to error code
+    QMessageBox::critical(this, "Ошибка", ex.GetSource().what());
 }
 
 /*
@@ -322,11 +346,13 @@ void DSMainWindow::initPlots()
     ui->activatorPlot->xAxis->setLabel("x");
     ui->activatorPlot->yAxis->setLabel("Концентрация активатора");
     ui->activatorPlot->xAxis->setRange(0, 1);
+    ui->activatorPlot->graph(0)->setPen(QPen(QColor(0, 255, 0)));
 
     ui->inhibitorPlot->addGraph();
     ui->inhibitorPlot->xAxis->setLabel("x");
     ui->inhibitorPlot->yAxis->setLabel("Концентрация ингибитора");
     ui->inhibitorPlot->xAxis->setRange(0, 1);
+    ui->inhibitorPlot->graph(0)->setPen(QPen(QColor(255, 0, 0)));
 
     // Scale y axes on plots with some junk values
     resetPlotsScale(0, 1, 0, 1);
@@ -336,45 +362,17 @@ void DSMainWindow::resetPlotsScale(double activatorMin, double activatorMax,
                                    double inhibitorMin, double inhibitorMax)
 {
     double activatorYRange = activatorMax - activatorMin;
-    activatorPlotMargin = plotRelativeYMargin() *
+    double activatorPlotMargin = plotRelativeYMargin() *
             std::max(activatorYRange, minPlotYRange());
     ui->activatorPlot->yAxis->setRange(activatorMin - activatorPlotMargin,
                                        activatorMax + activatorPlotMargin);
 
 
     double inhibitorYRange = inhibitorMax - inhibitorMin;
-    inhibitorPlotMargin = plotRelativeYMargin() *
+    double inhibitorPlotMargin = plotRelativeYMargin() *
             std::max(inhibitorYRange, minPlotYRange());
     ui->inhibitorPlot->yAxis->setRange(inhibitorMin - inhibitorPlotMargin,
                                        inhibitorMax + inhibitorPlotMargin);
-}
-
-void DSMainWindow::expandPlotsScale(double activatorMin, double activatorMax,
-                                    double inhibitorMin, double inhibitorMax)
-{
-    double currentActivatorMin = ui->activatorPlot->yAxis->range().lower;
-    double currentActivatorMax = ui->activatorPlot->yAxis->range().upper;
-    double newActivatorRange = activatorMax - activatorMin;
-    double newActivatorMargin = plotRelativeYMargin() *
-            std::max(newActivatorRange, minPlotYRange());
-    activatorPlotMargin = std::max(activatorPlotMargin, newActivatorMargin);
-    ui->activatorPlot->yAxis->setRange(
-                std::min(currentActivatorMin,
-                         activatorMin - activatorPlotMargin),
-                std::max(currentActivatorMax,
-                         activatorMax + activatorPlotMargin));
-
-    double currentInhibitorMin = ui->inhibitorPlot->yAxis->range().lower;
-    double currentInhibitorMax = ui->inhibitorPlot->yAxis->range().upper;
-    double newInhibitorRange = inhibitorMax - inhibitorMin;
-    double newInhibitorMargin = plotRelativeYMargin() *
-            std::max(newInhibitorRange, minPlotYRange());
-    inhibitorPlotMargin = std::max(inhibitorPlotMargin, newInhibitorMargin);
-    ui->inhibitorPlot->yAxis->setRange(
-                std::min(currentInhibitorMin,
-                         inhibitorMin - inhibitorPlotMargin),
-                std::max(currentInhibitorMax,
-                         inhibitorMax + inhibitorPlotMargin));
 }
 
 void DSMainWindow::displayActivatorLayer(const SchemeLayer& layer)
@@ -413,4 +411,61 @@ void DSMainWindow::displayInhibitorLayer(const SchemeLayer& layer)
 
     ui->inhibitorPlot->graph(0)->setData(xs, ys);
     ui->inhibitorPlot->replot();
+}
+void DSMainWindow::saveActivatorPlot()
+{
+    QString filePath = QFileDialog::getSaveFileName(0, "Сохранить график концентрации активатора", "", "*.png");
+
+    if(filePath.indexOf(".png") < 0 && !filePath.isEmpty())
+        filePath += ".png";
+
+    if(!filePath.isEmpty())
+    {
+        QFile file(filePath);
+        if (!file.open(QIODevice::WriteOnly|QFile::WriteOnly))
+        {
+            QMessageBox::warning(0,"Ошибка сохранения файла",
+                       QObject::tr( "\n Невозможно создать файл"));
+        }
+        else
+            ui->activatorPlot->savePng(filePath, 640, 480, 1.0, -1);
+    }
+}
+void DSMainWindow::saveInhibitorPlot()
+{
+    QString filePath = QFileDialog::getSaveFileName(0, "Сохранить график концентрации ингибитора", "", "*.png");
+
+    if(filePath.indexOf(".png") < 0 && !filePath.isEmpty())
+        filePath += ".png";
+
+    if(!filePath.isEmpty())
+    {
+        QFile file(filePath);
+        if (!file.open(QIODevice::WriteOnly|QFile::WriteOnly))
+        {
+            QMessageBox::warning(0,"Ошибка сохранения файла",
+                       QObject::tr( "\n Невозможно создать файл"));
+        }
+        else
+            ui->inhibitorPlot->savePng(filePath, 640, 480, 1.0, -1);
+    }
+}
+void DSMainWindow::showWarningMessages()
+{
+    if( ui->explicitSolverRadioButton->isChecked())
+    {
+        double lambda1 = getManager()->getModel()->AccessParameters()->GetLambda1();
+        double lambda2 = getManager()->getModel()->AccessParameters()->GetLambda2();
+        double h = 1.0/getManager()->getModel()->AccessParameters()->GetGridDimension();
+        double k = getManager()->getModel()->AccessParameters()->GetTimeStep();
+
+        if(k>h*h/std::max(lambda1, lambda2)/2)
+            QMessageBox::critical(this, QString("Неверные параметры"),
+                                  QString("При выбранных параметрах явная схема неустойчива"));
+    }
+}
+
+void DSMainWindow::showEquationsHelpWindow()
+{
+    getManager()->showEquationHelpDialog();
 }

@@ -87,6 +87,9 @@
            <stylestrategy>PreferAntialias</stylestrategy>
           </font>
          </property>
+         <property name="toolTip">
+          <string>Скорость самообразования активатора</string>
+         </property>
          <property name="layoutDirection">
           <enum>Qt::LeftToRight</enum>
          </property>
@@ -104,6 +107,9 @@
           <font>
            <stylestrategy>PreferAntialias</stylestrategy>
           </font>
+         </property>
+         <property name="toolTip">
+          <string>Коэффициент диффузии активатора</string>
          </property>
          <property name="layoutDirection">
           <enum>Qt::LeftToRight</enum>
@@ -130,6 +136,9 @@
            <stylestrategy>PreferAntialias</stylestrategy>
           </font>
          </property>
+         <property name="toolTip">
+          <string>Естественный распад активатора</string>
+         </property>
          <property name="layoutDirection">
           <enum>Qt::LeftToRight</enum>
          </property>
@@ -155,6 +164,9 @@
            <stylestrategy>PreferAntialias</stylestrategy>
           </font>
          </property>
+         <property name="toolTip">
+          <string>Естественный распад ингибитора</string>
+         </property>
          <property name="layoutDirection">
           <enum>Qt::LeftToRight</enum>
          </property>
@@ -179,6 +191,9 @@
           <font>
            <stylestrategy>PreferAntialias</stylestrategy>
           </font>
+         </property>
+         <property name="toolTip">
+          <string>Подкачка ингибитора</string>
          </property>
          <property name="layoutDirection">
           <enum>Qt::LeftToRight</enum>
@@ -280,6 +295,9 @@
            <stylestrategy>PreferAntialias</stylestrategy>
           </font>
          </property>
+         <property name="toolTip">
+          <string>Коэффициент диффузии ингибитора</string>
+         </property>
          <property name="layoutDirection">
           <enum>Qt::LeftToRight</enum>
          </property>
@@ -344,6 +362,9 @@
            <stylestrategy>PreferAntialias</stylestrategy>
           </font>
          </property>
+         <property name="toolTip">
+          <string>Скорость образования ингибитора</string>
+         </property>
          <property name="layoutDirection">
           <enum>Qt::LeftToRight</enum>
          </property>
@@ -375,109 +396,8 @@
       </layout>
      </widget>
     </item>
-    <item row="1" column="0">
-     <widget class="QGroupBox" name="solverTypeBox">
-      <property name="minimumSize">
-       <size>
-        <width>220</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>220</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="title">
-       <string>Тип cхемы</string>
-      </property>
-      <layout class="QGridLayout" name="gridLayout_4">
-       <item row="0" column="0">
-        <widget class="QRadioButton" name="explicitSolverRadioButton">
-         <property name="text">
-          <string>Явная схема</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QRadioButton" name="implicitSolverRadioButton">
-         <property name="text">
-          <string>Неявная схема</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="3" column="0">
-     <widget class="QPushButton" name="stabilityRunButton">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>220</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>220</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>Счёт на установление</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="0">
-     <spacer name="verticalSpacer_2">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>40</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item row="2" column="0">
-     <widget class="QPushButton" name="finiteRunButton">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>220</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>220</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>Вычисление всех слоёв</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="1" rowspan="5">
-     <widget class="QWidget" name="widget" native="true">
+    <item row="0" column="1" rowspan="8">
+     <widget class="QWidget" name="layerOutputGroup" native="true">
       <layout class="QGridLayout" name="gridLayout_3" rowstretch="0,1,1">
        <property name="topMargin">
         <number>2</number>
@@ -496,7 +416,10 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,1,0,1,0,0,0">
+         <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,1,1,1,1,1,1,1,1,1,1">
+          <property name="spacing">
+           <number>2</number>
+          </property>
           <property name="leftMargin">
            <number>2</number>
           </property>
@@ -548,16 +471,35 @@
            </widget>
           </item>
           <item>
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
            <widget class="QLabel" name="label">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="minimumSize">
              <size>
-              <width>31</width>
+              <width>35</width>
               <height>0</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
-              <width>16777215</width>
+              <width>50</width>
               <height>16777215</height>
              </size>
             </property>
@@ -582,7 +524,7 @@
             </property>
             <property name="minimumSize">
              <size>
-              <width>70</width>
+              <width>60</width>
               <height>0</height>
              </size>
             </property>
@@ -599,10 +541,19 @@
             <property name="text">
              <string>из NNNNNN, шаг</string>
             </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
            </widget>
           </item>
           <item>
            <widget class="QLineEdit" name="layerStepEdit">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="minimumSize">
              <size>
               <width>50</width>
@@ -616,6 +567,32 @@
              </size>
             </property>
            </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="currentLayerTimeLabel">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>, t =TTTTTT</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
           </item>
           <item>
            <widget class="QPushButton" name="nextLayerButton">
@@ -667,6 +644,127 @@
       </layout>
      </widget>
     </item>
+    <item row="1" column="0">
+     <widget class="QGroupBox" name="solverTypeGroup">
+      <property name="minimumSize">
+       <size>
+        <width>220</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>220</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="title">
+       <string>Тип cхемы</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_4">
+       <item row="0" column="0">
+        <widget class="QRadioButton" name="explicitSolverRadioButton">
+         <property name="text">
+          <string>Явная схема</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QRadioButton" name="implicitSolverRadioButton">
+         <property name="text">
+          <string>Неявная схема</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QPushButton" name="finiteRunButton">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>220</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>220</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Вычисление всех слоёв</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QPushButton" name="stabilityRunButton">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>220</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>220</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Счёт на установление</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QPushButton" name="continueRunButton">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="text">
+       <string>Продолжить расчёт</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="0">
+     <spacer name="verticalSpacer_2">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>40</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="5" column="0">
+     <widget class="QPushButton" name="lastResultsButton">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="text">
+       <string>Результаты последнего расчёта</string>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -694,11 +792,26 @@
     <property name="title">
      <string>Файл</string>
     </property>
+    <widget class="QMenu" name="menu">
+     <property name="title">
+      <string>Сохранить график</string>
+     </property>
+     <addaction name="saveActivatorPlotAction"/>
+     <addaction name="saveInhibitorPlotAction"/>
+    </widget>
+    <addaction name="menu"/>
     <addaction name="quitAction"/>
+   </widget>
+   <widget class="QMenu" name="helpMenu">
+    <property name="title">
+     <string>Справка</string>
+    </property>
+    <addaction name="showEquationsHelpAction"/>
    </widget>
    <addaction name="fileMenu"/>
    <addaction name="parametersMenu"/>
    <addaction name="analysisMenu"/>
+   <addaction name="helpMenu"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="initConditionsAction">
@@ -725,6 +838,27 @@
     <string>Сравнение пары слоёв</string>
    </property>
   </action>
+  <action name="saveActivatorPlotAction">
+   <property name="text">
+    <string>Концентрации активатора</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="saveInhibitorPlotAction">
+   <property name="text">
+    <string>Концентрации ингибитора</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
+   </property>
+  </action>
+  <action name="showEquationsHelpAction">
+   <property name="text">
+    <string>Справка по уравнениям</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -735,6 +869,30 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>lambda1Edit</tabstop>
+  <tabstop>lambda2Edit</tabstop>
+  <tabstop>kEdit</tabstop>
+  <tabstop>cEdit</tabstop>
+  <tabstop>rhoEdit</tabstop>
+  <tabstop>nuEdit</tabstop>
+  <tabstop>gammaEdit</tabstop>
+  <tabstop>gridDimEdit</tabstop>
+  <tabstop>timeStepEdit</tabstop>
+  <tabstop>activatorAccuracyEdit</tabstop>
+  <tabstop>inhibitorAccuracyEdit</tabstop>
+  <tabstop>iterationsEdit</tabstop>
+  <tabstop>explicitSolverRadioButton</tabstop>
+  <tabstop>implicitSolverRadioButton</tabstop>
+  <tabstop>finiteRunButton</tabstop>
+  <tabstop>stabilityRunButton</tabstop>
+  <tabstop>firstLayerButton</tabstop>
+  <tabstop>prevLayerButton</tabstop>
+  <tabstop>currentLayerEdit</tabstop>
+  <tabstop>layerStepEdit</tabstop>
+  <tabstop>nextLayerButton</tabstop>
+  <tabstop>lastLayerButton</tabstop>
+ </tabstops>
  <resources>
   <include location="resources.qrc"/>
  </resources>

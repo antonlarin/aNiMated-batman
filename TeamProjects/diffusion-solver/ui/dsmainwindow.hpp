@@ -1,9 +1,11 @@
 #ifndef DSMAINWINDOW_HPP
 #define DSMAINWINDOW_HPP
 
+#include <memory>
 #include <QMainWindow>
 
 #include "dswindowmanager.hpp"
+#include "dsequationhelpdialog.hpp"
 
 namespace Ui {
 class DSMainWindow;
@@ -42,11 +44,20 @@ public slots:
 
     void startFiniteRun();
     void startStabilityRun();
+    void continueRun();
+    void showLastRunResults();
 
     void showSelectedLayer();
     void displayRunResults();
 
+    void saveActivatorPlot();
+    void saveInhibitorPlot();
+
     void updateModelResult(const SchemeSolverResult&);
+
+    void modelSolverError(const DSSolverException&);
+
+    void showEquationsHelpWindow();
 
 private:
     static int maxPlotPointsNumber() { return 400; }
@@ -56,15 +67,13 @@ private:
     void initPlots();
     void resetPlotsScale(double activatorMin, double activatorMax,
                          double inhibitorMin, double inhibitorMax);
-    void expandPlotsScale(double activatorMin, double activatorMax,
-                          double inhibitorMin, double inhibitorMax);
     void displayActivatorLayer(const SchemeLayer& layer);
     void displayInhibitorLayer(const SchemeLayer& layer);
 
+    void showWarningMessages();
+
     Ui::DSMainWindow *ui;
-    double activatorPlotMargin;
-    double inhibitorPlotMargin;
-    bool plotsNeedScaleReset;
+    std::unique_ptr<DSEquationHelpDialog> equationHelpDialog;
 };
 
 #endif // DSMAINWINDOW_HPP

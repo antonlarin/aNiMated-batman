@@ -4,6 +4,8 @@
 #include "dsinitconditionsdialog.hpp"
 #include "dssolvingprogressdialog.hpp"
 #include "dslayerpairanalysiswindow.hpp"
+#include "dssummarydialog.hpp"
+#include "dsequationhelpdialog.hpp"
 
 DSWindowManager::DSWindowManager(DSModel* model) :
     QObject(),
@@ -11,8 +13,12 @@ DSWindowManager::DSWindowManager(DSModel* model) :
     mainWindow(new DSMainWindow(this)),
     initialConditionsDialog(nullptr),
     solvingProgressDialog(nullptr),
-    layerPairAnalysisWindow(nullptr)
-{}
+    layerPairAnalysisWindow(nullptr),
+    summaryDialog(nullptr)
+{
+    connect(getModel(), SIGNAL(resultAcquired()),
+            this, SLOT(showSummaryDialog()));
+}
 
 
 
@@ -31,7 +37,19 @@ void DSWindowManager::showLayerPairAnalysisWindow()
     layerPairAnalysisWindow->showWindow();
 }
 
+void DSWindowManager::showSummaryDialog()
+{
+    summaryDialog.reset(new DSSummaryDialog(this));
+    summaryDialog->showWindow();
+}
 
+void DSWindowManager::showEquationHelpDialog()
+{
+    if (!equationHelpDialog)
+        equationHelpDialog = std::make_unique<DSEquationHelpDialog>(this);
+
+    equationHelpDialog->showWindow();
+}
 
 /*
  * Other methods implementation
