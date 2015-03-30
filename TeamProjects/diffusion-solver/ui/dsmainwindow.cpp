@@ -86,6 +86,7 @@ DSMainWindow::DSMainWindow(DSWindowManager* manager, QWidget *parent) :
     connect(ui->implicitSolverRadioButton, SIGNAL(clicked()),
             model, SLOT(selectImplicitSolver()));
 
+    ui->plotControlPanel->setVisible(false);
     initPlots();
 }
 
@@ -284,12 +285,19 @@ void DSMainWindow::changeLayerStep(const QString& newLayerStep)
 void DSMainWindow::showSelectedLayer()
 {
     DSModel* model = getManager()->getModel();
-    ui->totalLayerNumLabel->setText(tr("из %1, шаг").
-                                    arg(model->GetPerformedIterationsCount()));
-    ui->currentLayerEdit->setText(tr("%1").
-                                  arg(model->GetCurrentLayerIndex()));
-    ui->layerStepEdit->setText(tr("%1").
-                               arg(model->GetLayerStep()));
+    ui->totalLayerNumLabel->setText(
+        QString("из %1, шаг").arg(model->GetPerformedIterationsCount())
+    );
+    ui->currentLayerEdit->setText(
+        QString("%1").arg(model->GetCurrentLayerIndex())
+    );
+    ui->layerStepEdit->setText(
+        QString("%1").arg(model->GetLayerStep())
+    );
+    ui->currentLayerTimeLabel->setText(
+        QString(", t = %1").arg(model->GetCurrentLayerTime())
+    );
+
     displayActivatorLayer(model->GetCurrentActivatorLayer());
     displayInhibitorLayer(model->GetCurrentInhibitorLayer());
 }
@@ -301,6 +309,7 @@ void DSMainWindow::displayRunResults()
     resetPlotsScale(model->GetActivatorMinimum(), model->GetActivatorMaximum(),
                     model->GetInhibitorMinimum(), model->GetInhibitorMaximum());
     showSelectedLayer();
+    ui->plotControlPanel->setVisible(true);
     ui->layerPairAnalysisAction->setEnabled(true);
     ui->lastResultsButton->setEnabled(true);
     ui->continueRunButton->setEnabled(model->IsContinuationAvailable());

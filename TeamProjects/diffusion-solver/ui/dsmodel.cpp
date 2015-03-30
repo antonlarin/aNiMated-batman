@@ -146,6 +146,12 @@ void DSModel::ContinueRun()
     solverThread.start();
 }
 
+double DSModel::GetCurrentLayerTime() const
+{
+    double timeStep = parameters.GetTimeStep();
+    return currentLayerIndex * timeStep;
+}
+
 const SchemeLayer DSModel::GetActivatorLayer(int index)
 {
     SchemeSolution solutionActivator = result->GetSolutionU1();
