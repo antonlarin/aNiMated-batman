@@ -34,6 +34,7 @@ public:
     void StartRun(SchemeSolverMode mode);
     void ContinueRun();
 
+    double GetCurrentLayerTime() const;
     const SchemeLayer GetActivatorLayer(int index);
     const SchemeLayer GetInhibitorLayer(int index);
 
