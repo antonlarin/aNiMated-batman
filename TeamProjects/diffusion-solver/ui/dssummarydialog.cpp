@@ -8,7 +8,7 @@ DSSummaryDialog::DSSummaryDialog(DSWindowManager* manager, QWidget *parent) :
 {
     ui->setupUi(this);
 
-    connect(ui->buttonBox, SIGNAL(rejected()),
+    connect(ui->closeButton, SIGNAL(clicked()),
             this, SLOT(close()));
 }
 
