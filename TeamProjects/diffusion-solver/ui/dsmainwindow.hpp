@@ -57,8 +57,6 @@ public slots:
 
     void modelSolverError(const DSSolverException&);
 
-    void showEquationsHelpWindow();
-
 private:
     static int maxPlotPointsNumber() { return 400; }
     static double minPlotYRange() { return 1e-4; }

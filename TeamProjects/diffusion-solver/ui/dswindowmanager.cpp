@@ -46,7 +46,7 @@ void DSWindowManager::showSummaryDialog()
 void DSWindowManager::showEquationHelpDialog()
 {
     if (!equationHelpDialog)
-        equationHelpDialog = std::make_unique<DSEquationHelpDialog>(this);
+        equationHelpDialog.reset(new DSEquationHelpDialog(this));
 
     equationHelpDialog->showWindow();
 }

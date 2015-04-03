@@ -190,7 +190,7 @@ void DSMainWindow::inhibitorAccuracyChanged(const QString& newAccuracy)
     double value = newAccuracy.toDouble(&isValidDouble);
     if (isValidDouble)
         getManager()->getModel()->AccessParameters()->
-                SetActivatorAccuracy(value);
+                SetInhibitorAccuracy(value);
 }
 
 void DSMainWindow::iterationsLimitChanged(const QString& newIterationsLimit)
@@ -463,9 +463,4 @@ void DSMainWindow::showWarningMessages()
             QMessageBox::critical(this, QString("Неверные параметры"),
                                   QString("При выбранных параметрах явная схема неустойчива"));
     }
-}
-
-void DSMainWindow::showEquationsHelpWindow()
-{
-    getManager()->showEquationHelpDialog();
 }
