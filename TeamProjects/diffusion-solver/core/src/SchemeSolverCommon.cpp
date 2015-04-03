@@ -84,6 +84,7 @@ void SchemeSolverCommon::PrepareSolverOverride(const SchemeTask& task) { }
 
 void SchemeSolverCommon::SolvingLoop(const SchemeTask& task) {
    int maxIterations = task.GetMaximumIterations();
+   int updateStep = GetIterationInfoUpdateStep();
    while (mPerformedIterationsCount < maxIterations) {
       mCurrLayerU1 = mGridU1.GetCurrentLayer();
       mCurrLayerU2 = mGridU2.GetCurrentLayer();
@@ -95,8 +96,10 @@ void SchemeSolverCommon::SolvingLoop(const SchemeTask& task) {
       mBuilderU2.SetIterationsCount(mPerformedIterationsCount);
       
       DoSolverIteration();
-      if (UpdateCurrentSolution(mPerformedIterationsCount, task))
-         break;
+      if (mPerformedIterationsCount % updateStep) {
+         if (UpdateCurrentSolution(mPerformedIterationsCount, task))
+            break;
+      }
 
       mGridU1.NextLayer();
       mGridU2.NextLayer();

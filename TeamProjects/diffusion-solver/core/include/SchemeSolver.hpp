@@ -18,6 +18,7 @@ namespace diffusioncore {
       SchemeSolverMode mSolverMode;
       std::shared_ptr<SchemeTask> mCurrentTask;
       SolverIterationCallback mIterationCallback;
+      int mIterationInfoUpdateStep;
 
    public:
       SchemeSolver();
@@ -26,6 +27,7 @@ namespace diffusioncore {
       PROPERTY(SchemeSolverMode, SolverMode);
       PROPERTY(std::shared_ptr<SchemeTask>, CurrentTask);
       PROPERTY(SolverIterationCallback, IterationCallback);
+      PROPERTY(int, IterationInfoUpdateStep);
 
       void RegisterIterationCallback(SolverIterationCallback callback);
 

@@ -6,6 +6,7 @@ using namespace diffusioncore;
 SchemeSolver::SchemeSolver() {
    mSolverMode = SchemeSolverMode::StableLayer;
    mCurrentTask = std::make_shared<SchemeTask>();
+   mIterationInfoUpdateStep = 20;
 }
 
 SchemeSolver::~SchemeSolver() { }
@@ -31,6 +32,13 @@ void SchemeSolver::SetIterationCallback(SolverIterationCallback callback) {
 SolverIterationCallback SchemeSolver::GetIterationCallback() const {
    return mIterationCallback;
 } 
+
+void SchemeSolver::SetIterationInfoUpdateStep(int callStep) {
+   mIterationInfoUpdateStep = callStep;
+}
+int SchemeSolver::GetIterationInfoUpdateStep() const {
+   return mIterationInfoUpdateStep;
+}
 
 
 SchemeSolverResult SchemeSolver::Solve() {  
