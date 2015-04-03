@@ -23,6 +23,9 @@ namespace diffusioncore {
       int mIntervalsCount;
       int mIterationsCount;
 
+      SchemeSolverMode mSolverMode;
+      int mUpdateStep;
+
       SchemeGrid mGridU1;
       SchemeGrid mGridU2;
       SchemeSolutionBuilder mBuilderU1;
@@ -42,17 +45,21 @@ namespace diffusioncore {
       
    protected:
       virtual void DoSolverIteration() = 0;
-      virtual void InitializeGrid(const SchemeTask& task); 
       virtual void InitializeSchemeParameters(const SchemeTask& task);
-      virtual bool UpdateCurrentSolution(int iterCount, 
-                                         const SchemeTask& task);
-
+      virtual void InitializeGrid(const SchemeTask& task);
       virtual void CheckParametersOverride(const SchemeTask& task);
       virtual void PrepareSolverOverride(const SchemeTask& task);
       virtual void CleanupSolverOverride(const SchemeTask& task);
       virtual SchemeSolverResult SolveOverride(SchemeTask task);
 
    private:
+      void UpdateCurrentLayersDifference();
+      SchemeSolverResult ConstructSolverResult(int itersCount, 
+                                               const SchemeTask& task);
+      bool UpdateCurrentIteratonInfo(int itersCount, 
+                                     const SchemeTask& task);
+      bool CheckStopCondition();
+
       void PrepareSolver(const SchemeTask& task);
       void CleanupSolver(const SchemeTask& task);
 
