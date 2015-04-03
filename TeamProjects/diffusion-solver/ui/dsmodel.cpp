@@ -256,7 +256,6 @@ void DSModel::selectExplicitSolver()
 void DSModel::solverThreadFinished(const SchemeSolverResult& res)
 {
     result.reset(new SchemeSolverResult(res));
-    continuationAvailable = result->IsContinuationAvailable();
     emit resultAcquired();
 }
 

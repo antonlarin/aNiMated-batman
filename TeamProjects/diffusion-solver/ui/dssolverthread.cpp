@@ -72,14 +72,7 @@ void DSSolverThread::run()
 
     try
     {
-        if (!isContinuationRun)
-        {
-            result = solver->Solve();
-        }
-        else
-        {
-            result = solver->ContinueSolving();
-        }
+        result = solver->Solve();
     }
     catch (std::exception ex)
     {
