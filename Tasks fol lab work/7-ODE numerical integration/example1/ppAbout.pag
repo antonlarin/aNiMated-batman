@@ -1,0 +1,230 @@
+VERSION 5.00
+Begin VB.PropertyPage ppAbout 
+   Caption         =   "About"
+   ClientHeight    =   4470
+   ClientLeft      =   0
+   ClientTop       =   0
+   ClientWidth     =   6165
+   PaletteMode     =   0  'Halftone
+   ScaleHeight     =   4470
+   ScaleWidth      =   6165
+   Begin VB.Frame Frame1 
+      Height          =   4245
+      Left            =   450
+      TabIndex        =   0
+      Top             =   90
+      Width           =   5175
+      Begin VB.PictureBox Picture3 
+         Appearance      =   0  'Flat
+         AutoSize        =   -1  'True
+         BackColor       =   &H80000005&
+         BorderStyle     =   0  'None
+         ForeColor       =   &H80000008&
+         Height          =   2625
+         Left            =   60
+         Picture         =   "ppAbout.pgx":0000
+         ScaleHeight     =   2625
+         ScaleWidth      =   5085
+         TabIndex        =   12
+         Top             =   240
+         Width           =   5085
+      End
+      Begin VB.PictureBox Picture2 
+         Appearance      =   0  'Flat
+         BackColor       =   &H00E0E0E0&
+         BorderStyle     =   0  'None
+         FillColor       =   &H00FFFFFF&
+         FillStyle       =   0  'Solid
+         ForeColor       =   &H80000009&
+         Height          =   705
+         Left            =   1050
+         ScaleHeight     =   705
+         ScaleWidth      =   3765
+         TabIndex        =   3
+         Top             =   3135
+         Width           =   3765
+         Begin VB.Label Label1 
+            AutoSize        =   -1  'True
+            BackStyle       =   0  'Transparent
+            Caption         =   "E-mail: "
+            ForeColor       =   &H00808080&
+            Height          =   195
+            Index           =   1
+            Left            =   720
+            TabIndex        =   7
+            Top             =   360
+            Width           =   510
+         End
+         Begin VB.Label Label1 
+            AutoSize        =   -1  'True
+            BackStyle       =   0  'Transparent
+            Caption         =   "Web-page: "
+            ForeColor       =   &H00808080&
+            Height          =   195
+            Index           =   0
+            Left            =   390
+            TabIndex        =   6
+            Top             =   120
+            Width           =   840
+         End
+         Begin VB.Label lblHomePage 
+            Alignment       =   2  'Center
+            AutoSize        =   -1  'True
+            BackStyle       =   0  'Transparent
+            Caption         =   "http://ctlchart.narod.ru"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   204
+               Weight          =   400
+               Underline       =   -1  'True
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H00FF0000&
+            Height          =   195
+            Left            =   1500
+            MouseIcon       =   "ppAbout.pgx":2B986
+            MousePointer    =   99  'Custom
+            TabIndex        =   5
+            Top             =   120
+            Width           =   1635
+         End
+         Begin VB.Label lblMailto 
+            Alignment       =   2  'Center
+            AutoSize        =   -1  'True
+            BackStyle       =   0  'Transparent
+            Caption         =   "mailto:ctlchart@narod.ru"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   204
+               Weight          =   400
+               Underline       =   -1  'True
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H00FF0000&
+            Height          =   195
+            Left            =   1500
+            MouseIcon       =   "ppAbout.pgx":2BAD8
+            MousePointer    =   99  'Custom
+            TabIndex        =   4
+            Top             =   360
+            Width           =   1755
+         End
+      End
+      Begin VB.PictureBox Picture1 
+         Appearance      =   0  'Flat
+         AutoSize        =   -1  'True
+         BackColor       =   &H80000005&
+         BorderStyle     =   0  'None
+         ForeColor       =   &H80000008&
+         Height          =   240
+         Left            =   120
+         Picture         =   "ppAbout.pgx":2BC2A
+         ScaleHeight     =   240
+         ScaleWidth      =   240
+         TabIndex        =   1
+         ToolTipText     =   " .ScrollData corrected! "
+         Top             =   0
+         Width           =   240
+      End
+      Begin VB.Label lblDecription 
+         Alignment       =   2  'Center
+         Appearance      =   0  'Flat
+         BackColor       =   &H00C0C0C0&
+         ForeColor       =   &H00808080&
+         Height          =   705
+         Index           =   2
+         Left            =   1110
+         TabIndex        =   10
+         Top             =   3195
+         Width           =   3765
+         WordWrap        =   -1  'True
+      End
+      Begin VB.Label Label2 
+         Alignment       =   2  'Center
+         Appearance      =   0  'Flat
+         AutoSize        =   -1  'True
+         BackColor       =   &H00E0E0E0&
+         Caption         =   "Ipse Fecit © Alexander Vl. Chuntonov"
+         BeginProperty Font 
+            Name            =   "Small Fonts"
+            Size            =   6.75
+            Charset         =   204
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ForeColor       =   &H00808080&
+         Height          =   165
+         Left            =   1050
+         TabIndex        =   8
+         Top             =   3930
+         Width           =   3765
+         WordWrap        =   -1  'True
+      End
+      Begin VB.Label lblDecription 
+         Alignment       =   2  'Center
+         Appearance      =   0  'Flat
+         BackColor       =   &H00E0E0E0&
+         Caption         =   "acChart.ocx для 2D-графики"
+         ForeColor       =   &H00808080&
+         Height          =   195
+         Index           =   0
+         Left            =   1050
+         TabIndex        =   2
+         Top             =   2850
+         Width           =   3765
+         WordWrap        =   -1  'True
+      End
+      Begin VB.Label lblDecription 
+         Alignment       =   2  'Center
+         Appearance      =   0  'Flat
+         BackColor       =   &H00C0C0C0&
+         ForeColor       =   &H00808080&
+         Height          =   195
+         Index           =   1
+         Left            =   1110
+         TabIndex        =   9
+         Top             =   2910
+         Width           =   3765
+         WordWrap        =   -1  'True
+      End
+      Begin VB.Label lblDecription 
+         Alignment       =   2  'Center
+         Appearance      =   0  'Flat
+         BackColor       =   &H00C0C0C0&
+         ForeColor       =   &H00808080&
+         Height          =   165
+         Index           =   3
+         Left            =   1110
+         TabIndex        =   11
+         Top             =   3990
+         Width           =   3765
+         WordWrap        =   -1  'True
+      End
+   End
+End
+Attribute VB_Name = "ppAbout"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = False
+Attribute VB_Exposed = False
+Option Explicit
+Private Declare Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" (ByVal hwnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
+
+
+Private Sub lblHomePage_Click()
+ShellExecute PropertyPage.hwnd, "open", lblHomePage.Caption, "", "", 0
+End Sub
+
+Private Sub lblMailto_Click()
+ShellExecute PropertyPage.hwnd, "open", lblMailto.Caption, "", "", 0
+End Sub
+
+Private Sub PropertyPage_SelectionChanged()
+'lblName.Caption = PropertyPage.SelectedControls(0)
+End Sub
