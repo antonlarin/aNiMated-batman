@@ -32,13 +32,11 @@ namespace diffusioncore {
       void RegisterIterationCallback(SolverIterationCallback callback);
 
       SchemeSolverResult Solve();
-      SchemeSolverResult ContinueSolving();
 
    protected:
       bool UpdateIterationInfo(SchemeSolverResult& result);
 
       virtual SchemeSolverResult SolveOverride(SchemeTask task) = 0;
-      virtual SchemeSolverResult ContinueSolvingOverride(SchemeTask task) = 0;
       virtual void CheckParametersOverride(SchemeTask task);
 
    private:

@@ -10,8 +10,7 @@ SchemeSolverResult::SchemeSolverResult() {
 SchemeSolverResult::SchemeSolverResult(const SchemeSolution& solutionU1,
                                        const SchemeSolution& solutionU2,
                                        const SchemeStatistic& statistic,
-                                       const SchemeTask& task,
-                                       bool isContinuationAvailable) {
+                                       const SchemeTask& task) {
    assert(solutionU1.GetLayersCount() == solutionU2.GetLayersCount());
    assert(solutionU1.GetIntervalsCount() == solutionU2.GetIntervalsCount());
 
@@ -24,7 +23,6 @@ SchemeSolverResult::SchemeSolverResult(const SchemeSolution& solutionU1,
    mIntervalsCount = solutionU1.GetIntervalsCount();
 
    mIsInitialized = true;
-   mIsContinuationAvailable = isContinuationAvailable;
 }
 
 SchemeSolverResult::~SchemeSolverResult() { }
@@ -56,10 +54,6 @@ SchemeStatistic SchemeSolverResult::GetStatistic() const {
 SchemeTask SchemeSolverResult::GetTask() const {
    CheckIsInitialized();
    return mTask;
-}
-
-bool SchemeSolverResult::IsContinuationAvailable() const {
-   return mIsContinuationAvailable;
 }
 
 
