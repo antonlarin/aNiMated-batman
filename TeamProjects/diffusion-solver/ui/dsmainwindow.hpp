@@ -53,7 +53,7 @@ public slots:
     void saveActivatorPlot();
     void saveInhibitorPlot();
 
-    void updateModelResult(const SchemeSolverResult&);
+    void updateModelResult(const SchemeSolverIterationInfo&);
 
     void modelSolverError(const DSSolverException&);
 
@@ -65,8 +65,8 @@ private:
     void initPlots();
     void resetPlotsScale(double activatorMin, double activatorMax,
                          double inhibitorMin, double inhibitorMax);
-    void displayActivatorLayer(const SchemeLayer& layer);
-    void displayInhibitorLayer(const SchemeLayer& layer);
+    void displayActivatorLayer(const SchemeWeakLayer& layer);
+    void displayInhibitorLayer(const SchemeWeakLayer& layer);
 
     void showWarningMessages();
 
