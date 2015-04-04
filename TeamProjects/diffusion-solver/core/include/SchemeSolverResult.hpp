@@ -17,7 +17,6 @@ namespace diffusioncore {
 
       int mLayersCount;
       int mIntervalsCount;
-      bool mIsInitialized;
 
    public:
       SchemeSolverResult();

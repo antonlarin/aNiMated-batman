@@ -1,5 +1,6 @@
 #include <cmath>
 #include "SchemeLayerGeneratorInitial.hpp"
+
 using namespace diffusioncore;
 
 const double PI_CONST = 3.14159265358979323846;

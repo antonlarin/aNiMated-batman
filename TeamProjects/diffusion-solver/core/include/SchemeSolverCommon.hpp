@@ -5,7 +5,6 @@
 #include "CoreGlobal.hpp"
 #include "SchemeGrid.hpp"
 #include "SchemeSolver.hpp"
-#include "SchemeSolutionBuilder.hpp"
 
 namespace diffusioncore {
    class EXPORT_API SchemeSolverCommon : public SchemeSolver {
@@ -26,10 +25,8 @@ namespace diffusioncore {
       SchemeSolverMode mSolverMode;
       int mUpdateStep;
 
-      SchemeGrid mGridU1;
-      SchemeGrid mGridU2;
-      SchemeSolutionBuilder mBuilderU1;
-      SchemeSolutionBuilder mBuilderU2;
+      std::unique_ptr<SchemeGrid> mGridU1;
+      std::unique_ptr<SchemeGrid> mGridU2;
 
       double* mPrevLayerU1;
       double* mCurrLayerU1;
@@ -56,6 +53,8 @@ namespace diffusioncore {
       void UpdateCurrentLayersDifference();
       SchemeSolverResult ConstructSolverResult(int itersCount, 
                                                const SchemeTask& task);
+      SchemeSolverIterationInfo ConstructSolverIntermediateResult(
+         int itersCount);
       bool UpdateCurrentIteratonInfo(int itersCount, 
                                      const SchemeTask& task);
       bool CheckStopCondition();
