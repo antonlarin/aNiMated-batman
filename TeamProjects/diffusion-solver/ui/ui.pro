@@ -26,7 +26,8 @@ SOURCES += main.cpp\
     idswindow.cpp \
     dssummarydialog.cpp \
     dssolverexception.cpp \
-    dsequationhelpdialog.cpp
+    dsequationhelpdialog.cpp \
+    dssettingsmanager.cpp
 
 HEADERS  += dsmainwindow.hpp \
     dsmodel.hpp \
@@ -40,7 +41,8 @@ HEADERS  += dsmainwindow.hpp \
     idswindow.hpp \
     dssummarydialog.hpp \
     dssolverexception.hpp \
-    dsequationhelpdialog.hpp
+    dsequationhelpdialog.hpp \
+    dssettingsmanager.hpp
 
 FORMS    += dsmainwindow.ui \
     dsinitconditionsdialog.ui \
