@@ -799,6 +799,14 @@
      <addaction name="saveActivatorPlotAction"/>
      <addaction name="saveInhibitorPlotAction"/>
     </widget>
+    <widget class="QMenu" name="menu_2">
+     <property name="title">
+      <string>Параметры системы</string>
+     </property>
+     <addaction name="saveParametersAction"/>
+     <addaction name="loadParametersAction"/>
+    </widget>
+    <addaction name="menu_2"/>
     <addaction name="menu"/>
     <addaction name="quitAction"/>
    </widget>
@@ -857,6 +865,22 @@
   <action name="showEquationsHelpAction">
    <property name="text">
     <string>Справка по уравнениям</string>
+   </property>
+  </action>
+  <action name="saveParametersAction">
+   <property name="text">
+    <string>Сохранить</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+S</string>
+   </property>
+  </action>
+  <action name="loadParametersAction">
+   <property name="text">
+    <string>Загрузить</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+L</string>
    </property>
   </action>
  </widget>

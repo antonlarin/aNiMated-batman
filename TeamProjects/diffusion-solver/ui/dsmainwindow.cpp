@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "dsmodel.hpp"
+#include "dssettingsmanager.hpp"
 
 DSMainWindow::DSMainWindow(DSWindowManager* manager, QWidget *parent) :
     QMainWindow(parent),
@@ -70,6 +71,10 @@ DSMainWindow::DSMainWindow(DSWindowManager* manager, QWidget *parent) :
             this, SLOT(saveActivatorPlot()));
     connect(ui->showEquationsHelpAction, SIGNAL(triggered()),
             getManager(), SLOT(showEquationHelpDialog()));
+    connect(ui->saveParametersAction, SIGNAL(triggered()),
+        this, SLOT(saveEquationsParameters()));
+    connect(ui->loadParametersAction, SIGNAL(triggered()),
+            this, SLOT(loadEquationsParameters()));
 
     DSModel* model = getManager()->getModel();
     connect(model, SIGNAL(layerIndexChanged()),
@@ -414,7 +419,8 @@ void DSMainWindow::displayInhibitorLayer(const SchemeLayer& layer)
 }
 void DSMainWindow::saveActivatorPlot()
 {
-    QString filePath = QFileDialog::getSaveFileName(0, "Сохранить график концентрации активатора", "", "*.png");
+    QString filePath = QFileDialog::getSaveFileName(0,
+                      "Сохранить график концентрации активатора", "", "*.png");
 
     if(filePath.indexOf(".png") < 0 && !filePath.isEmpty())
         filePath += ".png";
@@ -427,13 +433,16 @@ void DSMainWindow::saveActivatorPlot()
             QMessageBox::warning(0,"Ошибка сохранения файла",
                        QObject::tr( "\n Невозможно создать файл"));
         }
-        else
+        else    {
             ui->activatorPlot->savePng(filePath, 640, 480, 1.0, -1);
+            file.close();
+        }
     }
 }
 void DSMainWindow::saveInhibitorPlot()
 {
-    QString filePath = QFileDialog::getSaveFileName(0, "Сохранить график концентрации ингибитора", "", "*.png");
+    QString filePath = QFileDialog::getSaveFileName(0,
+                      "Сохранить график концентрации ингибитора", "", "*.png");
 
     if(filePath.indexOf(".png") < 0 && !filePath.isEmpty())
         filePath += ".png";
@@ -446,8 +455,10 @@ void DSMainWindow::saveInhibitorPlot()
             QMessageBox::warning(0,"Ошибка сохранения файла",
                        QObject::tr( "\n Невозможно создать файл"));
         }
-        else
+        else    {
             ui->inhibitorPlot->savePng(filePath, 640, 480, 1.0, -1);
+            file.close();
+        }
     }
 }
 void DSMainWindow::showWarningMessages()
@@ -462,5 +473,60 @@ void DSMainWindow::showWarningMessages()
         if(k>h*h/std::max(lambda1, lambda2)/2)
             QMessageBox::critical(this, QString("Неверные параметры"),
                                   QString("При выбранных параметрах явная схема неустойчива"));
+    }
+}
+void DSMainWindow::saveEquationsParameters()
+{
+    QString filePath = QFileDialog::getSaveFileName(0,
+                      "Сохранить параметры системы уравнений", "", "*.xml");
+
+    if(!filePath.isEmpty())    {
+        if(filePath.indexOf(".xml") < 0)
+            filePath += ".xml";
+        QFile file(filePath);
+        if (!file.open(QIODevice::WriteOnly|QFile::WriteOnly))  {
+            QMessageBox::warning(0,"Ошибка сохранения файла",
+                       QObject::tr( "\n Невозможно создать файл"));
+        }
+        else    {
+            DSSettingsManager::saveSettings(file,
+                                getManager()->getModel()->AccessParameters());
+            file.close();
+        }
+    }
+}
+void DSMainWindow::loadEquationsParameters()
+{
+    QString filePath = QFileDialog::getOpenFileName(0,
+                      "Загрузить параметры системы уравнений", "", "*.xml");
+    if(!filePath.isEmpty())
+    {
+        QFile file(filePath);
+        if (!file.open(QIODevice::ReadOnly|QFile::ReadOnly))    {
+            QMessageBox::warning(0,"Ошибка открытия файла",
+                       QObject::tr( "\n Невозможно открыть файл"));
+        }
+        else    {
+            try     {
+
+            DSParameterSet* currentParameters =
+                        getManager()->getModel()->AccessParameters();
+            DSSettingsManager::loadSettings(file, currentParameters);
+
+            ui->lambda1Edit->setText(QString::number(currentParameters->GetLambda1()));
+            ui->lambda2Edit->setText(QString::number(currentParameters->GetLambda2()));
+            ui->cEdit->setText(QString::number(currentParameters->GetC()));
+            ui->kEdit->setText(QString::number(currentParameters->GetK()));
+            ui->rhoEdit->setText(QString::number(currentParameters->GetRho()));
+            ui->nuEdit->setText(QString::number(currentParameters->GetNu()));
+            ui->gammaEdit->setText(QString::number(currentParameters->GetGamma()));
+
+            }
+            catch(std::exception exp)   {
+                QMessageBox::critical(this, QString("Ошибка"),
+                  QString(exp.what()));
+            }
+            file.close();
+        }
     }
 }

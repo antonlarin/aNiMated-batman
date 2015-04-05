@@ -53,6 +53,9 @@ public slots:
     void saveActivatorPlot();
     void saveInhibitorPlot();
 
+    void loadEquationsParameters();
+    void saveEquationsParameters();
+
     void updateModelResult(const SchemeSolverResult&);
 
     void modelSolverError(const DSSolverException&);
