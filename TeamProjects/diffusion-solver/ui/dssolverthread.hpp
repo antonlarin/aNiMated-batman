@@ -50,7 +50,7 @@ private:
     void Initialize();
     bool UpdateCurrentSolverResult(SchemeSolverIterationInfo& info);
 
-    milliseconds GetMaxUpdateIterationSpan() const { return milliseconds(10); }
+    inline milliseconds GetMaxUpdateIterationSpan() const;
 
     QMutex mtx;
     bool solverNeedStop;

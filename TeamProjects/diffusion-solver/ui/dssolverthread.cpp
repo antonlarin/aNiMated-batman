@@ -108,3 +108,8 @@ bool DSSolverThread::UpdateCurrentSolverResult(SchemeSolverIterationInfo& result
     return !stop;
 }
 
+milliseconds DSSolverThread::GetMaxUpdateIterationSpan() const
+{
+    return milliseconds(50);
+}
+
