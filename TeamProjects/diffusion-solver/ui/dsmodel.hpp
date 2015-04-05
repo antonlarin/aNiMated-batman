@@ -31,7 +31,7 @@ public:
 
     void AcquireResult(SchemeSolverResult& newResult);
 
-    void StartRun(SchemeSolverMode mode);
+    void StartRun();
     void ContinueRun();
 
     double GetCurrentLayerTime() const;

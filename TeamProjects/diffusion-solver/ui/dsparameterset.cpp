@@ -17,7 +17,9 @@ DSParameterSet::DSParameterSet() :
     gridDimension(100),
     iterationsLimit(1000),
     activatorInitConditionsCoeffs(),
-    inhibitorInitConditionsCoeffs()
+    inhibitorInitConditionsCoeffs(),
+    solvingMode(SchemeSolverMode::AllLayers),
+    layerSavingStep(1)
 {
     activatorInitConditionsCoeffs.push_back(1.0);
     activatorInitConditionsCoeffs.push_back(0.5);
@@ -260,4 +262,33 @@ bool DSParameterSet::SetInhibitorInitialConditions(vector<double> value)
         return true;
     }
     return false;
+}
+
+SchemeSolverMode DSParameterSet::GetSolvingMode() const
+{
+    return solvingMode;
+}
+
+bool DSParameterSet::SetSolvingMode(SchemeSolverMode mode)
+{
+    solvingMode = mode;
+    return true;
+}
+
+int DSParameterSet::GetLayerSavingStep() const
+{
+    return layerSavingStep;
+}
+
+bool DSParameterSet::SetLayerSavingStep(int value)
+{
+    if (value > 0)
+    {
+        layerSavingStep = value;
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }

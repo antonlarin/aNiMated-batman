@@ -5,6 +5,7 @@
 #include <diffusioncore>
 
 using std::vector;
+using diffusioncore::SchemeSolverMode;
 
 #define VALIDATED_PROPERTY(T, N) \
     T Get ## N() const;          \
@@ -30,6 +31,8 @@ public:
     VALIDATED_PROPERTY(int, IterationsLimit)
     VALIDATED_PROPERTY(vector<double>, ActivatorInitialConditions)
     VALIDATED_PROPERTY(vector<double>, InhibitorInitialConditions)
+    VALIDATED_PROPERTY(SchemeSolverMode, SolvingMode)
+    VALIDATED_PROPERTY(int, LayerSavingStep)
 
 private:
     double lambda1;
@@ -46,6 +49,8 @@ private:
     int iterationsLimit;
     vector<double> activatorInitConditionsCoeffs;
     vector<double> inhibitorInitConditionsCoeffs;
+    SchemeSolverMode solvingMode;
+    int layerSavingStep;
 };
 
 #endif // DSPARAMETERSET_H

@@ -98,7 +98,7 @@ DSParameterSet* DSModel::AccessParameters()
     return &parameters;
 }
 
-void DSModel::StartRun(SchemeSolverMode mode)
+void DSModel::StartRun()
 {
     task->SetLambda1(AccessParameters()->GetLambda1());
     task->SetLambda2(AccessParameters()->GetLambda2());
@@ -126,14 +126,8 @@ void DSModel::StartRun(SchemeSolverMode mode)
 
     task->SetInitialLayers(activatorInitLayer, inhibitorInitLayer);
 
-    switch (mode)
-    {
-    case AllLayers:
-        solver->SetSolverMode(AllLayers);
-        break;
-    case StableLayer:
-        solver->SetSolverMode(StableLayer);
-    }
+    solver->SetSolverMode(AccessParameters()->GetSolvingMode());
+    solver->SetSaveLayerStep(AccessParameters()->GetLayerSavingStep());
 
     currentLayerIndex = 0;
     solverThread.SetContinuationFlag(false);

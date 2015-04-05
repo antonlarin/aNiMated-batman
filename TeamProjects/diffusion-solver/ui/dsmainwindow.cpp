@@ -50,10 +50,14 @@ DSMainWindow::DSMainWindow(DSWindowManager* manager, QWidget *parent) :
     connect(ui->layerStepEdit, SIGNAL(textEdited(QString)),
             this, SLOT(changeLayerStep(QString)));
 
-    connect(ui->finiteRunButton, SIGNAL(clicked()),
-            this, SLOT(startFiniteRun()));
-    connect(ui->stabilityRunButton, SIGNAL(clicked()),
-            this, SLOT(startStabilityRun()));
+    connect(ui->savingLayersRadioButton, SIGNAL(clicked()),
+            this, SLOT(solvingModeChanged()));
+    connect(ui->nonSavingLayersRadioButton, SIGNAL(clicked()),
+            this, SLOT(solvingModeChanged()));
+    connect(ui->layerSavingStepEdit, SIGNAL(textEdited(QString)),
+            this, SLOT(layerSavingStepChanged(QString)));
+    connect(ui->newRunButton, SIGNAL(clicked()),
+            this, SLOT(startNewRun()));
     connect(ui->continueRunButton, SIGNAL(clicked()),
             this, SLOT(continueRun()));
     connect(ui->lastResultsButton, SIGNAL(clicked()),
@@ -206,27 +210,35 @@ void DSMainWindow::iterationsLimitChanged(const QString& newIterationsLimit)
         getManager()->getModel()->AccessParameters()->SetIterationsLimit(value);
 }
 
-void DSMainWindow::startFiniteRun()
+void DSMainWindow::solvingModeChanged()
+{
+    SchemeSolverMode value;
+    if (ui->savingLayersRadioButton->isChecked())
+    {
+        value = SchemeSolverMode::AllLayers;
+    }
+    else // if (ui->nonSavingLayerRadioButton->isChecked())
+    {
+        value = SchemeSolverMode::StableLayer;
+    }
+
+    getManager()->getModel()->AccessParameters()->SetSolvingMode(value);
+}
+
+void DSMainWindow::layerSavingStepChanged(const QString& newLayerSavingStep)
+{
+    bool isValidInteger;
+    int value = newLayerSavingStep.toInt(&isValidInteger);
+    if (isValidInteger)
+        getManager()->getModel()->AccessParameters()->SetLayerSavingStep(value);
+}
+
+void DSMainWindow::startNewRun()
 {
     try
     {
         this->showWarningMessages();
-        getManager()->getModel()->StartRun(SchemeSolverMode::AllLayers);
-        getManager()->showSolvingProgressDialog();
-    }
-    catch (std::runtime_error e)
-    {
-        QMessageBox::critical(this, QString("Неверные параметры"),
-                              QString(e.what()));
-    }
-}
-
-void DSMainWindow::startStabilityRun()
-{
-    try
-    {
-        showWarningMessages();
-        getManager()->getModel()->StartRun(SchemeSolverMode::StableLayer);
+        getManager()->getModel()->StartRun();
         getManager()->showSolvingProgressDialog();
     }
     catch (std::runtime_error e)

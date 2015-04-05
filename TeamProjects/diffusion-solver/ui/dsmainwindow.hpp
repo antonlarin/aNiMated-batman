@@ -34,6 +34,8 @@ public slots:
     void activatorAccuracyChanged(const QString& newAccuracy);
     void inhibitorAccuracyChanged(const QString& newAccuracy);
     void iterationsLimitChanged(const QString& newIterationsLimit);
+    void solvingModeChanged();
+    void layerSavingStepChanged(const QString& newLayerSavingStep);
 
     void goToPrevLayer();
     void goToNextLayer();
@@ -42,8 +44,7 @@ public slots:
     void goToLayer(const QString& newLayer);
     void changeLayerStep(const QString& newLayerStep);
 
-    void startFiniteRun();
-    void startStabilityRun();
+    void startNewRun();
     void continueRun();
     void showLastRunResults();
 
