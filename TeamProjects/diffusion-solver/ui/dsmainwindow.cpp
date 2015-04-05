@@ -513,13 +513,18 @@ void DSMainWindow::loadEquationsParameters()
                         getManager()->getModel()->AccessParameters();
             DSSettingsManager::loadSettings(file, currentParameters);
 
-            ui->lambda1Edit->setText(QString::number(currentParameters->GetLambda1()));
-            ui->lambda2Edit->setText(QString::number(currentParameters->GetLambda2()));
-            ui->cEdit->setText(QString::number(currentParameters->GetC()));
-            ui->kEdit->setText(QString::number(currentParameters->GetK()));
-            ui->rhoEdit->setText(QString::number(currentParameters->GetRho()));
-            ui->nuEdit->setText(QString::number(currentParameters->GetNu()));
-            ui->gammaEdit->setText(QString::number(currentParameters->GetGamma()));
+            ui->lambda1Edit->setText(QString::number(currentParameters->GetLambda1(), 'g', 16));
+            ui->lambda2Edit->setText(QString::number(currentParameters->GetLambda2(), 'g', 16));
+            ui->cEdit->setText(QString::number(currentParameters->GetC(), 'g', 16));
+            ui->kEdit->setText(QString::number(currentParameters->GetK(), 'g', 16));
+            ui->rhoEdit->setText(QString::number(currentParameters->GetRho(), 'g', 16));
+            ui->nuEdit->setText(QString::number(currentParameters->GetNu(), 'g', 16));
+            ui->gammaEdit->setText(QString::number(currentParameters->GetGamma(), 'g', 16));
+            ui->timeStepEdit->setText(QString::number(currentParameters->GetTimeStep(), 'g', 16));
+            ui->activatorAccuracyEdit->setText(QString::number(currentParameters->GetActivatorAccuracy(), 'g', 16));
+            ui->inhibitorAccuracyEdit->setText(QString::number(currentParameters->GetInhibitorAccuracy(), 'g', 16));
+            ui->gridDimEdit->setText(QString::number(currentParameters->GetGridDimension()));
+            ui->iterationsEdit->setText(QString::number(currentParameters->GetIterationsLimit()));
 
             }
             catch(std::exception exp)   {
