@@ -13,7 +13,7 @@ SchemeLayer::SchemeLayer() {
 }
 
 SchemeLayer::SchemeLayer(const std::vector<double>& v) {
-   Initialize(v.data(), v.size());
+   Initialize(v.data(), (int)v.size());
 }
 
 SchemeLayer::SchemeLayer(const double* v, int length) {
@@ -24,6 +24,10 @@ SchemeLayer::SchemeLayer(const double* v, int length) {
 SchemeLayer::~SchemeLayer() { }
 
 
+double* SchemeLayer::Raw() const {
+   return mHolder.get();
+}
+
 double SchemeLayer::Get(int index) const {
    assert(index < mLength);
    assert(index >= 0);
@@ -32,6 +36,10 @@ double SchemeLayer::Get(int index) const {
 
 double SchemeLayer::operator[] (int index) const {
    return Get(index);
+}
+
+SchemeWeakLayer SchemeLayer::Weak() const {
+   return SchemeWeakLayer(mHolder.get(), mLength);
 }
 
 int SchemeLayer::GetLength() const {

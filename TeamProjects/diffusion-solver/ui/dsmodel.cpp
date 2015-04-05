@@ -17,8 +17,8 @@ DSModel::DSModel() :
     connect(&solverThread, SIGNAL(solverFinished(SchemeSolverResult&)),
             this, SLOT(solverThreadFinished(SchemeSolverResult&)));
 
-    connect(&solverThread, SIGNAL(resultChanged(const SchemeSolverResult&)),
-            this, SLOT(solverThreadResultChanged(const SchemeSolverResult&)));
+    connect(&solverThread, SIGNAL(resultChanged(const SchemeSolverIterationInfo&)),
+            this, SLOT(solverThreadResultChanged(const SchemeSolverIterationInfo&)));
 
     connect(&solverThread, SIGNAL(solverError(const DSSolverException&)),
             this, SLOT(solverThreadHandleError(const DSSolverException&)));
@@ -110,7 +110,7 @@ void DSModel::StartRun(SchemeSolverMode mode)
     task->SetStepTime(AccessParameters()->GetTimeStep());
     task->SetAccuracyU1(AccessParameters()->GetActivatorAccuracy());
     task->SetAccuracyU2(AccessParameters()->GetInhibitorAccuracy());
-    task->SetMaximumIterations(AccessParameters()->GetIterationsLimit());
+    task->SetEndIterationIndex(AccessParameters()->GetIterationsLimit());
 
     SchemeLayerGeneratorInitial initialLayerGenerator;
     initialLayerGenerator.SetIntervalsCount(
@@ -256,11 +256,10 @@ void DSModel::selectExplicitSolver()
 void DSModel::solverThreadFinished(const SchemeSolverResult& res)
 {
     result.reset(new SchemeSolverResult(res));
-    continuationAvailable = result->IsContinuationAvailable();
     emit resultAcquired();
 }
 
-void DSModel::solverThreadResultChanged(const SchemeSolverResult& res)
+void DSModel::solverThreadResultChanged(const SchemeSolverIterationInfo& res)
 {
     emit resultChanged(res);
 }

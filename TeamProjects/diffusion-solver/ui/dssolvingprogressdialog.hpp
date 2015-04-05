@@ -20,7 +20,7 @@ public:
     virtual void showWindow();
 
 public slots:
-    void updateResult(const SchemeSolverResult&);
+    void updateResult(const SchemeSolverIterationInfo&);
 
 private:
     Ui::DSSolvingProgressDialog *ui;

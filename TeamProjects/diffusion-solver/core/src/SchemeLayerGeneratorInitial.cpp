@@ -1,9 +1,10 @@
 #include <cmath>
 #include "SchemeLayerGeneratorInitial.hpp"
+
 using namespace diffusioncore;
 
 const double PI_CONST = 3.14159265358979323846;
-inline double EvaluateCos(double x, int index) {
+inline double EvaluateCos(double x, size_t index) {
    return std::cos(PI_CONST * x * index);
 }
 

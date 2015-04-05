@@ -11,8 +11,8 @@ DSSolvingProgressDialog::DSSolvingProgressDialog(DSWindowManager* manager,
     ui->setupUi(this);
 
     DSModel* model = getManager()->getModel();
-    connect(model, SIGNAL(resultChanged(const SchemeSolverResult&)),
-            this, SLOT(updateResult(const SchemeSolverResult&)));
+    connect(model, SIGNAL(resultChanged(const SchemeSolverIterationInfo&)),
+            this, SLOT(updateResult(const SchemeSolverIterationInfo&)));
 
     connect(model, SIGNAL(resultAcquired()),
             this, SLOT(close()));
@@ -32,13 +32,12 @@ void DSSolvingProgressDialog::showWindow()
 }
 
 
-void DSSolvingProgressDialog::updateResult(const SchemeSolverResult& res)
+void DSSolvingProgressDialog::updateResult(const SchemeSolverIterationInfo& res)
 {
     auto stat = res.GetStatistic();
-    auto task = res.GetTask();
 
     int iters = stat.GetIterationsCount();
-    int total = task.GetMaximumLayers() - 1;
+    int total = stat.GetIterationsCount();
 
     ui->labelIterationNumber->setText(
                 tr("Пройдено %1 итераций из %2").arg(iters).arg(total));

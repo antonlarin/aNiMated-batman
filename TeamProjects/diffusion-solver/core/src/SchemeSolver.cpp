@@ -6,6 +6,8 @@ using namespace diffusioncore;
 SchemeSolver::SchemeSolver() {
    mSolverMode = SchemeSolverMode::StableLayer;
    mCurrentTask = std::make_shared<SchemeTask>();
+   mIterationInfoUpdateStep = 10;
+   mSaveLayerStep = 10;
 }
 
 SchemeSolver::~SchemeSolver() { }
@@ -32,15 +34,26 @@ SolverIterationCallback SchemeSolver::GetIterationCallback() const {
    return mIterationCallback;
 } 
 
+void SchemeSolver::SetIterationInfoUpdateStep(int callStep) {
+   mIterationInfoUpdateStep = callStep;
+}
+int SchemeSolver::GetIterationInfoUpdateStep() const {
+   return mIterationInfoUpdateStep;
+}
+
+void SchemeSolver::SetSaveLayerStep(int saveStep) {
+   assert(saveStep > 0);
+   mSaveLayerStep = saveStep;
+}
+int SchemeSolver::GetSaveLayerStep() const {
+   return mSaveLayerStep;
+}
+
 
 SchemeSolverResult SchemeSolver::Solve() {  
    SchemeTask task = mCurrentTask->Clone();
    CheckParameters(task);
    return SolveOverride(task);
-}
-
-SchemeSolverResult SchemeSolver::ContinueSolving() {
-   return ContinueSolvingOverride(mCurrentTask->Clone());  
 }
 
 
@@ -52,9 +65,9 @@ void SchemeSolver::CheckParametersOverride(SchemeTask task) {
       throw std::runtime_error("Initial layer has negative value");
 }
 
-bool SchemeSolver::UpdateIterationInfo(SchemeSolverResult& result) {
+bool SchemeSolver::UpdateIterationInfo(SchemeSolverIterationInfo& info) {
    if (mIterationCallback)
-      return mIterationCallback(result);
+      return mIterationCallback(info);
 
    return true;
 }

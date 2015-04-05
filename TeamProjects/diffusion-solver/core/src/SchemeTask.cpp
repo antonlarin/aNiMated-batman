@@ -15,7 +15,8 @@ SchemeTask::SchemeTask() {
    mAccuracyU2 = 0.001;
    mStepTime = 0.00001;
    mIntervalsCount = 100;
-   mMaximumIterations = 1000;
+   mStartIterationIndex = 0;
+   mEndIterationIndex = 1000;
 
    std::vector<double> defaultValues(mIntervalsCount + 1, 1);
    mStartLayerU1 = SchemeLayer(defaultValues);
@@ -105,12 +106,20 @@ double SchemeTask::GetAccuracyU2() const {
    return mAccuracyU2;
 }
 
-void SchemeTask::SetMaximumIterations(int value) {
+void SchemeTask::SetStartIterationIndex(int value) {
    assert(value > 0);
-   mMaximumIterations = value;
+   mStartIterationIndex = value;
 }
-int SchemeTask::GetMaximumIterations() const {
-   return mMaximumIterations;
+int SchemeTask::GetStartIterationIndex() const {
+   return mStartIterationIndex;
+}
+
+void SchemeTask::SetEndIterationIndex(int value) {
+   assert(value > 0);
+   mEndIterationIndex = value;
+}
+int SchemeTask::GetEndIterationIndex() const {
+   return mEndIterationIndex;
 }
 
 
@@ -122,8 +131,8 @@ double SchemeTask::GetSegmentEnd() const {
    return 1.0;
 }
 
-int SchemeTask::GetMaximumLayers() const {
-   return mMaximumIterations + 1;
+int SchemeTask::GetIterationsCount() const {
+   return mEndIterationIndex - mStartIterationIndex + 1;
 }
 
 int SchemeTask::GetIntervalsCount() const {

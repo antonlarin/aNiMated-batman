@@ -55,7 +55,7 @@ public:
 signals:
     void layerIndexChanged();
     void resultAcquired();
-    void resultChanged(const SchemeSolverResult&);
+    void resultChanged(const SchemeSolverIterationInfo&);
     void comparedLayersChanged();
     void solverError(const DSSolverException&);
 
@@ -66,7 +66,7 @@ public slots:
 
 private slots:
     void solverThreadFinished(const SchemeSolverResult&);
-    void solverThreadResultChanged(const SchemeSolverResult&);
+    void solverThreadResultChanged(const SchemeSolverIterationInfo&);
     void solverThreadHandleError(const DSSolverException&);
 
 private:

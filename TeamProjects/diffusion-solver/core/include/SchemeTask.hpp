@@ -19,9 +19,10 @@ namespace diffusioncore {
       double mAccuracyU1;
       double mAccuracyU2;
       int mIntervalsCount;
-      int mMaximumIterations;
       SchemeLayer mStartLayerU1;
       SchemeLayer mStartLayerU2;
+      int mStartIterationIndex;
+      int mEndIterationIndex;
 
    public:
       SchemeTask();
@@ -37,12 +38,13 @@ namespace diffusioncore {
       PROPERTY(double, StepTime);
       PROPERTY(double, AccuracyU1);
       PROPERTY(double, AccuracyU2);
-      PROPERTY(int, MaximumIterations);
+      PROPERTY(int, StartIterationIndex);
+      PROPERTY(int, EndIterationIndex);
 
       double GetSegmentEnd() const;
       double GetSegmentBegin() const;
 
-      int GetMaximumLayers() const;
+      int GetIterationsCount() const;
       int GetIntervalsCount() const;
       SchemeLayer GetInitialLayerU1() const;
       SchemeLayer GetInitialLayerU2() const;

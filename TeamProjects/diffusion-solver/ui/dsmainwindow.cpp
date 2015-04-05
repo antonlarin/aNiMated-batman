@@ -81,8 +81,8 @@ DSMainWindow::DSMainWindow(DSWindowManager* manager, QWidget *parent) :
             this, SLOT(showSelectedLayer()));
     connect(model, SIGNAL(resultAcquired()),
             this, SLOT(displayRunResults()));
-    connect(model, SIGNAL(resultChanged(const SchemeSolverResult&)),
-            this, SLOT(updateModelResult(const SchemeSolverResult&)));
+    connect(model, SIGNAL(resultChanged(const SchemeSolverIterationInfo&)),
+            this, SLOT(updateModelResult(const SchemeSolverIterationInfo&)));
     connect(model, SIGNAL(solverError(const DSSolverException&)),
             this, SLOT(modelSolverError(const DSSolverException&)));
 
@@ -303,8 +303,8 @@ void DSMainWindow::showSelectedLayer()
         QString(", t = %1").arg(model->GetCurrentLayerTime())
     );
 
-    displayActivatorLayer(model->GetCurrentActivatorLayer());
-    displayInhibitorLayer(model->GetCurrentInhibitorLayer());
+    displayActivatorLayer(model->GetCurrentActivatorLayer().Weak());
+    displayInhibitorLayer(model->GetCurrentInhibitorLayer().Weak());
 }
 
 void DSMainWindow::displayRunResults()
@@ -320,18 +320,15 @@ void DSMainWindow::displayRunResults()
     ui->continueRunButton->setEnabled(model->IsContinuationAvailable());
 }
 
-void DSMainWindow::updateModelResult(const SchemeSolverResult& result)
+void DSMainWindow::updateModelResult(const SchemeSolverIterationInfo& result)
 {
-    SchemeSolution activatorSolution = result.GetSolutionU1();
-    SchemeSolution inhibitorSolution = result.GetSolutionU2();
+    resetPlotsScale(result.GetMinValueU1(),
+                    result.GetMaxValueU1(),
+                    result.GetMinValueU2(),
+                    result.GetMaxValueU2());
 
-    resetPlotsScale(activatorSolution.GetMinimum(),
-                    activatorSolution.GetMaximum(),
-                    inhibitorSolution.GetMinimum(),
-                    inhibitorSolution.GetMaximum());
-
-    SchemeLayer activator = activatorSolution.GetLastLayer();
-    SchemeLayer inhibitor = inhibitorSolution.GetLastLayer();
+    SchemeWeakLayer activator = result.GetCurrentLayerU1();
+    SchemeWeakLayer inhibitor = result.GetCurrentLayerU2();
     displayActivatorLayer(activator);
     displayInhibitorLayer(inhibitor);
 }
@@ -380,7 +377,7 @@ void DSMainWindow::resetPlotsScale(double activatorMin, double activatorMax,
                                        inhibitorMax + inhibitorPlotMargin);
 }
 
-void DSMainWindow::displayActivatorLayer(const SchemeLayer& layer)
+void DSMainWindow::displayActivatorLayer(const SchemeWeakLayer& layer)
 {
     QVector<double> xs, ys;
     int layerLength = layer.GetLength();
@@ -399,7 +396,7 @@ void DSMainWindow::displayActivatorLayer(const SchemeLayer& layer)
     ui->activatorPlot->replot();
 }
 
-void DSMainWindow::displayInhibitorLayer(const SchemeLayer& layer)
+void DSMainWindow::displayInhibitorLayer(const SchemeWeakLayer& layer)
 {
     QVector<double> xs, ys;
     int layerLength = layer.GetLength();
