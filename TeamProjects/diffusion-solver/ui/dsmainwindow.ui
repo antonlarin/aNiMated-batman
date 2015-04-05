@@ -30,6 +30,24 @@
     </property>
     <item row="2" column="0">
      <widget class="QGroupBox" name="runTypeGroup">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>220</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>220</width>
+        <height>16777215</height>
+       </size>
+      </property>
       <property name="title">
        <string>Сохранение слоёв</string>
       </property>
@@ -72,12 +90,6 @@
         </widget>
        </item>
       </layout>
-      <zorder>savingLayersRadioButton</zorder>
-      <zorder>nonSavingLayersRadioButton</zorder>
-      <zorder>lineEdit</zorder>
-      <zorder>label_2</zorder>
-      <zorder>layerSavingStepLabel</zorder>
-      <zorder>layerSavingStepEdit</zorder>
      </widget>
     </item>
     <item row="0" column="0">
@@ -114,38 +126,11 @@
         <number>4</number>
        </property>
        <property name="bottomMargin">
-        <number>2</number>
+        <number>8</number>
        </property>
        <property name="spacing">
         <number>2</number>
        </property>
-       <item row="12" column="0" colspan="2">
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLineEdit" name="lambda2Edit">
-         <property name="text">
-          <string>1.0</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="1">
-        <widget class="QLineEdit" name="nuEdit">
-         <property name="text">
-          <string>1.0</string>
-         </property>
-        </widget>
-       </item>
        <item row="5" column="0">
         <widget class="QLabel" name="nuLabel">
          <property name="font">
@@ -164,6 +149,13 @@
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QLineEdit" name="nuEdit">
+         <property name="text">
+          <string>1.0</string>
          </property>
         </widget>
        </item>
@@ -188,27 +180,6 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="lambda1Label">
-         <property name="font">
-          <font>
-           <stylestrategy>PreferAntialias</stylestrategy>
-          </font>
-         </property>
-         <property name="toolTip">
-          <string>Коэффициент диффузии активатора</string>
-         </property>
-         <property name="layoutDirection">
-          <enum>Qt::LeftToRight</enum>
-         </property>
-         <property name="text">
-          <string>λ1</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
        <item row="6" column="0">
         <widget class="QLabel" name="gammaLabel">
          <property name="font">
@@ -224,6 +195,27 @@
          </property>
          <property name="text">
           <string>γ</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="lambda1Label">
+         <property name="font">
+          <font>
+           <stylestrategy>PreferAntialias</stylestrategy>
+          </font>
+         </property>
+         <property name="toolTip">
+          <string>Коэффициент диффузии активатора</string>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="text">
+          <string>λ1</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -262,42 +254,17 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="rhoLabel">
-         <property name="font">
-          <font>
-           <stylestrategy>PreferAntialias</stylestrategy>
-          </font>
-         </property>
-         <property name="toolTip">
-          <string>Подкачка ингибитора</string>
-         </property>
-         <property name="layoutDirection">
-          <enum>Qt::LeftToRight</enum>
-         </property>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="lambda2Edit">
          <property name="text">
-          <string>ρ</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
+          <string>1.0</string>
          </property>
         </widget>
        </item>
-       <item row="8" column="0">
-        <widget class="QLabel" name="timeStepLabel">
-         <property name="font">
-          <font>
-           <stylestrategy>PreferAntialias</stylestrategy>
-          </font>
-         </property>
-         <property name="layoutDirection">
-          <enum>Qt::LeftToRight</enum>
-         </property>
+       <item row="11" column="1">
+        <widget class="QLineEdit" name="iterationsEdit">
          <property name="text">
-          <string>Шаг по t</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
+          <string>1000</string>
          </property>
         </widget>
        </item>
@@ -305,6 +272,13 @@
         <widget class="QLineEdit" name="timeStepEdit">
          <property name="text">
           <string>0.00001</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1">
+        <widget class="QLineEdit" name="gammaEdit">
+         <property name="text">
+          <string>1.0</string>
          </property>
         </widget>
        </item>
@@ -323,20 +297,6 @@
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="1">
-        <widget class="QLineEdit" name="gammaEdit">
-         <property name="text">
-          <string>1.0</string>
-         </property>
-        </widget>
-       </item>
-       <item row="11" column="1">
-        <widget class="QLineEdit" name="iterationsEdit">
-         <property name="text">
-          <string>1000</string>
          </property>
         </widget>
        </item>
@@ -375,20 +335,6 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
-        <widget class="QLineEdit" name="lambda1Edit">
-         <property name="text">
-          <string>1.0</string>
-         </property>
-        </widget>
-       </item>
-       <item row="9" column="1">
-        <widget class="QLineEdit" name="activatorAccuracyEdit">
-         <property name="text">
-          <string>0.001</string>
-         </property>
-        </widget>
-       </item>
        <item row="9" column="0">
         <widget class="QLabel" name="activatorAccuracyLabel">
          <property name="font">
@@ -401,16 +347,6 @@
          </property>
          <property name="text">
           <string>ε по активатору</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="10" column="0">
-        <widget class="QLabel" name="inhibitorAccuracyLabel">
-         <property name="text">
-          <string>ε по ингибитору</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -438,10 +374,73 @@
          </property>
         </widget>
        </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="lambda1Edit">
+         <property name="text">
+          <string>1.0</string>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="0">
+        <widget class="QLabel" name="inhibitorAccuracyLabel">
+         <property name="text">
+          <string>ε по ингибитору</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="1">
+        <widget class="QLineEdit" name="activatorAccuracyEdit">
+         <property name="text">
+          <string>0.001</string>
+         </property>
+        </widget>
+       </item>
        <item row="10" column="1">
         <widget class="QLineEdit" name="inhibitorAccuracyEdit">
          <property name="text">
           <string>0.001</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0">
+        <widget class="QLabel" name="timeStepLabel">
+         <property name="font">
+          <font>
+           <stylestrategy>PreferAntialias</stylestrategy>
+          </font>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="text">
+          <string>Шаг по t</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="rhoLabel">
+         <property name="font">
+          <font>
+           <stylestrategy>PreferAntialias</stylestrategy>
+          </font>
+         </property>
+         <property name="toolTip">
+          <string>Подкачка ингибитора</string>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="text">
+          <string>ρ</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
          </property>
         </widget>
        </item>
@@ -739,6 +738,24 @@
       <property name="enabled">
        <bool>false</bool>
       </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>220</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>220</width>
+        <height>16777215</height>
+       </size>
+      </property>
       <property name="text">
        <string>Продолжить расчёт</string>
       </property>
@@ -786,6 +803,24 @@
      <widget class="QPushButton" name="lastResultsButton">
       <property name="enabled">
        <bool>false</bool>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>220</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>220</width>
+        <height>16777215</height>
+       </size>
       </property>
       <property name="text">
        <string>Результаты последнего расчёта</string>
