@@ -57,6 +57,8 @@ public slots:
     void loadEquationsParameters();
     void saveEquationsParameters();
 
+    void showSystemEquilibriumInformation();
+
     void updateModelResult(const SchemeSolverIterationInfo&);
 
     void modelSolverError(const DSSolverException&);

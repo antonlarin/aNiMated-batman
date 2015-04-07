@@ -877,6 +877,7 @@
      <string>Справка</string>
     </property>
     <addaction name="showEquationsHelpAction"/>
+    <addaction name="showEquilibriumHelpAction"/>
    </widget>
    <addaction name="fileMenu"/>
    <addaction name="parametersMenu"/>
@@ -943,6 +944,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+L</string>
+   </property>
+  </action>
+  <action name="showEquilibriumHelpAction">
+   <property name="text">
+    <string>Информация о состояниях равновесия</string>
    </property>
   </action>
  </widget>
