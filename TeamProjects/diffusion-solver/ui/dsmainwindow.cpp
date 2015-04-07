@@ -303,7 +303,7 @@ void DSMainWindow::showSelectedLayer()
 {
     DSModel* model = getManager()->getModel();
     ui->totalLayerNumLabel->setText(
-        QString("из %1, шаг").arg(model->GetPerformedIterationsCount())
+        QString("из %1, шаг").arg(model->GetAvailableLayerCount())
     );
     ui->currentLayerEdit->setText(
         QString("%1").arg(model->GetCurrentLayerIndex())

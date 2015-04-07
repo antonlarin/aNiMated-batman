@@ -10,7 +10,7 @@ namespace diffusioncore {
    class EXPORT_API SchemeResultsStorage final {
    private:
       int mTotalLayerCount;
-      std::list<SchemeSolverResult> mResults;      
+      std::list<SchemeSolverResult> mResults;
 
    public:
       SchemeResultsStorage();
@@ -21,17 +21,17 @@ namespace diffusioncore {
 
       SchemeLayer GetLayerU1(int layerIndex) const;
       SchemeLayer GetLayerU2(int layerIndex) const;
-      double TymeByIndex(int layerIndex) const;
+      double TimeByIndex(int layerIndex) const;
 
       int GetLayersCount() const;
-   
+
    private:
       SchemeSolverResult GetResultFromLayerIndex(int layer) const;
       int GetLayerIndexForResult(
-         const SchemeSolverResult& res, 
+         const SchemeSolverResult& res,
          int totalIndex) const;
 
    };
 }
 
-#endif   
+#endif

@@ -35,6 +35,7 @@ public:
     void StartRun();
     void ContinueRun();
 
+    int GetAvailableLayerCount() const;
     double GetCurrentLayerTime() const;
     const SchemeLayer GetActivatorLayer(int index);
     const SchemeLayer GetInhibitorLayer(int index);
@@ -52,7 +53,6 @@ public:
     double GetAchievedInhibitorAccuracy() const;
 
     bool IsContinuationAvailable() const;
-    void setupInitialConditions();
 signals:
     void layerIndexChanged();
     void resultAcquired();
@@ -74,6 +74,7 @@ private:
     void UpdateSolver(SchemeSolver* solver);    
     void setupTask();
     void setupSolverSettings();
+    void setupInitialConditions();
 
 private:
     DSParameterSet parameters;

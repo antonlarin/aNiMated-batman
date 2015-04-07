@@ -156,28 +156,31 @@ void DSModel::ContinueRun()
     SchemeLayer lastActivatorLayer = resultsStorage->GetLayerU1(lastLayerIndex);
     SchemeLayer lastInhibitorLayer = resultsStorage->GetLayerU2(lastLayerIndex);
     task->SetInitialLayers(lastActivatorLayer, lastInhibitorLayer);
+    task->SetStartIterationIndex(lastLayerIndex);
 
     setupSolverSettings();
 
     solverThread.start();
 }
 
+int DSModel::GetAvailableLayerCount() const
+{
+    return resultsStorage->GetLayersCount();
+}
+
 double DSModel::GetCurrentLayerTime() const
 {
-    double timeStep = parameters.GetTimeStep();
-    return currentLayerIndex * timeStep;
+    return resultsStorage->TimeByIndex(currentLayerIndex);
 }
 
 const SchemeLayer DSModel::GetActivatorLayer(int index)
 {
-    SchemeSolution solutionActivator = result->GetSolutionU1();
-    return solutionActivator.GetLayer(index);
+    return resultsStorage->GetLayerU1(index);
 }
 
 const SchemeLayer DSModel::GetInhibitorLayer(int index)
 {
-    SchemeSolution solutionInhibitor = result->GetSolutionU2();
-    return solutionInhibitor.GetLayer(index);
+    return resultsStorage->GetLayerU2(index);
 }
 
 const SchemeLayer DSModel::GetCurrentActivatorLayer()
@@ -239,7 +242,7 @@ bool DSModel::IsContinuationAvailable() const
 
 int DSModel::GetLayerCount() const
 {
-    return result->GetLayersCount();
+    return resultsStorage->GetLayersCount();
 }
 
 

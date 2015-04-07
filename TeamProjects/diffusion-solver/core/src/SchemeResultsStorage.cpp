@@ -33,7 +33,7 @@ SchemeLayer SchemeResultsStorage::GetLayerU2(int layerIndex) const {
    return res.GetSolutionU2().GetLayer(indexInRes);
 }
 
-double SchemeResultsStorage::TymeByIndex(int layerIndex) const {
+double SchemeResultsStorage::TimeByIndex(int layerIndex) const {
    int layersCounter = 0;
    double resTime = 0.0;
    for (const SchemeSolverResult& res : mResults) {
@@ -67,5 +67,12 @@ SchemeSolverResult SchemeResultsStorage::GetResultFromLayerIndex(
 
 inline int SchemeResultsStorage::GetLayerIndexForResult(
    const SchemeSolverResult& res, int totalIndex) const {
-   return totalIndex - res.GetLayersCount() + 1;
+   int resultIndex = totalIndex;
+   for (const SchemeSolverResult& res : mResults) {
+      int currentLayerCount = res.GetLayersCount();
+      if (resultIndex < currentLayerCount)
+         return resultIndex;
+      else
+         resultIndex -= currentLayerCount;
+   }
 }
