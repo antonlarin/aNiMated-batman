@@ -79,6 +79,8 @@ DSMainWindow::DSMainWindow(DSWindowManager* manager, QWidget *parent) :
         this, SLOT(saveEquationsParameters()));
     connect(ui->loadParametersAction, SIGNAL(triggered()),
             this, SLOT(loadEquationsParameters()));
+    connect(ui->showEquilibriumHelpAction, SIGNAL(triggered()),
+            this, SLOT(showSystemEquilibriumInformation()));
 
     DSModel* model = getManager()->getModel();
     connect(model, SIGNAL(layerIndexChanged()),
@@ -543,4 +545,17 @@ void DSMainWindow::loadEquationsParameters()
             file.close();
         }
     }
+}
+void DSMainWindow::showSystemEquilibriumInformation()
+{
+    DSParameterSet* currentParameters =
+            getManager()->getModel()->AccessParameters();
+    double u1 = (currentParameters->GetRho() +
+                 currentParameters->GetK()*currentParameters->GetNu()/currentParameters->GetC())/
+            currentParameters->GetGamma();
+    double u2 = u1*u1*currentParameters->GetC()/currentParameters->GetNu();
+    QString infoMessage("");
+    infoMessage+="Возможное стационарное однородное по пространству \nустойчивое решение: ( ";
+    infoMessage+=QString::number(u1) + QString(" ; ") + QString::number(u2) + QString(" )\n");
+    QMessageBox::information(0,"Информация о состояниях равновесия", infoMessage);
 }
