@@ -6,7 +6,7 @@
 
 void DSSettingsManager::handleParsingError()
 {
-    throw std::exception("Ошибка при чтении параметров");
+    throw std::runtime_error("Ошибка при чтении параметров");
 }
 
 void DSSettingsManager::saveSettings(QFile& outputFile, const DSParameterSet* settings)
