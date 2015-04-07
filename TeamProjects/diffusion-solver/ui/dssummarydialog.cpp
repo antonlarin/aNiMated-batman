@@ -21,11 +21,17 @@ void DSSummaryDialog::showWindow()
 {
     DSModel* model = getManager()->getModel();
     ui->activatorAccuracyValueLabel->setText(
-                tr("%1").arg(model->GetAchievedActivatorAccuracy()));
+        QString("%1").arg(model->GetAchievedActivatorAccuracy())
+    );
+    ui->finalTimeValueLabel->setText(
+        QString("%1").arg(model->GetLastLayerTime())
+    );
     ui->inhibitorAccuracyValueLabel->setText(
-                tr("%1").arg(model->GetAchievedInhibitorAccuracy()));
+        QString("%1").arg(model->GetAchievedInhibitorAccuracy())
+    );
     ui->iterationsPerformedValueLabel->setText(
-                tr("%1").arg(model->GetPerformedIterationsCount()));
+        QString("%1").arg(model->GetPerformedIterationsCount())
+    );
 
     show();
 }

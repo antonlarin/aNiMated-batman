@@ -37,6 +37,7 @@ public:
 
     int GetAvailableLayerCount() const;
     double GetCurrentLayerTime() const;
+    double GetLastLayerTime() const;
     const SchemeLayer GetActivatorLayer(int index);
     const SchemeLayer GetInhibitorLayer(int index);
 

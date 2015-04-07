@@ -173,6 +173,11 @@ double DSModel::GetCurrentLayerTime() const
     return resultsStorage->TimeByIndex(currentLayerIndex);
 }
 
+double DSModel::GetLastLayerTime() const
+{
+    return resultsStorage->TimeByIndex(GetAvailableLayerCount() - 1);
+}
+
 const SchemeLayer DSModel::GetActivatorLayer(int index)
 {
     return resultsStorage->GetLayerU1(index);

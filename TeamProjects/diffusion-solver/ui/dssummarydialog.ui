@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>260</width>
-    <height>111</height>
+    <height>135</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,14 +20,14 @@
    <bool>true</bool>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="0">
+   <item row="2" column="0">
     <widget class="QLabel" name="activatorAccuracyLabel">
      <property name="text">
       <string>Точность по активатору:</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
+   <item row="4" column="0">
     <widget class="QLabel" name="inhibitorAccuracyLabel">
      <property name="text">
       <string>Точность по ингибитору:</string>
@@ -48,24 +48,38 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
+   <item row="4" column="1">
     <widget class="QLabel" name="inhibitorAccuracyValueLabel">
      <property name="text">
       <string>TextLabel</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
+   <item row="5" column="1">
+    <widget class="QPushButton" name="closeButton">
+     <property name="text">
+      <string>Закрыть</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
     <widget class="QLabel" name="activatorAccuracyValueLabel">
      <property name="text">
       <string>TextLabel</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="1">
-    <widget class="QPushButton" name="closeButton">
+   <item row="1" column="0">
+    <widget class="QLabel" name="finalTimeLabel">
      <property name="text">
-      <string>Закрыть</string>
+      <string>t последнего слоя:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QLabel" name="finalTimeValueLabel">
+     <property name="text">
+      <string>TextLabel</string>
      </property>
     </widget>
    </item>
