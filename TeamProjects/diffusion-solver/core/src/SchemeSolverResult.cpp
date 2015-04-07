@@ -21,6 +21,7 @@ SchemeSolverResult::SchemeSolverResult(const SchemeSolution& solutionU1,
 
    mLayersCount = solutionU1.GetLayersCount();
    mIntervalsCount = task.GetIntervalsCount();
+   mTotalTime = statistic.GetIterationsCount() * task.GetStepTime();
 }
 
 SchemeSolverResult::~SchemeSolverResult() { }
@@ -32,6 +33,10 @@ int SchemeSolverResult::GetLayersCount() const {
 
 int SchemeSolverResult::GetIntervalsCount() const {
    return mIntervalsCount;
+}
+
+double SchemeSolverResult::GetTotalTime() const {
+   return mTotalTime;
 }
 
 SchemeSolution SchemeSolverResult::GetSolutionU1() const {

@@ -17,6 +17,7 @@ namespace diffusioncore {
 
       int mLayersCount;
       int mIntervalsCount;
+      double mTotalTime;
 
    public:
       SchemeSolverResult();
@@ -28,6 +29,7 @@ namespace diffusioncore {
 
       int GetLayersCount() const;
       int GetIntervalsCount() const;
+      double GetTotalTime() const;
 
       SchemeSolution GetSolutionU1() const;
       SchemeSolution GetSolutionU2() const;
