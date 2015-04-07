@@ -7,6 +7,7 @@
 #include <QObject>
 
 #include <diffusioncore>
+#include "SchemeResultsStorage.hpp"
 #include "dssolverthread.hpp"
 #include "dsparameterset.hpp"
 
@@ -51,7 +52,7 @@ public:
     double GetAchievedInhibitorAccuracy() const;
 
     bool IsContinuationAvailable() const;
-
+    void setupInitialConditions();
 signals:
     void layerIndexChanged();
     void resultAcquired();
@@ -70,7 +71,9 @@ private slots:
     void solverThreadHandleError(const DSSolverException&);
 
 private:
-    void UpdateSolver(SchemeSolver* solver);
+    void UpdateSolver(SchemeSolver* solver);    
+    void setupTask();
+    void setupSolverSettings();
 
 private:
     DSParameterSet parameters;
@@ -79,6 +82,7 @@ private:
     shared_ptr<SchemeTask> task;
     shared_ptr<SchemeSolver> solver;
     unique_ptr<SchemeSolverResult> result;
+    unique_ptr<SchemeResultsStorage> resultsStorage;
 
     bool continuationAvailable;
     int currentLayerIndex;

@@ -9,10 +9,12 @@ DSModel::DSModel() :
     QObject(),
     parameters(),
     task(new SchemeTask),
+    continuationAvailable(false),
     currentLayerIndex(0),
     layerStep(1),
     firstComparedLayerIndex(0),
-    secondComparedLayerIndex(0)
+    secondComparedLayerIndex(0),
+    resultsStorage(new SchemeResultsStorage())
 {
     connect(&solverThread, SIGNAL(solverFinished(SchemeSolverResult&)),
             this, SLOT(solverThreadFinished(SchemeSolverResult&)));
@@ -98,20 +100,14 @@ DSParameterSet* DSModel::AccessParameters()
     return &parameters;
 }
 
-void DSModel::StartRun()
+void DSModel::setupSolverSettings()
 {
-    task->SetLambda1(AccessParameters()->GetLambda1());
-    task->SetLambda2(AccessParameters()->GetLambda2());
-    task->SetK(AccessParameters()->GetK());
-    task->SetC(AccessParameters()->GetC());
-    task->SetRho(AccessParameters()->GetRho());
-    task->SetMu(AccessParameters()->GetGamma());
-    task->SetNu(AccessParameters()->GetNu());
-    task->SetStepTime(AccessParameters()->GetTimeStep());
-    task->SetAccuracyU1(AccessParameters()->GetActivatorAccuracy());
-    task->SetAccuracyU2(AccessParameters()->GetInhibitorAccuracy());
-    task->SetEndIterationIndex(AccessParameters()->GetIterationsLimit());
+    solver->SetSolverMode(AccessParameters()->GetSolvingMode());
+    solver->SetSaveLayerStep(AccessParameters()->GetLayerSavingStep());
+}
 
+void DSModel::setupInitialConditions()
+{
     SchemeLayerGeneratorInitial initialLayerGenerator;
     initialLayerGenerator.SetIntervalsCount(
                 AccessParameters()->GetGridDimension());
@@ -125,18 +121,44 @@ void DSModel::StartRun()
     SchemeLayer inhibitorInitLayer = initialLayerGenerator.Generate();
 
     task->SetInitialLayers(activatorInitLayer, inhibitorInitLayer);
+}
 
-    solver->SetSolverMode(AccessParameters()->GetSolvingMode());
-    solver->SetSaveLayerStep(AccessParameters()->GetLayerSavingStep());
+void DSModel::setupTask()
+{
+    task->SetLambda1(AccessParameters()->GetLambda1());
+    task->SetLambda2(AccessParameters()->GetLambda2());
+    task->SetK(AccessParameters()->GetK());
+    task->SetC(AccessParameters()->GetC());
+    task->SetRho(AccessParameters()->GetRho());
+    task->SetMu(AccessParameters()->GetGamma());
+    task->SetNu(AccessParameters()->GetNu());
+    task->SetStepTime(AccessParameters()->GetTimeStep());
+    task->SetAccuracyU1(AccessParameters()->GetActivatorAccuracy());
+    task->SetAccuracyU2(AccessParameters()->GetInhibitorAccuracy());
+    task->SetEndIterationIndex(AccessParameters()->GetIterationsLimit());
+}
 
-    currentLayerIndex = 0;
-    solverThread.SetContinuationFlag(false);
+void DSModel::StartRun()
+{
+    setupTask();
+    setupInitialConditions();
+    setupSolverSettings();
+
+    resultsStorage->Drop();
     solverThread.start();
 }
 
 void DSModel::ContinueRun()
 {
-    solverThread.SetContinuationFlag(true);
+    setupTask();
+
+    int lastLayerIndex = resultsStorage->GetLayersCount() - 1;
+    SchemeLayer lastActivatorLayer = resultsStorage->GetLayerU1(lastLayerIndex);
+    SchemeLayer lastInhibitorLayer = resultsStorage->GetLayerU2(lastLayerIndex);
+    task->SetInitialLayers(lastActivatorLayer, lastInhibitorLayer);
+
+    setupSolverSettings();
+
     solverThread.start();
 }
 
@@ -249,7 +271,9 @@ void DSModel::selectExplicitSolver()
 
 void DSModel::solverThreadFinished(const SchemeSolverResult& res)
 {
+    resultsStorage->AddResult(res);
     result.reset(new SchemeSolverResult(res));
+    continuationAvailable = true;
     emit resultAcquired();
 }
 

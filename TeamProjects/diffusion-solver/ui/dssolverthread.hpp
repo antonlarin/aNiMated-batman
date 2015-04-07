@@ -33,7 +33,6 @@ public:
 
     void StopSolver();
     void UpdateSolver(std::shared_ptr<SchemeSolver> solver);
-    void SetContinuationFlag(bool isContinuation);
 
 signals:
     void resultChanged(const SchemeSolverIterationInfo&);
@@ -54,7 +53,6 @@ private:
 
     QMutex mtx;
     bool solverNeedStop;
-    bool isContinuationRun;
     SchemeSolverResult result;
     std::once_flag registerMetaTypeFlag;
     std::shared_ptr<SchemeSolver> solver;
