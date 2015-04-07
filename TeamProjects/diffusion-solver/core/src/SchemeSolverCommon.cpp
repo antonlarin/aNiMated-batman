@@ -90,13 +90,15 @@ inline SchemeSolverResult SchemeSolverCommon::ConstructSolverResult(
    int itersCount, const SchemeTask& task) {
    SchemeSolution solutionU1 = mGridU1->BuildSolution();
    SchemeSolution solutionU2 = mGridU2->BuildSolution();
-   SchemeStatistic statistic(itersCount, mMaxDiffU1, mMaxDiffU2);
+   SchemeStatistic statistic(
+      mIterationsCount, itersCount, mMaxDiffU1, mMaxDiffU2);
    return SchemeSolverResult(solutionU1, solutionU2, statistic, task);
 }
 
 inline SchemeSolverIterationInfo 
 SchemeSolverCommon::ConstructSolverIntermediateResult(int itersCount) {
-   SchemeStatistic statistic(itersCount, mMaxDiffU1, mMaxDiffU2);
+   SchemeStatistic statistic(
+      mIterationsCount, itersCount, mMaxDiffU1, mMaxDiffU2);
    SchemeWeakLayer currentLayerU1(mCurrLayerU1, mIntervalsCount);
    SchemeWeakLayer currentLayerU2(mCurrLayerU2, mIntervalsCount);
    return SchemeSolverIterationInfo(

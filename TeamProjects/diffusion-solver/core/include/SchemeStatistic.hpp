@@ -8,6 +8,7 @@ namespace diffusioncore {
    class EXPORT_API SchemeStatistic {
    private:
       int mIterationsCount;
+      int mPerformedIterationsCount;
       double mStopAccuracyU1;
       double mStopAccuracyU2;
 
@@ -15,12 +16,14 @@ namespace diffusioncore {
 
    public:
       SchemeStatistic();
-      SchemeStatistic(int iterationsCount, 
+      SchemeStatistic(int iterationsCount,
+                      int performedIterationsCount,
                       double stopAccuracyU1,
                       double stopAccuracyU2);
       ~SchemeStatistic();
       
       int GetIterationsCount() const;
+      int GetPerformedIterationsCount() const;
       double GetStopAccuracyU1() const;
       double GetStopAccuracyU2() const;
 

@@ -195,7 +195,7 @@ double DSModel::GetInhibitorMinimum() const
 int DSModel::GetPerformedIterationsCount() const
 {
     SchemeStatistic stat = result->GetStatistic();
-    return stat.GetIterationsCount();
+    return stat.GetPerformedIterationsCount();
 }
 
 double DSModel::GetAchievedActivatorAccuracy() const
