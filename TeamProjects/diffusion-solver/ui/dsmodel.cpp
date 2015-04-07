@@ -195,26 +195,22 @@ const SchemeLayer DSModel::GetCurrentInhibitorLayer()
 
 double DSModel::GetActivatorMaximum() const
 {
-    auto solutionActivator = result->GetSolutionU1();
-    return solutionActivator.GetMaximum();
+    return resultsStorage->GetU1Maximum();
 }
 
 double DSModel::GetActivatorMinimum() const
 {
-    auto solutionActivator = result->GetSolutionU1();
-    return solutionActivator.GetMinimum();
+    return resultsStorage->GetU1Minimum();
 }
 
 double DSModel::GetInhibitorMaximum() const
 {
-    auto solutionInhibitor = result->GetSolutionU2();
-    return solutionInhibitor.GetMaximum();
+    return resultsStorage->GetU2Maximum();
 }
 
 double DSModel::GetInhibitorMinimum() const
 {
-    auto solutionInhibitor = result->GetSolutionU2();
-    return solutionInhibitor.GetMinimum();
+    return resultsStorage->GetU2Minimum();
 }
 
 int DSModel::GetPerformedIterationsCount() const

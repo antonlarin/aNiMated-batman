@@ -11,6 +11,10 @@ namespace diffusioncore {
    private:
       int mTotalLayerCount;
       std::list<SchemeSolverResult> mResults;
+      double mU1Minimum;
+      double mU1Maximum;
+      double mU2Minimum;
+      double mU2Maximum;
 
    public:
       SchemeResultsStorage();
@@ -21,6 +25,10 @@ namespace diffusioncore {
 
       SchemeLayer GetLayerU1(int layerIndex) const;
       SchemeLayer GetLayerU2(int layerIndex) const;
+      double GetU1Minimum() const;
+      double GetU1Maximum() const;
+      double GetU2Minimum() const;
+      double GetU2Maximum() const;
       double TimeByIndex(int layerIndex) const;
 
       int GetLayersCount() const;

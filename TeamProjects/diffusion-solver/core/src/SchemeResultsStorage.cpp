@@ -1,11 +1,16 @@
 #include <stdexcept>
+#include <limits>
+#include <algorithm>
 #include "SchemeResultsStorage.hpp"
 
 using namespace diffusioncore;
+typedef std::numeric_limits<double> doubleLimits;
 
-SchemeResultsStorage::SchemeResultsStorage() {
-   mTotalLayerCount = 0;
-}
+SchemeResultsStorage::SchemeResultsStorage() :
+   mTotalLayerCount(0),
+   mU1Minimum(doubleLimits::infinity()), mU1Maximum(-doubleLimits::infinity()),
+   mU2Minimum(doubleLimits::infinity()), mU2Maximum(-doubleLimits::infinity())
+{}
 
 SchemeResultsStorage::~SchemeResultsStorage() { }
 
@@ -13,6 +18,11 @@ SchemeResultsStorage::~SchemeResultsStorage() { }
 void SchemeResultsStorage::AddResult(const SchemeSolverResult& result) {
    mResults.push_back(result);
    mTotalLayerCount += result.GetLayersCount();
+
+   mU1Minimum = std::min(mU1Minimum, result.GetSolutionU1().GetMinimum());
+   mU1Maximum = std::max(mU1Maximum, result.GetSolutionU1().GetMaximum());
+   mU2Minimum = std::min(mU2Minimum, result.GetSolutionU2().GetMinimum());
+   mU2Maximum = std::max(mU2Maximum, result.GetSolutionU2().GetMaximum());
 }
 
 void SchemeResultsStorage::Drop() {
@@ -32,6 +42,23 @@ SchemeLayer SchemeResultsStorage::GetLayerU2(int layerIndex) const {
    int indexInRes = GetLayerIndexForResult(res, layerIndex);
    return res.GetSolutionU2().GetLayer(indexInRes);
 }
+
+double SchemeResultsStorage::GetU1Minimum() const {
+   return mU1Minimum;
+}
+
+double SchemeResultsStorage::GetU1Maximum() const {
+   return mU1Maximum;
+}
+
+double SchemeResultsStorage::GetU2Minimum() const {
+   return mU2Minimum;
+}
+
+double SchemeResultsStorage::GetU2Maximum() const {
+   return mU2Maximum;
+}
+
 
 double SchemeResultsStorage::TimeByIndex(int layerIndex) const {
    int layersCounter = 0;
