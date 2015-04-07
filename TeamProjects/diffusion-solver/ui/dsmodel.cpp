@@ -17,8 +17,8 @@ DSModel::DSModel() :
     connect(&solverThread, SIGNAL(solverFinished(SchemeSolverResult&)),
             this, SLOT(solverThreadFinished(SchemeSolverResult&)));
 
-    connect(&solverThread, SIGNAL(resultChanged(const SchemeSolverResult&)),
-            this, SLOT(solverThreadResultChanged(const SchemeSolverResult&)));
+    connect(&solverThread, SIGNAL(resultChanged(const SchemeSolverIterationInfo&)),
+            this, SLOT(solverThreadResultChanged(const SchemeSolverIterationInfo&)));
 
     connect(&solverThread, SIGNAL(solverError(const DSSolverException&)),
             this, SLOT(solverThreadHandleError(const DSSolverException&)));
@@ -98,7 +98,7 @@ DSParameterSet* DSModel::AccessParameters()
     return &parameters;
 }
 
-void DSModel::StartRun(SchemeSolverMode mode)
+void DSModel::StartRun()
 {
     task->SetLambda1(AccessParameters()->GetLambda1());
     task->SetLambda2(AccessParameters()->GetLambda2());
@@ -110,7 +110,7 @@ void DSModel::StartRun(SchemeSolverMode mode)
     task->SetStepTime(AccessParameters()->GetTimeStep());
     task->SetAccuracyU1(AccessParameters()->GetActivatorAccuracy());
     task->SetAccuracyU2(AccessParameters()->GetInhibitorAccuracy());
-    task->SetMaximumIterations(AccessParameters()->GetIterationsLimit());
+    task->SetEndIterationIndex(AccessParameters()->GetIterationsLimit());
 
     SchemeLayerGeneratorInitial initialLayerGenerator;
     initialLayerGenerator.SetIntervalsCount(
@@ -126,14 +126,8 @@ void DSModel::StartRun(SchemeSolverMode mode)
 
     task->SetInitialLayers(activatorInitLayer, inhibitorInitLayer);
 
-    switch (mode)
-    {
-    case AllLayers:
-        solver->SetSolverMode(AllLayers);
-        break;
-    case StableLayer:
-        solver->SetSolverMode(StableLayer);
-    }
+    solver->SetSolverMode(AccessParameters()->GetSolvingMode());
+    solver->SetSaveLayerStep(AccessParameters()->GetLayerSavingStep());
 
     currentLayerIndex = 0;
     solverThread.SetContinuationFlag(false);
@@ -201,7 +195,7 @@ double DSModel::GetInhibitorMinimum() const
 int DSModel::GetPerformedIterationsCount() const
 {
     SchemeStatistic stat = result->GetStatistic();
-    return stat.GetIterationsCount();
+    return stat.GetPerformedIterationsCount();
 }
 
 double DSModel::GetAchievedActivatorAccuracy() const
@@ -256,11 +250,10 @@ void DSModel::selectExplicitSolver()
 void DSModel::solverThreadFinished(const SchemeSolverResult& res)
 {
     result.reset(new SchemeSolverResult(res));
-    continuationAvailable = result->IsContinuationAvailable();
     emit resultAcquired();
 }
 
-void DSModel::solverThreadResultChanged(const SchemeSolverResult& res)
+void DSModel::solverThreadResultChanged(const SchemeSolverIterationInfo& res)
 {
     emit resultChanged(res);
 }

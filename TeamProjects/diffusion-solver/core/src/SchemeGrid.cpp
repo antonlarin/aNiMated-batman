@@ -1,99 +1,89 @@
 #include <limits>
 #include <cassert>
+#include <cstring>
 #include <algorithm>
-#include <stdexcept>
 #include "CoreUtils.hpp"
 #include "SchemeGrid.hpp"
 
 using namespace diffusioncore;
-using namespace diffusioncore::utils;
 
-SchemeGrid::SchemeGrid() {
-   mIsInitialized = false;
-}
+SchemeGrid::SchemeGrid(const SchemeTask& task,
+                       const SchemeLayer& initialLayer,
+                       const SchemeSolver* solver) {
+   mSwapCounter    = 0;
+   mSaveLayerStep  = solver->GetSaveLayerStep();
+   mSolverMode     = solver->GetSolverMode();
+   mPointsCount    = initialLayer.GetLength();
+   mLayersMaxCount = CalculateLayersCount(task);
+   mRawGridSize    = mLayersMaxCount * mPointsCount;
 
-SchemeGrid::SchemeGrid(int layersCount,
-                       SchemeLayer& initialLayer,
-                       SchemeSolverMode solverMode) {
-   assert(layersCount > 0);
-
-   mSolverMode = solverMode;
-   mLayersCount = layersCount;
-   mPointsCount = initialLayer.GetLength();
+   mMaxValue = -std::numeric_limits<double>::infinity();
+   mMinValue = std::numeric_limits<double>::infinity();
 
    InitializeGrid(initialLayer);
-   InitializeLayers();
-
-   mIsInitialized = true;
 }
 
 SchemeGrid::~SchemeGrid() { }
 
 
-SharedVector SchemeGrid::Source() const {
-   CheckIsInitialized();
-   return mGrid;
-}
-
-void SchemeGrid::NextLayer() {
-   CheckIsInitialized();
-   switch (mSolverMode) {
-      case SchemeSolverMode::AllLayers:
-         mPrevLayer = mCurrLayer;
-         mCurrLayer = mCurrLayer + mPointsCount;
-         break;
-
-      case SchemeSolverMode::StableLayer:
-         PointerSwap(&mCurrLayer, &mPrevLayer);
-         break;
-
-      default:
-         throw std::runtime_error("Invalid solving mode");
-   }
+void SchemeGrid::UpdateMinMaxValues(double value) {
+   mMaxValue = std::max(mMaxValue, value);
+   mMinValue = std::min(mMinValue, value);
 }
 
 double* SchemeGrid::GetPrevousLayer() const {
-   CheckIsInitialized();
-   return mPrevLayer;
+   return mPrevLayer.get();
 }
 
 double* SchemeGrid::GetCurrentLayer() const {
-   CheckIsInitialized();
-   return mCurrLayer;
+   return mCurrLayer.get();
 }
 
-void SchemeGrid::InitializeGrid(SchemeLayer& initialLayer) {
-   int n = mPointsCount;
-   int m = mLayersCount;
+double SchemeGrid::GetMinValue() const {
+   return mMinValue;
+}
 
-   size_t gridSize = 0;
-   switch (mSolverMode) {
-      case SchemeSolverMode::AllLayers:
-         gridSize = n * m;
-         break;
+double SchemeGrid::GetMaxValue() const {
+   return mMaxValue;
+}
 
-      case SchemeSolverMode::StableLayer:
-         gridSize = 2 * n;
-         break;
-
-      default:
-         throw std::runtime_error("Invalid solving mode");
+void SchemeGrid::NextLayer() {
+   if (mSolverMode == SchemeSolverMode::AllLayers) {
+      if (mSwapCounter % mSaveLayerStep == 0)
+         SaveCurrentLayer();
    }
 
-   double* grid = new double[gridSize];
-   mGrid = SharedVector(grid, array_deleter<double>());
+   std::swap(mCurrLayer, mPrevLayer);
+   mSwapCounter++;
+}
 
-   for (int i = 0; i < n; i++) {
-      grid[i] = initialLayer[i];
+SchemeSolution SchemeGrid::BuildSolution() {
+   SchemeSolution solution;
+   if (mSolverMode == SchemeSolverMode::StableLayer) {
+      SchemeLayer layer(mCurrLayer.get(), mPointsCount);
+      solution = SchemeSolution(layer, mMinValue, mMaxValue);
    }
+   else if (mSolverMode == SchemeSolverMode::AllLayers) {
+      solution = SchemeSolution(mLayers, mMinValue, mMaxValue);
+      mLayers.clear();
+   }
+   return solution;
 }
 
-void SchemeGrid::InitializeLayers() {
-   mPrevLayer = mGrid.get();
-   mCurrLayer = mGrid.get() + mPointsCount;
+int SchemeGrid::CalculateLayersCount(const SchemeTask& task) const {
+   int iterationsCount = task.GetIterationsCount();
+   return (iterationsCount + mSaveLayerStep - 1) / mSaveLayerStep + 1;
 }
 
-void SchemeGrid::CheckIsInitialized() const {
-   if (!mIsInitialized)
-      throw std::runtime_error("Object is not initialized");
+void SchemeGrid::InitializeGrid(const SchemeLayer& initialLayer) {
+   mPrevLayer.reset(new double[mPointsCount]);
+   mCurrLayer.reset(new double[mPointsCount]);
+
+   size_t rawLayerSize = sizeof(double) * mPointsCount;
+   std::memcpy(mPrevLayer.get(), initialLayer.Raw(), rawLayerSize);
+}
+
+void SchemeGrid::SaveCurrentLayer() {
+   assert(mSolverMode == SchemeSolverMode::AllLayers);
+   mLayers.push_back(SchemeLayer(mCurrLayer.get(), mPointsCount));
 }

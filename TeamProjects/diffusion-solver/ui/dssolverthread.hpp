@@ -16,7 +16,9 @@ using namespace std::chrono;
 
 using diffusioncore::SchemeSolver;
 using diffusioncore::SchemeSolverResult;
+using diffusioncore::SchemeSolverIterationInfo;
 
+Q_DECLARE_METATYPE(SchemeSolverIterationInfo)
 Q_DECLARE_METATYPE(SchemeSolverResult)
 Q_DECLARE_METATYPE(DSSolverException)
 
@@ -34,7 +36,7 @@ public:
     void SetContinuationFlag(bool isContinuation);
 
 signals:
-    void resultChanged(const SchemeSolverResult&);
+    void resultChanged(const SchemeSolverIterationInfo&);
     void solverFinished(const SchemeSolverResult&);
     void solverError(const DSSolverException&);
 
@@ -46,9 +48,9 @@ protected:
 
 private:
     void Initialize();
-    bool UpdateCurrentSolverResult(SchemeSolverResult& info);
+    bool UpdateCurrentSolverResult(SchemeSolverIterationInfo& info);
 
-    milliseconds GetMaxUpdateIterationSpan() const { return milliseconds(10); }
+    inline milliseconds GetMaxUpdateIterationSpan() const;
 
     QMutex mtx;
     bool solverNeedStop;

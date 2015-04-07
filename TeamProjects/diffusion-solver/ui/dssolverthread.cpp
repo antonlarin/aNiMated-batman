@@ -28,6 +28,9 @@ void DSSolverThread::Initialize()
         qRegisterMetaType<SchemeSolverResult>();
         qRegisterMetaType<SchemeSolverResult>("SchemeSolverResult&");
 
+        qRegisterMetaType<SchemeSolverIterationInfo>();
+        qRegisterMetaType<SchemeSolverIterationInfo>("SchemeSolverIterationInfo&");
+
         qRegisterMetaType<DSSolverException>();
         qRegisterMetaType<DSSolverException>("DSSolverException&");
     });
@@ -72,14 +75,7 @@ void DSSolverThread::run()
 
     try
     {
-        if (!isContinuationRun)
-        {
-            result = solver->Solve();
-        }
-        else
-        {
-            result = solver->ContinueSolving();
-        }
+        result = solver->Solve();
     }
     catch (std::exception ex)
     {
@@ -93,7 +89,7 @@ void DSSolverThread::threadFinished()
     emit solverFinished(result);
 }
 
-bool DSSolverThread::UpdateCurrentSolverResult(SchemeSolverResult& result)
+bool DSSolverThread::UpdateCurrentSolverResult(SchemeSolverIterationInfo& result)
 {
     high_resolution_clock::time_point anotherPoint = high_resolution_clock::now();
     milliseconds sinceLastIterationInfoUpdate =
@@ -110,5 +106,10 @@ bool DSSolverThread::UpdateCurrentSolverResult(SchemeSolverResult& result)
 
     // to exit from solver need return false
     return !stop;
+}
+
+milliseconds DSSolverThread::GetMaxUpdateIterationSpan() const
+{
+    return milliseconds(50);
 }
 

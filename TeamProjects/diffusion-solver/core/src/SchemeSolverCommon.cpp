@@ -5,61 +5,42 @@ using namespace diffusioncore::utils;
 
 SchemeSolverCommon::SchemeSolverCommon() { }
 SchemeSolverCommon::~SchemeSolverCommon() { }
-   
-
-void SchemeSolverCommon::InitializeGrid(const SchemeTask& task) {
-   int layersCount = task.GetMaximumLayers();
-   SchemeSolverMode solvingMode = GetSolverMode();
-
-   auto initialLayerU1 = task.GetInitialLayerU1();
-   auto initialLayerU2 = task.GetInitialLayerU2();
-   mGridU1 = SchemeGrid(layersCount, initialLayerU1, solvingMode); 
-   mGridU2 = SchemeGrid(layersCount, initialLayerU2, solvingMode);
-}
-
-bool SchemeSolverCommon::UpdateCurrentSolution(int itersCount, 
-                                               const SchemeTask& task) {
-   int n = mIntervalsCount;
-   mMaxDiffU1 = MaxDifference(mCurrLayerU1, mPrevLayerU1, n + 1);
-   mMaxDiffU2 = MaxDifference(mCurrLayerU2, mPrevLayerU2, n + 1);
-
-   SchemeSolution solutionU1 = mBuilderU1.Build(mGridU1);
-   SchemeSolution solutionU2 = mBuilderU2.Build(mGridU2);
-   SchemeStatistic statistic(itersCount, mMaxDiffU1, mMaxDiffU2);
-   SchemeSolverResult result(solutionU1, solutionU2, statistic, task, true);
-   
-   if (!UpdateIterationInfo(result))
-      return true;
-
-   if (GetSolverMode() == SchemeSolverMode::StableLayer)
-      return mMaxDiffU1 < mAccuracyU1 && mMaxDiffU2 < mAccuracyU2;
-
-   return false;
-}
-
 
 SchemeSolverResult SchemeSolverCommon::SolveOverride(SchemeTask task) {
    PrepareSolver(task);
 
-   mPerformedIterationsCount = 0;
-   SolvingLoop(task);
-   SchemeSolverResult result = ConstructSolvingResult(task);
+   bool needToStop = false;
+   int iterationsCount = task.GetStartIterationIndex();
+   int maxIterations = task.GetEndIterationIndex();
+   while (iterationsCount <= maxIterations && !needToStop) {
+      mCurrLayerU1 = mGridU1->GetCurrentLayer();
+      mCurrLayerU2 = mGridU2->GetCurrentLayer();
+      mPrevLayerU1 = mGridU1->GetPrevousLayer();
+      mPrevLayerU2 = mGridU2->GetPrevousLayer();
+      
+      iterationsCount++;
+      DoSolverIteration();
+      UpdateCurrentLayersDifference();
 
+      needToStop = 
+         CheckStopCondition() ||
+         UpdateCurrentIteratonInfo(iterationsCount, task);
+
+      mGridU1->NextLayer();
+      mGridU2->NextLayer();
+   }
+
+   SchemeSolverResult result = ConstructSolverResult(
+      iterationsCount, task);
    CleanupSolver(task);
    return result;
 }
 
-SchemeSolverResult SchemeSolverCommon::ContinueSolvingOverride(SchemeTask task) {
-   PrepareSolverOverride(task);
-
-   mGridU1.NextLayer();
-   mGridU2.NextLayer();
-   SolvingLoop(task);
-
-   SchemeSolverResult result = ConstructSolvingResult(task);
-
-   CleanupSolverOverride(task);
-   return result;
+void SchemeSolverCommon::InitializeGrid(const SchemeTask& task) {
+   auto initialLayerU1 = task.GetInitialLayerU1();
+   auto initialLayerU2 = task.GetInitialLayerU2();
+   mGridU1.reset(new SchemeGrid(task, initialLayerU1, this)); 
+   mGridU2.reset(new SchemeGrid(task, initialLayerU2, this));
 }
 
 void SchemeSolverCommon::InitializeSchemeParameters(const SchemeTask& task) {
@@ -74,7 +55,7 @@ void SchemeSolverCommon::InitializeSchemeParameters(const SchemeTask& task) {
    mAccuracyU1 = task.GetAccuracyU1();
    mAccuracyU2 = task.GetAccuracyU2();
    mIntervalsCount = task.GetIntervalsCount();
-   mIterationsCount = task.GetMaximumIterations();
+   mIterationsCount = task.GetIterationsCount();
 }
 
 void SchemeSolverCommon::CheckParametersOverride(const SchemeTask& task) { }
@@ -82,60 +63,56 @@ void SchemeSolverCommon::CleanupSolverOverride(const SchemeTask& task) { }
 void SchemeSolverCommon::PrepareSolverOverride(const SchemeTask& task) { }
 
 
-void SchemeSolverCommon::SolvingLoop(const SchemeTask& task) {
-   int maxIterations = task.GetMaximumIterations();
-   while (mPerformedIterationsCount < maxIterations) {
-      mCurrLayerU1 = mGridU1.GetCurrentLayer();
-      mCurrLayerU2 = mGridU2.GetCurrentLayer();
-      mPrevLayerU1 = mGridU1.GetPrevousLayer();
-      mPrevLayerU2 = mGridU2.GetPrevousLayer();
-      
-      mPerformedIterationsCount++;
-      mBuilderU1.SetIterationsCount(mPerformedIterationsCount);
-      mBuilderU2.SetIterationsCount(mPerformedIterationsCount);
-      
-      DoSolverIteration();
-      if (UpdateCurrentSolution(mPerformedIterationsCount, task))
-         break;
-
-      mGridU1.NextLayer();
-      mGridU2.NextLayer();
-   }
+inline void SchemeSolverCommon::UpdateCurrentLayersDifference() {
+   int n = mIntervalsCount;
+   mMaxDiffU1 = MaxDifference(mCurrLayerU1, mPrevLayerU1, n + 1);
+   mMaxDiffU2 = MaxDifference(mCurrLayerU2, mPrevLayerU2, n + 1);
 }
 
-SchemeSolverResult SchemeSolverCommon::ConstructSolvingResult(
-      const SchemeTask& task) {
-   SchemeSolution solutionU1 = mBuilderU1.Build(mGridU1);
-   SchemeSolution solutionU2 = mBuilderU2.Build(mGridU2);
-   SchemeStatistic statistic(mPerformedIterationsCount, mMaxDiffU1, mMaxDiffU2);
-   
-   int maxIterations = task.GetMaximumIterations();
-   bool isContinuationAvailable;
-   if (maxIterations > mPerformedIterationsCount)
-   {
-      isContinuationAvailable = true;
-   }
-   else
-   {
-      isContinuationAvailable = false;
-   }
+inline bool SchemeSolverCommon::CheckStopCondition() {
+   if (mSolverMode == SchemeSolverMode::StableLayer)
+      return mMaxDiffU1 < mAccuracyU1 && mMaxDiffU2 < mAccuracyU2;
 
-   return SchemeSolverResult(solutionU1, solutionU2, statistic, task,
-                             isContinuationAvailable);
+   return false;
+}
+
+inline bool SchemeSolverCommon::UpdateCurrentIteratonInfo(
+   int itersCount, const SchemeTask& task) {
+   if (itersCount % mUpdateStep)
+      return false;
+
+   SchemeSolverIterationInfo info = 
+      ConstructSolverIntermediateResult(itersCount);
+   return !UpdateIterationInfo(info);
+}
+
+inline SchemeSolverResult SchemeSolverCommon::ConstructSolverResult(
+   int itersCount, const SchemeTask& task) {
+   SchemeSolution solutionU1 = mGridU1->BuildSolution();
+   SchemeSolution solutionU2 = mGridU2->BuildSolution();
+   SchemeStatistic statistic(
+      mIterationsCount, itersCount, mMaxDiffU1, mMaxDiffU2);
+   return SchemeSolverResult(solutionU1, solutionU2, statistic, task);
+}
+
+inline SchemeSolverIterationInfo 
+SchemeSolverCommon::ConstructSolverIntermediateResult(int itersCount) {
+   SchemeStatistic statistic(
+      mIterationsCount, itersCount, mMaxDiffU1, mMaxDiffU2);
+   SchemeWeakLayer currentLayerU1(mCurrLayerU1, mIntervalsCount);
+   SchemeWeakLayer currentLayerU2(mCurrLayerU2, mIntervalsCount);
+   return SchemeSolverIterationInfo(
+      currentLayerU1, currentLayerU2, statistic, 
+      mGridU1->GetMinValue(), mGridU1->GetMaxValue(),
+      mGridU2->GetMinValue(), mGridU2->GetMaxValue());
 }
 
 void SchemeSolverCommon::PrepareSolver(const SchemeTask& task) { 
+   mSolverMode = GetSolverMode();
+   mUpdateStep = GetIterationInfoUpdateStep();
+
    InitializeSchemeParameters(task);
    InitializeGrid(task);
-
-   mBuilderU1 = SchemeSolutionBuilder(task, GetSolverMode());
-   mBuilderU2 = SchemeSolutionBuilder(task, GetSolverMode());
-
-   auto initialLayerU1 = task.GetInitialLayerU1();
-   auto initialLayerU2 = task.GetInitialLayerU2();
-   mBuilderU1.UpdateMinMaxValues(initialLayerU1);
-   mBuilderU2.UpdateMinMaxValues(initialLayerU2);
-
    PrepareSolverOverride(task);
 }
 

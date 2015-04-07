@@ -34,6 +34,8 @@ public slots:
     void activatorAccuracyChanged(const QString& newAccuracy);
     void inhibitorAccuracyChanged(const QString& newAccuracy);
     void iterationsLimitChanged(const QString& newIterationsLimit);
+    void solvingModeChanged();
+    void layerSavingStepChanged(const QString& newLayerSavingStep);
 
     void goToPrevLayer();
     void goToNextLayer();
@@ -42,8 +44,7 @@ public slots:
     void goToLayer(const QString& newLayer);
     void changeLayerStep(const QString& newLayerStep);
 
-    void startFiniteRun();
-    void startStabilityRun();
+    void startNewRun();
     void continueRun();
     void showLastRunResults();
 
@@ -56,7 +57,7 @@ public slots:
     void loadEquationsParameters();
     void saveEquationsParameters();
 
-    void updateModelResult(const SchemeSolverResult&);
+    void updateModelResult(const SchemeSolverIterationInfo&);
 
     void modelSolverError(const DSSolverException&);
 
@@ -68,8 +69,8 @@ private:
     void initPlots();
     void resetPlotsScale(double activatorMin, double activatorMax,
                          double inhibitorMin, double inhibitorMax);
-    void displayActivatorLayer(const SchemeLayer& layer);
-    void displayInhibitorLayer(const SchemeLayer& layer);
+    void displayActivatorLayer(const SchemeWeakLayer& layer);
+    void displayInhibitorLayer(const SchemeWeakLayer& layer);
 
     void showWarningMessages();
 
