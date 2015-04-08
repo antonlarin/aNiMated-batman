@@ -57,27 +57,27 @@ public:
 
     bool IsContinuationAvailable() const;
 signals:
-    void layerIndexChanged();
-    void resultAcquired();
-    void resultChanged(const SchemeSolverIterationInfo&);
-    void comparedLayersChanged();
-    void solverError(const DSSolverException&);
+    void LayerIndexChanged();
+    void ResultAcquired();
+    void ResultChanged(const SchemeSolverIterationInfo&);
+    void ComparedLayersChanged();
+    void SolverError(const DSSolverException&);
 
 public slots:
-    void stopSolver();
-    void selectImplicitSolver();
-    void selectExplicitSolver();
+    void StopSolver();
+    void SelectImplicitSolver();
+    void SelectExplicitSolver();
 
 private slots:
-    void solverThreadFinished(const SchemeSolverResult&);
-    void solverThreadResultChanged(const SchemeSolverIterationInfo&);
-    void solverThreadHandleError(const DSSolverException&);
+    void SolverThreadFinished(const SchemeSolverResult&);
+    void SolverThreadResultChanged(const SchemeSolverIterationInfo&);
+    void SolverThreadHandleError(const DSSolverException&);
 
 private:
     void UpdateSolver(SchemeSolver* solver);    
-    void setupTask();
-    void setupSolverSettings();
-    void setupInitialConditions();
+    void SetupTask();
+    void SetupSolverSettings();
+    void SetupInitialConditions();
 
 private:
     DSParameterSet parameters;

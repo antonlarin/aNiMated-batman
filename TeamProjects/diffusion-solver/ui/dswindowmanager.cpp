@@ -16,7 +16,7 @@ DSWindowManager::DSWindowManager(DSModel* model) :
     layerPairAnalysisWindow(nullptr),
     summaryDialog(nullptr)
 {
-    connect(getModel(), SIGNAL(resultAcquired()),
+    connect(getModel(), SIGNAL(ResultAcquired()),
             this, SLOT(showSummaryDialog()));
 }
 

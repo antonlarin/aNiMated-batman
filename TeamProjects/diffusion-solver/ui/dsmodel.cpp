@@ -18,15 +18,15 @@ DSModel::DSModel() :
     resultsStorage(new SchemeResultsStorage())
 {
     connect(&solverThread, SIGNAL(solverFinished(SchemeSolverResult&)),
-            this, SLOT(solverThreadFinished(SchemeSolverResult&)));
+            this, SLOT(SolverThreadFinished(SchemeSolverResult&)));
 
     connect(&solverThread, SIGNAL(resultChanged(const SchemeSolverIterationInfo&)),
-            this, SLOT(solverThreadResultChanged(const SchemeSolverIterationInfo&)));
+            this, SLOT(SolverThreadResultChanged(const SchemeSolverIterationInfo&)));
 
     connect(&solverThread, SIGNAL(solverError(const DSSolverException&)),
-            this, SLOT(solverThreadHandleError(const DSSolverException&)));
+            this, SLOT(SolverThreadHandleError(const DSSolverException&)));
 
-    selectExplicitSolver();
+    SelectExplicitSolver();
 }
 
 /*
@@ -45,7 +45,7 @@ void DSModel::SetCurrentLayerIndex(int value)
         currentLayerIndex = GetLayerCount() - 1;
     else
         currentLayerIndex = value;
-    emit layerIndexChanged();
+    emit LayerIndexChanged();
 }
 
 int DSModel::GetLayerStep() const
@@ -72,7 +72,7 @@ void DSModel::SetFirstComparedLayerIndex(int value)
         firstComparedLayerIndex = GetLayerCount() - 1;
     else
         firstComparedLayerIndex = value;
-    emit comparedLayersChanged();
+    emit ComparedLayersChanged();
 }
 
 int DSModel::GetSecondComparedLayerIndex() const
@@ -88,7 +88,7 @@ void DSModel::SetSecondComparedLayerIndex(int value)
         secondComparedLayerIndex = GetLayerCount() - 1;
     else
         secondComparedLayerIndex = value;
-    emit comparedLayersChanged();
+    emit ComparedLayersChanged();
 }
 
 
@@ -101,13 +101,13 @@ DSParameterSet* DSModel::AccessParameters()
     return &parameters;
 }
 
-void DSModel::setupSolverSettings()
+void DSModel::SetupSolverSettings()
 {
     solver->SetSolverMode(AccessParameters()->GetSolvingMode());
     solver->SetSaveLayerStep(AccessParameters()->GetLayerSavingStep());
 }
 
-void DSModel::setupInitialConditions()
+void DSModel::SetupInitialConditions()
 {
     SchemeLayerGeneratorInitial initialLayerGenerator;
     initialLayerGenerator.SetIntervalsCount(
@@ -124,7 +124,7 @@ void DSModel::setupInitialConditions()
     task->SetInitialLayers(activatorInitLayer, inhibitorInitLayer);
 }
 
-void DSModel::setupTask()
+void DSModel::SetupTask()
 {
     task->SetLambda1(AccessParameters()->GetLambda1());
     task->SetLambda2(AccessParameters()->GetLambda2());
@@ -141,17 +141,18 @@ void DSModel::setupTask()
 
 void DSModel::StartRun()
 {
-    setupTask();
-    setupInitialConditions();
-    setupSolverSettings();
+    SetupTask();
+    SetupInitialConditions();
+    SetupSolverSettings();
 
+    result.release();
     resultsStorage->Drop();
     solverThread.start();
 }
 
 void DSModel::ContinueRun()
 {
-    setupTask();
+    SetupTask();
 
     int lastLayerIndex = resultsStorage->GetLayersCount() - 1;
     SchemeLayer lastActivatorLayer = resultsStorage->GetLayerU1(lastLayerIndex);
@@ -159,7 +160,8 @@ void DSModel::ContinueRun()
     task->SetInitialLayers(lastActivatorLayer, lastInhibitorLayer);
     task->SetStartIterationIndex(lastLayerIndex);
 
-    setupSolverSettings();
+    SetupSolverSettings();
+    result.release();
 
     solverThread.start();
 }
@@ -258,38 +260,38 @@ void DSModel::UpdateSolver(SchemeSolver* slvr)
 /*
  * Slots implementation
  */
-void DSModel::stopSolver()
+void DSModel::StopSolver()
 {
     solverThread.StopSolver();
 }
 
-void DSModel::selectImplicitSolver()
+void DSModel::SelectImplicitSolver()
 {
     UpdateSolver(new SchemeSolverImplicit());
 }
 
-void DSModel::selectExplicitSolver()
+void DSModel::SelectExplicitSolver()
 {
     UpdateSolver(new SchemeSolverExplicit());
 }
 
 
-void DSModel::solverThreadFinished(const SchemeSolverResult& res)
+void DSModel::SolverThreadFinished(const SchemeSolverResult& res)
 {
     resultsStorage->AddResult(res);
     result.reset(new SchemeSolverResult(res));
     continuationAvailable = true;
-    emit resultAcquired();
+    emit ResultAcquired();
 }
 
-void DSModel::solverThreadResultChanged(const SchemeSolverIterationInfo& res)
+void DSModel::SolverThreadResultChanged(const SchemeSolverIterationInfo& res)
 {
-    emit resultChanged(res);
+    emit ResultChanged(res);
 }
 
-void DSModel::solverThreadHandleError(const DSSolverException& ex)
+void DSModel::SolverThreadHandleError(const DSSolverException& ex)
 {
-    emit solverError(ex);
+    emit SolverError(ex);
 }
 DSSettingsManager* DSModel::AccessSettingsManager()
 {

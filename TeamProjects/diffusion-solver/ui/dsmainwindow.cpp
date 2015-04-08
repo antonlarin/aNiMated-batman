@@ -83,19 +83,19 @@ DSMainWindow::DSMainWindow(DSWindowManager* manager, QWidget *parent) :
             this, SLOT(showSystemEquilibriumInformation()));
 
     DSModel* model = getManager()->getModel();
-    connect(model, SIGNAL(layerIndexChanged()),
+    connect(model, SIGNAL(LayerIndexChanged()),
             this, SLOT(showSelectedLayer()));
-    connect(model, SIGNAL(resultAcquired()),
+    connect(model, SIGNAL(ResultAcquired()),
             this, SLOT(displayRunResults()));
-    connect(model, SIGNAL(resultChanged(const SchemeSolverIterationInfo&)),
+    connect(model, SIGNAL(ResultChanged(const SchemeSolverIterationInfo&)),
             this, SLOT(updateModelResult(const SchemeSolverIterationInfo&)));
-    connect(model, SIGNAL(solverError(const DSSolverException&)),
+    connect(model, SIGNAL(SolverError(const DSSolverException&)),
             this, SLOT(modelSolverError(const DSSolverException&)));
 
     connect(ui->explicitSolverRadioButton, SIGNAL(clicked()),
-            model, SLOT(selectExplicitSolver()));
+            model, SLOT(SelectExplicitSolver()));
     connect(ui->implicitSolverRadioButton, SIGNAL(clicked()),
-            model, SLOT(selectImplicitSolver()));
+            model, SLOT(SelectImplicitSolver()));
 
     ui->plotControlPanel->setVisible(false);
     initPlots();

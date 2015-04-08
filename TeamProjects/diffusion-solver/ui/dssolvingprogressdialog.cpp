@@ -10,14 +10,14 @@ DSSolvingProgressDialog::DSSolvingProgressDialog(DSWindowManager* manager,
     ui->setupUi(this);
 
     DSModel* model = getManager()->getModel();
-    connect(model, SIGNAL(resultChanged(const SchemeSolverIterationInfo&)),
+    connect(model, SIGNAL(ResultChanged(const SchemeSolverIterationInfo&)),
             this, SLOT(updateResult(const SchemeSolverIterationInfo&)));
 
-    connect(model, SIGNAL(resultAcquired()),
+    connect(model, SIGNAL(ResultAcquired()),
             this, SLOT(close()));
 
     connect(ui->buttonStopSolver, SIGNAL(clicked()),
-            model, SLOT(stopSolver()));
+            model, SLOT(StopSolver()));
 }
 
 DSSolvingProgressDialog::~DSSolvingProgressDialog()
