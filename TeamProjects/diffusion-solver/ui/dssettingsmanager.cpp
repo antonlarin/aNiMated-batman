@@ -105,8 +105,6 @@ void DSSettingsManager::loadSettings(QFile& inputFile, DSParameterSet* settings)
                 else if(readStream.name() == "Gamma")
                     isParameterValid = settings->SetGamma(currentAttributeValue);
                 else if(readStream.name() == "TimeStep")
-                    isParameterValid = settings->SetGamma(currentAttributeValue);
-                else if(readStream.name() == "TimeStep")
                     isParameterValid = settings->SetTimeStep(currentAttributeValue);
                 else if(readStream.name() == "ActivatorAccuracy")
                     isParameterValid = settings->SetActivatorAccuracy(currentAttributeValue);
