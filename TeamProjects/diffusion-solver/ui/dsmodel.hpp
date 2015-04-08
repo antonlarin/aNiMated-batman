@@ -10,6 +10,7 @@
 #include "SchemeResultsStorage.hpp"
 #include "dssolverthread.hpp"
 #include "dsparameterset.hpp"
+#include "dssettingsmanager.hpp"
 
 using std::shared_ptr;
 using std::unique_ptr;
@@ -24,6 +25,7 @@ public:
     explicit DSModel();
 
     DSParameterSet* AccessParameters();
+    DSSettingsManager* AccessSettingsManager();
 
     PROPERTY(int, CurrentLayerIndex)
     PROPERTY(int, LayerStep)
@@ -79,6 +81,7 @@ private:
 
 private:
     DSParameterSet parameters;
+    DSSettingsManager settingsManager;
     DSSolverThread solverThread;
 
     shared_ptr<SchemeTask> task;

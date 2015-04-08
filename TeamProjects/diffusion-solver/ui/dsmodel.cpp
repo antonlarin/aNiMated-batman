@@ -8,6 +8,7 @@ using namespace std::placeholders;
 DSModel::DSModel() :
     QObject(),
     parameters(),
+    settingsManager(&parameters),
     task(new SchemeTask),
     continuationAvailable(false),
     currentLayerIndex(0),
@@ -289,4 +290,8 @@ void DSModel::solverThreadResultChanged(const SchemeSolverIterationInfo& res)
 void DSModel::solverThreadHandleError(const DSSolverException& ex)
 {
     emit solverError(ex);
+}
+DSSettingsManager* DSModel::AccessSettingsManager()
+{
+    return &settingsManager;
 }

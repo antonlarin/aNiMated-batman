@@ -2,15 +2,25 @@
 #define DSSETTINGSMANAGER_H
 
 #include <QFile>
+#include <QXmlStreamWriter>
+#include <QXmlStreamReader>
 #include "dsparameterset.hpp"
 
 class DSSettingsManager
 {
 private:
-    static void handleParsingError();
+    DSParameterSet* parametersPtr;
+    QXmlStreamWriter* writeStream;
+    QXmlStreamReader* readStream;
+
+    void handleParsingError();
+    void writeInitialConditions();
+    void readInitialConditions();
 public:
-    static void saveSettings(QFile&, const DSParameterSet*);
-    static void loadSettings(QFile&, DSParameterSet*);
+    DSSettingsManager(DSParameterSet*);
+    DSSettingsManager();
+    void saveSettings(QFile&);
+    void loadSettings(QFile&);
 };
 
 #endif // DSSETTINGSMANAGER_H

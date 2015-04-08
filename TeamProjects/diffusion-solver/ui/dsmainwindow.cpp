@@ -500,8 +500,7 @@ void DSMainWindow::saveEquationsParameters()
                        QObject::tr( "\n Невозможно создать файл"));
         }
         else    {
-            DSSettingsManager::saveSettings(file,
-                                getManager()->getModel()->AccessParameters());
+            getManager()->getModel()->AccessSettingsManager()->saveSettings(file);
             file.close();
         }
     }
@@ -522,7 +521,7 @@ void DSMainWindow::loadEquationsParameters()
 
             DSParameterSet* currentParameters =
                         getManager()->getModel()->AccessParameters();
-            DSSettingsManager::loadSettings(file, currentParameters);
+            getManager()->getModel()->AccessSettingsManager()->loadSettings(file);
 
             ui->lambda1Edit->setText(QString::number(currentParameters->GetLambda1(), 'g', 16));
             ui->lambda2Edit->setText(QString::number(currentParameters->GetLambda2(), 'g', 16));
