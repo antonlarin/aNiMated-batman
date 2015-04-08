@@ -555,7 +555,7 @@ void DSMainWindow::showSystemEquilibriumInformation()
             currentParameters->GetGamma();
     double u2 = u1*u1*currentParameters->GetC()/currentParameters->GetNu();
     QString infoMessage("");
-    infoMessage+="Возможное стационарное однородное по пространству \nустойчивое решение: ( ";
+    infoMessage+="Стационарное однородное по пространству решение: ( ";
     infoMessage+=QString::number(u1) + QString(" ; ") + QString::number(u2) + QString(" )\n");
-    QMessageBox::information(0,"Информация о состояниях равновесия", infoMessage);
+    QMessageBox::information(0,"Информация о стационарном решении", infoMessage);
 }

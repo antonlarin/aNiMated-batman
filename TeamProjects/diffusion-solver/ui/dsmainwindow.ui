@@ -948,7 +948,7 @@
   </action>
   <action name="showEquilibriumHelpAction">
    <property name="text">
-    <string>Информация о состояниях равновесия</string>
+    <string>Информация о стационарном решении</string>
    </property>
   </action>
  </widget>
