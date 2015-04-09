@@ -1,6 +1,8 @@
-#include "dssettingsmanager.hpp"
+﻿#include "dssettingsmanager.hpp"
 
 #include <stdexcept>
+
+#define MAX_HARMONIC_NUMBER 20
 
 DSSettingsManager::DSSettingsManager() : parametersPtr(nullptr)
 {
@@ -144,21 +146,77 @@ void DSSettingsManager::loadSettings(QFile& inputFile)
 }
 void DSSettingsManager::writeInitialConditions()
 {
+    const vector<double>& activatorCoeffs = parametersPtr->GetActivatorInitialConditions();
     writeStream->writeStartElement("ActivatorInitialConditions");
 
+    int harmonicNumber=0;
+    for(auto i = activatorCoeffs.begin(); i!=activatorCoeffs.end(); ++i)
+    {
+        if (*i)
+           writeStream->writeAttribute("H" + QString::number(harmonicNumber),
+                                       QString::number(*i, 'g', 16));
+        harmonicNumber++;
+    }
     writeStream->writeEndElement();
 
-
+    const vector<double>& inhibitorCoeffs = parametersPtr->GetInhibitorInitialConditions();
     writeStream->writeStartElement("InhibitorInitialConditions");
 
+    harmonicNumber = 0;
+    for(auto i=inhibitorCoeffs.begin(); i!=inhibitorCoeffs.end(); ++i)
+    {
+        if (*i)
+           writeStream->writeAttribute("H" + QString::number(harmonicNumber),
+                                       QString::number(*i, 'g', 16));
+        harmonicNumber++;
+    }
     writeStream->writeEndElement();
 }
 void DSSettingsManager::readInitialConditions()
 {
-    readStream->readNext();
-    readStream->readNext();
-    readStream->readNext();
-    readStream->readNext();
-    readStream->readNext();
-    readStream->readNext();
+    vector<double> harmonicsCoeffs(MAX_HARMONIC_NUMBER);
+
+    QXmlStreamReader::TokenType currentToken;
+
+    while(!( (currentToken = readStream->readNext()) == QXmlStreamReader::EndElement &&
+            readStream->name() == "InitialConditions"))
+    {
+        if(currentToken == QXmlStreamReader::EndElement
+                || readStream->name() == "")
+            continue;
+
+        QXmlStreamAttributes attributes = readStream->attributes();
+
+        std::fill(harmonicsCoeffs.begin(), harmonicsCoeffs.end() ,0);
+
+        while(!attributes.empty())
+        {
+            if(attributes.front().name().startsWith("H"))
+            {
+                QString name = attributes.front().name().toString();
+                name = name.remove(0, 1);
+
+                int harmonicNumber = name.toInt();
+                if(harmonicNumber >= harmonicsCoeffs.size())
+                    handleParsingError();
+                double harmonicValue = (attributes.value(attributes.front().name().toString())).toDouble();
+                harmonicsCoeffs[harmonicNumber] = harmonicValue;
+            }
+            else
+                handleParsingError();
+
+            attributes.pop_front();
+        }
+        bool isConditionsValid = false;
+        if(readStream->name() == "ActivatorInitialConditions")
+            isConditionsValid = parametersPtr->SetActivatorInitialConditions(harmonicsCoeffs);
+        else if(readStream->name() == "InhibitorInitialConditions")
+            isConditionsValid = parametersPtr->SetInhibitorInitialConditions(harmonicsCoeffs);
+        else if(!isConditionsValid)
+            handleParsingError();
+
+        if(readStream->hasError())
+            handleParsingError();
+    }
+
 }
