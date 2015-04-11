@@ -731,7 +731,7 @@
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QGroupBox" name="activatorScalePanel">
+        <widget class="QGroupBox" name="activatorScaleGroup">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -755,16 +755,6 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>
-           <widget class="QLabel" name="activatorMinimumLabel">
-            <property name="text">
-             <string>Минимум:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="activatorMinimumEdit"/>
-          </item>
-          <item>
            <widget class="QLabel" name="activatorMaximumLabel">
             <property name="text">
              <string>Максимум:</string>
@@ -773,6 +763,16 @@
           </item>
           <item>
            <widget class="QLineEdit" name="activatorMaximumEdit"/>
+          </item>
+          <item>
+           <widget class="QLabel" name="activatorMinimumLabel">
+            <property name="text">
+             <string>Минимум:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="activatorMinimumEdit"/>
           </item>
           <item>
            <widget class="QCheckBox" name="activatorAutoScaleCheckbox">
@@ -801,7 +801,7 @@
         </widget>
        </item>
        <item row="2" column="0">
-        <widget class="QGroupBox" name="inhibitorScalePanel">
+        <widget class="QGroupBox" name="inhibitorScaleGroup">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -825,16 +825,6 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
-           <widget class="QLabel" name="inhibitorMinimumLabel">
-            <property name="text">
-             <string>Минимум:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="inhibitorMinimumEdit"/>
-          </item>
-          <item>
            <widget class="QLabel" name="inhibitorMaximumLabel">
             <property name="text">
              <string>Максимум:</string>
@@ -843,6 +833,16 @@
           </item>
           <item>
            <widget class="QLineEdit" name="inhibitorMaximumEdit"/>
+          </item>
+          <item>
+           <widget class="QLabel" name="inhibitorMinimumLabel">
+            <property name="text">
+             <string>Минимум:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="inhibitorMinimumEdit"/>
           </item>
           <item>
            <widget class="QCheckBox" name="inhibitorAutoScaleCheckbox">

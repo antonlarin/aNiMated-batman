@@ -380,15 +380,44 @@ void DSMainWindow::resetPlotsScale(double activatorMin, double activatorMax,
     double activatorYRange = activatorMax - activatorMin;
     double activatorPlotMargin = plotRelativeYMargin() *
             std::max(activatorYRange, minPlotYRange());
-    ui->activatorPlot->yAxis->setRange(activatorMin - activatorPlotMargin,
-                                       activatorMax + activatorPlotMargin);
+    double activatorPlotMinimum = activatorMin - activatorPlotMargin;
+    double activatorPlotMaximum = activatorMax + activatorPlotMargin;
+    if (ui->activatorAutoScaleCheckbox->isChecked())
+    {
+        ui->activatorPlot->yAxis->setRange(activatorPlotMinimum,
+                                           activatorPlotMaximum);
+        ui->activatorMinimumEdit->setText(
+            QString("%1").arg(activatorPlotMinimum)
+        );
+        ui->activatorMaximumEdit->setText(
+            QString("%1").arg(activatorPlotMaximum)
+        );
+    }
+    else
+    {
 
+    }
 
     double inhibitorYRange = inhibitorMax - inhibitorMin;
     double inhibitorPlotMargin = plotRelativeYMargin() *
             std::max(inhibitorYRange, minPlotYRange());
-    ui->inhibitorPlot->yAxis->setRange(inhibitorMin - inhibitorPlotMargin,
-                                       inhibitorMax + inhibitorPlotMargin);
+    double inhibitorPlotMinimum = inhibitorMin - inhibitorPlotMargin;
+    double inhibitorPlotMaximum = inhibitorMax + inhibitorPlotMargin;
+    if (ui->inhibitorAutoScaleCheckbox->isChecked())
+    {
+        ui->inhibitorPlot->yAxis->setRange(inhibitorPlotMinimum,
+                                           inhibitorPlotMaximum);
+        ui->inhibitorMinimumEdit->setText(
+            QString("%1").arg(inhibitorPlotMinimum)
+        );
+        ui->inhibitorMaximumEdit->setText(
+            QString("%1").arg(inhibitorPlotMaximum)
+        );
+    }
+    else
+    {
+
+    }
 }
 
 void DSMainWindow::displayActivatorLayer(const SchemeWeakLayer& layer)

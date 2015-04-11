@@ -77,7 +77,6 @@ private:
     void showWarningMessages();
 
     Ui::DSMainWindow *ui;
-    std::unique_ptr<DSEquationHelpDialog> equationHelpDialog;
 };
 
 #endif // DSMAINWINDOW_HPP
