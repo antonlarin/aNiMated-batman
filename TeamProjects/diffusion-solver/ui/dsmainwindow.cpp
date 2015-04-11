@@ -218,10 +218,14 @@ void DSMainWindow::solvingModeChanged()
     if (ui->savingLayersRadioButton->isChecked())
     {
         value = SchemeSolverMode::AllLayers;
+        ui->layerSavingStepLabel->setVisible(true);
+        ui->layerSavingStepEdit->setVisible(true);
     }
     else // if (ui->nonSavingLayerRadioButton->isChecked())
     {
         value = SchemeSolverMode::StableLayer;
+        ui->layerSavingStepLabel->setVisible(false);
+        ui->layerSavingStepEdit->setVisible(false);
     }
 
     getManager()->getModel()->AccessParameters()->SetSolvingMode(value);
