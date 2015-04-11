@@ -497,7 +497,13 @@
        <property name="verticalSpacing">
         <number>2</number>
        </property>
-       <item row="0" column="0">
+       <item row="2" column="1">
+        <widget class="QCustomPlot" name="inhibitorPlot" native="true"/>
+       </item>
+       <item row="1" column="1">
+        <widget class="QCustomPlot" name="activatorPlot" native="true"/>
+       </item>
+       <item row="0" column="0" colspan="2">
         <widget class="QWidget" name="plotControlPanel" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -725,10 +731,144 @@
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QCustomPlot" name="activatorPlot" native="true"/>
+        <widget class="QGroupBox" name="activatorScalePanel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>140</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>140</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="title">
+          <string>Масштаб активатора:</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <item>
+           <widget class="QLabel" name="activatorMinimumLabel">
+            <property name="text">
+             <string>Минимум:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="activatorMinimumEdit"/>
+          </item>
+          <item>
+           <widget class="QLabel" name="activatorMaximumLabel">
+            <property name="text">
+             <string>Максимум:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="activatorMaximumEdit"/>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="activatorAutoScaleCheckbox">
+            <property name="text">
+             <string>Авто-масштаб</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="verticalSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>136</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
        </item>
        <item row="2" column="0">
-        <widget class="QCustomPlot" name="inhibitorPlot" native="true"/>
+        <widget class="QGroupBox" name="inhibitorScalePanel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>140</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>140</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="title">
+          <string>Масштаб ингибитора:</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="QLabel" name="inhibitorMinimumLabel">
+            <property name="text">
+             <string>Минимум:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="inhibitorMinimumEdit"/>
+          </item>
+          <item>
+           <widget class="QLabel" name="inhibitorMaximumLabel">
+            <property name="text">
+             <string>Максимум:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="inhibitorMaximumEdit"/>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="inhibitorAutoScaleCheckbox">
+            <property name="text">
+             <string>Авто-масштаб</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="verticalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>136</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
        </item>
       </layout>
      </widget>
