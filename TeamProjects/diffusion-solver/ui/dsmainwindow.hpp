@@ -50,6 +50,7 @@ public slots:
 
     void showSelectedLayer();
     void displayRunResults();
+    void updatePlotsScaleManually();
 
     void saveActivatorPlot();
     void saveInhibitorPlot();

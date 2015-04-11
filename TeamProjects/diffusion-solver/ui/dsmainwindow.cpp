@@ -82,6 +82,15 @@ DSMainWindow::DSMainWindow(DSWindowManager* manager, QWidget *parent) :
     connect(ui->showEquilibriumHelpAction, SIGNAL(triggered()),
             this, SLOT(showSystemEquilibriumInformation()));
 
+    connect(ui->activatorMinimumEdit, SIGNAL(textEdited(QString)),
+            this, SLOT(updatePlotsScaleManually()));
+    connect(ui->activatorMaximumEdit, SIGNAL(textEdited(QString)),
+            this, SLOT(updatePlotsScaleManually()));
+    connect(ui->inhibitorMinimumEdit, SIGNAL(textEdited(QString)),
+            this, SLOT(updatePlotsScaleManually()));
+    connect(ui->inhibitorMaximumEdit, SIGNAL(textEdited(QString)),
+            this, SLOT(updatePlotsScaleManually()));
+
     DSModel* model = getManager()->getModel();
     connect(model, SIGNAL(LayerIndexChanged()),
             this, SLOT(showSelectedLayer()));
@@ -338,6 +347,45 @@ void DSMainWindow::displayRunResults()
     ui->continueRunButton->setEnabled(model->IsContinuationAvailable());
 }
 
+void DSMainWindow::updatePlotsScaleManually()
+{
+    if (!ui->activatorAutoScaleCheckbox->isChecked())
+    {
+        bool isMinimumValid = true;
+        bool isMaximumValid = true;
+        double activatorPlotMinimum =
+            ui->activatorMinimumEdit->text().toDouble(&isMinimumValid);
+        double activatorPlotMaximum =
+            ui->activatorMaximumEdit->text().toDouble(&isMaximumValid);
+        if (!isMinimumValid || !isMaximumValid)
+        {
+            return;
+        }
+
+        ui->activatorPlot->yAxis->setRange(activatorPlotMinimum,
+                                           activatorPlotMaximum);
+        ui->activatorPlot->replot();
+    }
+
+    if (!ui->inhibitorAutoScaleCheckbox->isChecked())
+    {
+        bool isMinimumValid = true;
+        bool isMaximumValid = true;
+        double inhibitorPlotMinimum =
+            ui->inhibitorMinimumEdit->text().toDouble(&isMinimumValid);
+        double inhibitorPlotMaximum =
+            ui->inhibitorMaximumEdit->text().toDouble(&isMaximumValid);
+        if (!isMinimumValid || !isMaximumValid)
+        {
+            return;
+        }
+
+        ui->inhibitorPlot->yAxis->setRange(inhibitorPlotMinimum,
+                                           inhibitorPlotMaximum);
+        ui->inhibitorPlot->replot();
+    }
+}
+
 void DSMainWindow::updateModelResult(const SchemeSolverIterationInfo& result)
 {
     resetPlotsScale(result.GetMinValueU1(),
@@ -381,13 +429,14 @@ void DSMainWindow::initPlots()
 void DSMainWindow::resetPlotsScale(double activatorMin, double activatorMax,
                                    double inhibitorMin, double inhibitorMax)
 {
-    double activatorYRange = activatorMax - activatorMin;
-    double activatorPlotMargin = plotRelativeYMargin() *
-            std::max(activatorYRange, minPlotYRange());
-    double activatorPlotMinimum = activatorMin - activatorPlotMargin;
-    double activatorPlotMaximum = activatorMax + activatorPlotMargin;
     if (ui->activatorAutoScaleCheckbox->isChecked())
     {
+        double activatorYRange = activatorMax - activatorMin;
+        double activatorPlotMargin = plotRelativeYMargin() *
+                std::max(activatorYRange, minPlotYRange());
+        double activatorPlotMinimum = activatorMin - activatorPlotMargin;
+        double activatorPlotMaximum = activatorMax + activatorPlotMargin;
+
         ui->activatorPlot->yAxis->setRange(activatorPlotMinimum,
                                            activatorPlotMaximum);
         ui->activatorMinimumEdit->setText(
@@ -397,18 +446,15 @@ void DSMainWindow::resetPlotsScale(double activatorMin, double activatorMax,
             QString("%1").arg(activatorPlotMaximum)
         );
     }
-    else
-    {
 
-    }
-
-    double inhibitorYRange = inhibitorMax - inhibitorMin;
-    double inhibitorPlotMargin = plotRelativeYMargin() *
-            std::max(inhibitorYRange, minPlotYRange());
-    double inhibitorPlotMinimum = inhibitorMin - inhibitorPlotMargin;
-    double inhibitorPlotMaximum = inhibitorMax + inhibitorPlotMargin;
     if (ui->inhibitorAutoScaleCheckbox->isChecked())
     {
+        double inhibitorYRange = inhibitorMax - inhibitorMin;
+        double inhibitorPlotMargin = plotRelativeYMargin() *
+                std::max(inhibitorYRange, minPlotYRange());
+        double inhibitorPlotMinimum = inhibitorMin - inhibitorPlotMargin;
+        double inhibitorPlotMaximum = inhibitorMax + inhibitorPlotMargin;
+
         ui->inhibitorPlot->yAxis->setRange(inhibitorPlotMinimum,
                                            inhibitorPlotMaximum);
         ui->inhibitorMinimumEdit->setText(
@@ -417,10 +463,6 @@ void DSMainWindow::resetPlotsScale(double activatorMin, double activatorMax,
         ui->inhibitorMaximumEdit->setText(
             QString("%1").arg(inhibitorPlotMaximum)
         );
-    }
-    else
-    {
-
     }
 }
 
