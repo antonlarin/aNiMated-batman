@@ -18,7 +18,7 @@ DSLayerPairAnalysisWindow::DSLayerPairAnalysisWindow(DSWindowManager* manager,
     connect(ui->layer2Edit, SIGNAL(editingFinished()),
             this, SLOT(updateComparedLayerEditsText()));
 
-    connect(getManager()->getModel(), SIGNAL(comparedLayersChanged()),
+    connect(getManager()->getModel(), SIGNAL(ComparedLayersChanged()),
             this, SLOT(updateComparisonInfo()));
 
     initPlots();
