@@ -38,6 +38,7 @@ namespace diffusioncore {
       int GetLayerIndexForResult(
          const SchemeSolverResult& res,
          int totalIndex) const;
+      void ResetMinimaAndMaxima();
 
    };
 }

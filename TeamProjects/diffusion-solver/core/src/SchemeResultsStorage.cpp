@@ -7,10 +7,9 @@ using namespace diffusioncore;
 typedef std::numeric_limits<double> doubleLimits;
 
 SchemeResultsStorage::SchemeResultsStorage() :
-   mTotalLayerCount(0),
-   mU1Minimum(doubleLimits::infinity()), mU1Maximum(-doubleLimits::infinity()),
-   mU2Minimum(doubleLimits::infinity()), mU2Maximum(-doubleLimits::infinity())
-{}
+   mTotalLayerCount(0) {
+   ResetMinimaAndMaxima();
+}
 
 SchemeResultsStorage::~SchemeResultsStorage() { }
 
@@ -28,6 +27,7 @@ void SchemeResultsStorage::AddResult(const SchemeSolverResult& result) {
 void SchemeResultsStorage::Drop() {
    mResults.clear();
    mTotalLayerCount = 0;
+   ResetMinimaAndMaxima();
 }
 
 
@@ -102,4 +102,11 @@ inline int SchemeResultsStorage::GetLayerIndexForResult(
       else
          resultIndex -= currentLayerCount;
    }
+}
+
+void SchemeResultsStorage::ResetMinimaAndMaxima() {
+   mU1Minimum = doubleLimits::infinity();
+   mU1Maximum = -doubleLimits::infinity();
+   mU2Minimum = doubleLimits::infinity();
+   mU2Maximum = -doubleLimits::infinity();
 }
