@@ -86,7 +86,7 @@ private:
 
     shared_ptr<SchemeTask> task;
     shared_ptr<SchemeSolver> solver;
-    unique_ptr<SchemeSolverResult> result;
+    SchemeStatistic lastRunStatistic;
     unique_ptr<SchemeResultsStorage> resultsStorage;
 
     bool continuationAvailable;

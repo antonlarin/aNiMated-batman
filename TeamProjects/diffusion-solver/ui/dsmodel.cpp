@@ -15,6 +15,7 @@ DSModel::DSModel() :
     layerStep(1),
     firstComparedLayerIndex(0),
     secondComparedLayerIndex(0),
+    lastRunStatistic(),
     resultsStorage(new SchemeResultsStorage())
 {
     connect(&solverThread, SIGNAL(solverFinished(SchemeSolverResult&)),
@@ -145,7 +146,6 @@ void DSModel::StartRun()
     SetupInitialConditions();
     SetupSolverSettings();
 
-    result.release();
     resultsStorage->Drop();
     solverThread.start();
 }
@@ -161,7 +161,6 @@ void DSModel::ContinueRun()
     task->SetStartIterationIndex(lastLayerIndex);
 
     SetupSolverSettings();
-    result.release();
 
     solverThread.start();
 }
@@ -223,20 +222,17 @@ double DSModel::GetInhibitorMinimum() const
 
 int DSModel::GetPerformedIterationsCount() const
 {
-    SchemeStatistic stat = result->GetStatistic();
-    return stat.GetPerformedIterationsCount();
+    return lastRunStatistic.GetPerformedIterationsCount();
 }
 
 double DSModel::GetAchievedActivatorAccuracy() const
 {
-    SchemeStatistic stat = result->GetStatistic();
-    return stat.GetStopAccuracyU1();
+    return lastRunStatistic.GetStopAccuracyU1();
 }
 
 double DSModel::GetAchievedInhibitorAccuracy() const
 {
-    SchemeStatistic stat = result->GetStatistic();
-    return stat.GetStopAccuracyU2();
+    return lastRunStatistic.GetStopAccuracyU2();
 }
 
 bool DSModel::IsContinuationAvailable() const
@@ -279,7 +275,7 @@ void DSModel::SelectExplicitSolver()
 void DSModel::SolverThreadFinished(const SchemeSolverResult& res)
 {
     resultsStorage->AddResult(res);
-    result.reset(new SchemeSolverResult(res));
+    lastRunStatistic = res.GetStatistic();
     continuationAvailable = true;
     emit ResultAcquired();
 }
