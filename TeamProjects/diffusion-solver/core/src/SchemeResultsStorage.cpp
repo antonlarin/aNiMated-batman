@@ -102,6 +102,7 @@ inline int SchemeResultsStorage::GetLayerIndexForResult(
       else
          resultIndex -= currentLayerCount;
    }
+   return -1;
 }
 
 void SchemeResultsStorage::ResetMinimaAndMaxima() {
