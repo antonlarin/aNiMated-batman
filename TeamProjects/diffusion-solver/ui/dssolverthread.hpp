@@ -33,6 +33,7 @@ public:
 
     void StopSolver();
     void UpdateSolver(std::shared_ptr<SchemeSolver> solver);
+    bool IsFinishedWithError() const;
 
 signals:
     void resultChanged(const SchemeSolverIterationInfo&);
@@ -51,6 +52,7 @@ private:
 
     inline milliseconds GetMaxUpdateIterationSpan() const;
 
+    bool isFinishedWithError;
     QMutex mtx;
     bool solverNeedStop;
     SchemeSolverResult result;

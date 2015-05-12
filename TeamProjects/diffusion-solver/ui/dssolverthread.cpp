@@ -22,6 +22,7 @@ DSSolverThread::~DSSolverThread()
 void DSSolverThread::Initialize()
 {
     solverNeedStop = false;
+    isFinishedWithError = false;
     std::call_once(registerMetaTypeFlag, []() -> void
     {
         qRegisterMetaType<SchemeSolverResult>();
@@ -70,12 +71,19 @@ void DSSolverThread::run()
     try
     {
         result = solver->Solve();
+        isFinishedWithError = false;
     }
     catch (std::exception ex)
     {
         DSSolverException qex(ex);
+        isFinishedWithError = true;
         emit solverError(qex);
     }
+}
+
+bool DSSolverThread::IsFinishedWithError() const
+{
+    return this->isFinishedWithError;
 }
 
 void DSSolverThread::threadFinished()

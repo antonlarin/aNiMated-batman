@@ -277,7 +277,8 @@ void DSModel::SolverThreadFinished(const SchemeSolverResult& res)
     resultsStorage->AddResult(res);
     lastRunStatistic = res.GetStatistic();
     continuationAvailable = true;
-    emit ResultAcquired();
+    if(!solverThread.IsFinishedWithError())
+        emit ResultAcquired();
 }
 
 void DSModel::SolverThreadResultChanged(const SchemeSolverIterationInfo& res)
