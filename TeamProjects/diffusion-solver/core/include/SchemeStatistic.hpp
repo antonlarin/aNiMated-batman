@@ -21,7 +21,7 @@ namespace diffusioncore {
                       double stopAccuracyU1,
                       double stopAccuracyU2);
       ~SchemeStatistic();
-      
+
       int GetIterationsCount() const;
       int GetPerformedIterationsCount() const;
       double GetStopAccuracyU1() const;

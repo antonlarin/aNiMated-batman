@@ -13,15 +13,15 @@ void SchemeSolverExplicit::DoSolverIteration() {
    double k = mStepTime;
    double h = 1.0 / n;
    for (int i = 1; i < n; i++) {
-      mCurrLayerU1[i] = k * (mLambda1 * (mPrevLayerU1[i - 1] - 
-                        2 * mPrevLayerU1[i] + mPrevLayerU1[i + 1]) / 
-                        (h * h) + mK * std::pow(mPrevLayerU1[i], 2) / 
-                        mPrevLayerU2[i] - mMu * mPrevLayerU1[i] + mRho) + 
+      mCurrLayerU1[i] = k * (mLambda1 * (mPrevLayerU1[i - 1] -
+                        2 * mPrevLayerU1[i] + mPrevLayerU1[i + 1]) /
+                        (h * h) + mK * std::pow(mPrevLayerU1[i], 2) /
+                        mPrevLayerU2[i] - mMu * mPrevLayerU1[i] + mRho) +
                         mPrevLayerU1[i];
 
-      mCurrLayerU2[i] = k * (mLambda2 * (mPrevLayerU2[i - 1] - 
-                        2 * mPrevLayerU2[i] + mPrevLayerU2[i + 1]) / 
-                        (h * h) + mC * std::pow(mPrevLayerU1[i], 2) - 
+      mCurrLayerU2[i] = k * (mLambda2 * (mPrevLayerU2[i - 1] -
+                        2 * mPrevLayerU2[i] + mPrevLayerU2[i + 1]) /
+                        (h * h) + mC * std::pow(mPrevLayerU1[i], 2) -
                         mNu * mPrevLayerU2[i]) + mPrevLayerU2[i];
       mGridU1->UpdateMinMaxValues(mCurrLayerU1[i]);
       mGridU2->UpdateMinMaxValues(mCurrLayerU2[i]);

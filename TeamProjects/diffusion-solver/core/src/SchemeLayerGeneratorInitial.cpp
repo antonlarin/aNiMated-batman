@@ -29,7 +29,7 @@ SchemeLayer SchemeLayerGeneratorInitial::Generate() {
    std::vector<double> res(mIntervalsCount + 1, 0);
    for (int i = 0; i <= mIntervalsCount; ++i)
       res[i] = GetValue(dx * i);
-   
+
    return res;
 }
 
@@ -44,5 +44,5 @@ double SchemeLayerGeneratorInitial::GetValue(double x) {
    for (size_t i = 0; i < mCoeff.size(); ++i)
       sum += mCoeff[i] * EvaluateCos(x, i);
 
-   return sum;   
+   return sum;
 }

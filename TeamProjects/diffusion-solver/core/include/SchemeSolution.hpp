@@ -17,7 +17,7 @@ namespace diffusioncore {
       SchemeSolution();
       SchemeSolution(const std::vector<SchemeLayer>& layers,
                      double minValue, double maxValue);
-      SchemeSolution(const SchemeLayer& layer, 
+      SchemeSolution(const SchemeLayer& layer,
                      double minValue, double maxValue);
       ~SchemeSolution();
 

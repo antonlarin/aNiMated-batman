@@ -11,7 +11,7 @@
 
 namespace diffusioncore {
 
-   typedef std::function<bool(SchemeSolverIterationInfo&)> 
+   typedef std::function<bool(SchemeSolverIterationInfo&)>
       SolverIterationCallback;
 
    class EXPORT_API SchemeSolver {

@@ -16,7 +16,7 @@ SchemeSolution::SchemeSolution(const std::vector<SchemeLayer>& layers,
    mLayers = layers;
 }
 
-SchemeSolution::SchemeSolution(const SchemeLayer& layer, 
+SchemeSolution::SchemeSolution(const SchemeLayer& layer,
                                double minValue, double maxValue) {
    mMinValue = minValue;
    mMaxValue = maxValue;

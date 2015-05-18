@@ -19,7 +19,7 @@ namespace diffusioncore {
 
    public:
       static double MaxDifference(
-         const SchemeLayer& lhs, 
+         const SchemeLayer& lhs,
          const SchemeLayer& rhs);
 
       SchemeLayer();
@@ -38,7 +38,7 @@ namespace diffusioncore {
 
       bool CheckIsPositive() const;
 
-   private: 
+   private:
       void Initialize(const double* v, int length);
 
    };

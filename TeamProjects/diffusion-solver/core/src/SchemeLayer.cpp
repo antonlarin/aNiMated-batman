@@ -71,7 +71,7 @@ void SchemeLayer::Initialize(const double* v, int length) {
 }
 
 
-double SchemeLayer::MaxDifference(const SchemeLayer& lhs, 
+double SchemeLayer::MaxDifference(const SchemeLayer& lhs,
                                   const SchemeLayer& rhs) {
    SchemeLayer& minLayer = const_cast<SchemeLayer&>(lhs);
    SchemeLayer& maxLayer = const_cast<SchemeLayer&>(rhs);

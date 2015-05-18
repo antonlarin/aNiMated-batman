@@ -8,7 +8,7 @@ SchemeWeakLayer::SchemeWeakLayer() {
    mSourceSize = 0;
 }
 
-SchemeWeakLayer::SchemeWeakLayer(double const *source, 
+SchemeWeakLayer::SchemeWeakLayer(double const *source,
                                  int sourceSize) {
    mSource = source;
    mSourceSize = sourceSize;

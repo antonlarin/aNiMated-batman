@@ -17,12 +17,12 @@ SchemeSolverResult SchemeSolverCommon::SolveOverride(SchemeTask task) {
       mCurrLayerU2 = mGridU2->GetCurrentLayer();
       mPrevLayerU1 = mGridU1->GetPrevousLayer();
       mPrevLayerU2 = mGridU2->GetPrevousLayer();
-      
+
       iterationsCount++;
       DoSolverIteration();
       UpdateCurrentLayersDifference();
 
-      needToStop = 
+      needToStop =
          CheckStopCondition() ||
          UpdateCurrentIteratonInfo(iterationsCount, task);
 
@@ -39,7 +39,7 @@ SchemeSolverResult SchemeSolverCommon::SolveOverride(SchemeTask task) {
 void SchemeSolverCommon::InitializeGrid(const SchemeTask& task) {
    auto initialLayerU1 = task.GetInitialLayerU1();
    auto initialLayerU2 = task.GetInitialLayerU2();
-   mGridU1.reset(new SchemeGrid(task, initialLayerU1, this)); 
+   mGridU1.reset(new SchemeGrid(task, initialLayerU1, this));
    mGridU2.reset(new SchemeGrid(task, initialLayerU2, this));
 }
 
@@ -81,7 +81,7 @@ inline bool SchemeSolverCommon::UpdateCurrentIteratonInfo(
    if (itersCount % mUpdateStep)
       return false;
 
-   SchemeSolverIterationInfo info = 
+   SchemeSolverIterationInfo info =
       ConstructSolverIntermediateResult(itersCount);
    return !UpdateIterationInfo(info);
 }
@@ -95,19 +95,19 @@ inline SchemeSolverResult SchemeSolverCommon::ConstructSolverResult(
    return SchemeSolverResult(solutionU1, solutionU2, statistic, task);
 }
 
-inline SchemeSolverIterationInfo 
+inline SchemeSolverIterationInfo
 SchemeSolverCommon::ConstructSolverIntermediateResult(int itersCount) {
    SchemeStatistic statistic(
       mIterationsCount, itersCount, mMaxDiffU1, mMaxDiffU2);
    SchemeWeakLayer currentLayerU1(mCurrLayerU1, mIntervalsCount);
    SchemeWeakLayer currentLayerU2(mCurrLayerU2, mIntervalsCount);
    return SchemeSolverIterationInfo(
-      currentLayerU1, currentLayerU2, statistic, 
+      currentLayerU1, currentLayerU2, statistic,
       mGridU1->GetMinValue(), mGridU1->GetMaxValue(),
       mGridU2->GetMinValue(), mGridU2->GetMaxValue());
 }
 
-void SchemeSolverCommon::PrepareSolver(const SchemeTask& task) { 
+void SchemeSolverCommon::PrepareSolver(const SchemeTask& task) {
    mSolverMode = GetSolverMode();
    mUpdateStep = GetIterationInfoUpdateStep();
 
@@ -118,4 +118,6 @@ void SchemeSolverCommon::PrepareSolver(const SchemeTask& task) {
 
 void SchemeSolverCommon::CleanupSolver(const SchemeTask& task) {
    CleanupSolverOverride(task);
+   mGridU1.reset(nullptr);
+   mGridU2.reset(nullptr);
 }

@@ -17,7 +17,7 @@ namespace diffusioncore {
       std::unique_ptr<double, utils::array_deleter<double>> mPrevLayer;
       std::unique_ptr<double, utils::array_deleter<double>> mCurrLayer;
       std::vector<SchemeLayer> mLayers;
-      
+
       SchemeSolverMode mSolverMode;
       int mPointsCount;
       int mLayersMaxCount;
@@ -31,7 +31,7 @@ namespace diffusioncore {
 
    public:
       SchemeGrid(const SchemeTask& task,
-                 const SchemeLayer& initialLayer, 
+                 const SchemeLayer& initialLayer,
                  const SchemeSolver* solver);
       ~SchemeGrid();
 

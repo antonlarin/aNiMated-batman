@@ -2,7 +2,7 @@
 #include <algorithm>
 #include "CoreUtils.hpp"
 
-namespace diffusioncore { 
+namespace diffusioncore {
 namespace utils {
 
    double Max(const double* source, size_t size) {
@@ -23,8 +23,8 @@ namespace utils {
       return maxVal;
    }
 
-   double MaxDifference(const double* lhs, 
-                        const double* rhs, 
+   double MaxDifference(const double* lhs,
+                        const double* rhs,
                         size_t size) {
       double currentDiff;
       double maxDiff = 0;
@@ -35,7 +35,7 @@ namespace utils {
       return maxDiff;
    }
 
-   std::shared_ptr<double> CopyShared(const double* source, 
+   std::shared_ptr<double> CopyShared(const double* source,
                                       size_t size) {
       double* res = new double[size];
       double* i = const_cast<double*>(source);

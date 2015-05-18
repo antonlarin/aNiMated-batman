@@ -32,7 +32,7 @@ void SchemeSolver::SetIterationCallback(SolverIterationCallback callback) {
 }
 SolverIterationCallback SchemeSolver::GetIterationCallback() const {
    return mIterationCallback;
-} 
+}
 
 void SchemeSolver::SetIterationInfoUpdateStep(int callStep) {
    mIterationInfoUpdateStep = callStep;
@@ -50,14 +50,14 @@ int SchemeSolver::GetSaveLayerStep() const {
 }
 
 
-SchemeSolverResult SchemeSolver::Solve() {  
+SchemeSolverResult SchemeSolver::Solve() {
    SchemeTask task = mCurrentTask->Clone();
    CheckParameters(task);
    return SolveOverride(task);
 }
 
 
-void SchemeSolver::CheckParametersOverride(SchemeTask task) { 
+void SchemeSolver::CheckParametersOverride(SchemeTask task) {
    SchemeLayer layerU1 = task.GetInitialLayerU1();
    SchemeLayer layerU2 = task.GetInitialLayerU2();
    if (!layerU1.CheckIsPositive() ||

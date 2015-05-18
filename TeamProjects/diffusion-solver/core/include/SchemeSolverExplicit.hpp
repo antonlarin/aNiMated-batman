@@ -9,7 +9,7 @@ namespace diffusioncore {
    public:
       SchemeSolverExplicit();
       virtual ~SchemeSolverExplicit();
-   
+
    protected:
       virtual void CheckParametersOverride(const SchemeTask& task);
       virtual void DoSolverIteration();

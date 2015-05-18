@@ -49,6 +49,6 @@ double SchemeStatistic::GetStopAccuracyU2() const {
 
 
 void SchemeStatistic::CheckIsInitialized() const {
-   if (!mIsInitialized) 
+   if (!mIsInitialized)
       throw std::runtime_error("SchemeStatistic is not initialized");
 }

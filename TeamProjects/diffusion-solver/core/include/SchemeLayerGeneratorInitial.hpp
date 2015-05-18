@@ -6,7 +6,7 @@
 #include "ISchemeLayerGenerator.hpp"
 
 namespace diffusioncore {
-   class EXPORT_API SchemeLayerGeneratorInitial : 
+   class EXPORT_API SchemeLayerGeneratorInitial :
       public ISchemeLayerGenerator {
    private:
       std::vector<double> mCoeff;
@@ -15,7 +15,7 @@ namespace diffusioncore {
    public:
       SchemeLayerGeneratorInitial();
       ~SchemeLayerGeneratorInitial();
-      
+
       void SetCoefficients(std::vector<double> coeff);
       void SetIntervalsCount(int intervalsCount);
 

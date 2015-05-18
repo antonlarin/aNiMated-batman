@@ -27,7 +27,7 @@ namespace diffusioncore {
    public:
       SchemeTask();
       ~SchemeTask();
-      
+
       PROPERTY(double, K);
       PROPERTY(double, C);
       PROPERTY(double, Nu);

@@ -39,7 +39,7 @@ namespace diffusioncore {
    public:
       SchemeSolverCommon();
       virtual ~SchemeSolverCommon();
-      
+
    protected:
       virtual void DoSolverIteration() = 0;
       virtual void InitializeSchemeParameters(const SchemeTask& task);
@@ -51,11 +51,11 @@ namespace diffusioncore {
 
    private:
       void UpdateCurrentLayersDifference();
-      SchemeSolverResult ConstructSolverResult(int itersCount, 
+      SchemeSolverResult ConstructSolverResult(int itersCount,
                                                const SchemeTask& task);
       SchemeSolverIterationInfo ConstructSolverIntermediateResult(
          int itersCount);
-      bool UpdateCurrentIteratonInfo(int itersCount, 
+      bool UpdateCurrentIteratonInfo(int itersCount,
                                      const SchemeTask& task);
       bool CheckStopCondition();
 

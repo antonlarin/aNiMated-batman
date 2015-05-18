@@ -14,7 +14,7 @@ namespace diffusioncore {
       double mMinValueU1;
       double mMaxValueU1;
       double mMinValueU2;
-      double mMaxValueU2;  
+      double mMaxValueU2;
 
    public:
       SchemeSolverIterationInfo();

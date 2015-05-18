@@ -53,7 +53,7 @@ double SchemeTask::GetNu() const {
 void SchemeTask::SetMu(double value) {
    assert(value >= 0);
    mMu = value;
-} 
+}
 double SchemeTask::GetMu() const {
    return mMu;
 }
